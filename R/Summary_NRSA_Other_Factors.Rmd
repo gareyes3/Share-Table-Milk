@@ -1,0 +1,678 @@
+---
+title: "Checking other input paramters"
+author: "Gustavo Reyes"
+date: "3/15/2021"
+output: html_document
+---
+
+
+```{r}
+
+#Setting Working Directory-------------------------------------
+#setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-QMRA/R") 
+setwd("G:/Share Table QMRA/Share-Table-QMRA/R")
+pathfolder<-"DoseReponse5-14"
+```
+
+```{r}
+#Opening Libary and Inputs-------------------------------------
+source("Util_Library.R")
+source("Functions_Full_Analysis.R")
+source("Util_FunctionFoodWaste.R")
+```
+
+
+```{r}
+DFCheckingInputs<-data.frame(
+  "Input" = 1:10,
+  "Description" = "",
+  "MaxOut" = "",
+  "MinOut" = "",
+  "NominalOut"= "",
+  "Index"="",
+  stringsAsFactors = FALSE
+)
+```
+
+
+
+#Log Reducition Wash
+#Min Value, No Reduction. 
+
+```{r}
+Input_No<-1
+TreatmentNo<-1
+
+#Adding it to the DF
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Description"]<-"Reduction_wash"
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Wash<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+#Wash Selection Table Fruit
+Wash_Selection_YN_Fr<-1
+#Wash Share Table Items
+Wash_ST_YN_Fr<-1
+
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_1<-rbind.fill(List_Sens_Fr)
+meanTI1<-Func_NSA_Summary(Trial = "T1")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MinOut"]<-meanTI1
+
+
+```
+
+##-2 Log Reduction
+
+```{r}
+
+TreatmentNo<-2
+
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Wash<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+
+#Wash Selection Table Fruit
+Wash_Selection_YN_Fr<-1
+#Wash Share Table Items
+Wash_ST_YN_Fr<-1
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_2<-rbind.fill(List_Sens_Fr)
+meanTI2<-Func_NSA_Summary(Trial = "T2")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="NominalOut"]<-meanTI2
+```
+
+
+#Max Out (-5 log)
+
+```{r}
+TreatmentNo<-3
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Wash<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+
+
+#Wash Selection Table Fruit
+Wash_Selection_YN_Fr<-1
+#Wash Share Table Items
+Wash_ST_YN_Fr<-1
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_3<-rbind.fill(List_Sens_Fr)
+meanTI3<-Func_NSA_Summary(Trial = "T3")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MaxOut"]<-meanTI3
+```
+
+##Wrapping the out
+
+```{r}
+SIndexT1_3<-(meanTI3-meanTI1)/meanTI2
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Index"]<-SIndexT1_3
+```
+
+#Die off sensitivity: 
+
+
+
+#Log Reducition from Die-Off
+#DieOFF ON 
+
+```{r}
+Input_No<-2
+TreatmentNo<-4
+
+#Adding it to the DF
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Description"]<-"Growth_Time"
+
+#Inputs and Source Files
+
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+Time_ON<-120
+
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_4<-rbind.fill(List_Sens_Fr)
+meanTI4<-Func_NSA_Summary(Trial = "T4")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MinOut"]<-meanTI4
+
+
+#Summary DFs for Future.------------------------------------- 
+
+#Creating Data Frame of Consumed Items for all the products
+Individual_Analysis_Fr_CopDieoffON<-rbind.fill(List_Sens_Fr)
+#Copy of Compiled Data Frame
+Individual_Analysis_Fr_DieoffON<-rbind.fill(List_Sens_Fr)
+
+#Data Frame without repeats and Consumed Items
+ST_DieoffON_Analysis<-Func_Asys_MainDF(SummaryList = List_Sens_Fr,FoodType = "Fruit")
+
+
+#ST Die offON-------------------------------------
+ST_DieoffON_Analysis_Copy<-ST_DieoffON_Analysis
+
+
+ST_DieoffON_Analysis<-Func_Asys_ContbyStudent(ST_DieoffON_Analysis)
+
+
+#Drop NAs
+ST_DieoffON_Analysis<- ST_DieoffON_Analysis[!is.na(ST_DieoffON_Analysis$Contamination), ]
+
+#Analysis For weekly Dose Response ON
+
+OutputsDRDieoffON<-Func_DR_Main(AnalysisDF = ST_DieoffON_Analysis, Reps_DR = 100)
+df_inf_Week_DieoffON<-OutputsDRDieoffON$df_inf_Week
+df_ill_Week_DieoffON<-OutputsDRDieoffON$df_ill_Week
+
+
+df_ill_Week_DieoffON_Box_Prev<-Func_DF_Prevalence(AnalysisDFCop = ST_DieoffON_Analysis_Copy, df_Ill_Week = df_ill_Week_DieoffON,Intervention = "OFFWr")
+
+```
+
+
+
+#DieOFF Normal
+
+```{r}
+Input_No<-2
+TreatmentNo<-5
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_5<-rbind.fill(List_Sens_Fr)
+meanTI5<-Func_NSA_Summary(Trial = "T5")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="NominalOut"]<-meanTI5
+
+
+```
+
+
+#DieOFF Off
+
+```{r}
+Input_No<-2
+TreatmentNo<-6
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+Growth<-0
+Growth_Pre<-0
+Growth_Pss<-0
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_6<-rbind.fill(List_Sens_Fr)
+meanTI6<-Func_NSA_Summary(Trial = "T6")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MaxOut"]<-meanTI6
+
+
+```
+
+
+##Wrapping the out
+
+```{r}
+SIndexT4_6<-(meanTI6-meanTI4)/meanTI5
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Index"]<-SIndexT4_6
+```
+
+
+
+
+#Ill Exclusion 
+
+```{r}
+Input_No<-3
+TreatmentNo<-7
+
+#Adding it to the DF
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Description"]<-"Ill Exclusion"
+
+#Inputs and Source Files
+
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+  Ill_Avoid_ST<-0
+  Pr_Ill_Avoid_ST<-0
+
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_7<-rbind.fill(List_Sens_Fr)
+meanTI7<-Func_NSA_Summary(Trial = "T7")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MinOut"]<-meanTI7
+
+
+```
+
+
+
+#Ill Exlusion Normal
+
+```{r}
+Input_No<-3
+TreatmentNo<-8
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+  Ill_Avoid_ST<-1
+  Pr_Ill_Avoid_ST<-0.5
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_8<-rbind.fill(List_Sens_Fr)
+meanTI8<-Func_NSA_Summary(Trial = "T8")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="NominalOut"]<-meanTI8
+
+
+```
+
+
+#DieOFF Off
+
+```{r}
+Input_No<-3
+TreatmentNo<-9
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+
+  Ill_Avoid_ST<-1
+  Pr_Ill_Avoid_ST<-1
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_9<-rbind.fill(List_Sens_Fr)
+meanTI9<-Func_NSA_Summary(Trial = "T9")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MaxOut"]<-meanTI9
+
+
+```
+
+
+##Wrapping the out
+
+```{r}
+SIndexT7_9<-(meanTI9-meanTI7)/meanTI8
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Index"]<-SIndexT7_9
+```
+
+
+
+
+
+#Hand Sanitizer
+
+```{r}
+Input_No<-4
+TreatmentNo<-10
+
+#Adding it to the DF
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Description"]<-"Hand Sanitizer"
+
+#Inputs and Source Files
+
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Sanitize<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+Sanitizing_Station<-1
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_10<-rbind.fill(List_Sens_Fr)
+meanTI10<-Func_NSA_Summary(Trial = "T10")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MaxOut"]<-meanTI10
+
+
+```
+
+
+
+#Ill Exlusion Normal
+
+```{r}
+TreatmentNo<-11
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Sanitize<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+Sanitizing_Station<-1
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_11<-rbind.fill(List_Sens_Fr)
+meanTI11<-Func_NSA_Summary(Trial = "T11")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="NominalOut"]<-meanTI11
+
+
+```
+
+
+
+```{r}
+TreatmentNo<-12
+
+#Inputs and Source Files
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Sanitize<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+Sanitizing_Station<-1
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+source("Main_Loops2.R")
+```
+
+```{r}
+TI_12<-rbind.fill(List_Sens_Fr)
+meanTI12<-Func_NSA_Summary(Trial = "T12")
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="MinOut"]<-meanTI12
+
+
+```
+
+
+##Wrapping the out
+
+```{r}
+SIndexT10_12<-(meanTI10-meanTI12)/meanTI11
+DFCheckingInputs[Input_No,colnames(DFCheckingInputs)=="Index"]<-SIndexT10_12
+```
+
+
+
+
+
+```{r}
+DFCheckingInputsx<-DFCheckingInputs[1:4,]
+FullSA<-rbind(DFCheckingInputsx,SenstivityDF)
+
+FullSA$Index<-as.numeric(FullSA$Index)
+round(FullSA$Index, 3)
+
+
+ scale_x_discrete(labels=c("mass_feces_hands"="Mass of Feces Hands",
+                           "TrP_H_S"= "Transfer Prob Hand - Surface", 
+                            "TrP_H_F"="Transfer Prob Hand - Food", 
+                             "TrP_F_H"= "Transfer Prob Food-Hand",
+                              "TrP_S_H"= "Transfer Prob Surface-Hand",
+                              "Prevalence_Illness"="Illness Prevalence",
+                              "N_Touched"="Additional Touches When Choosing Fruit",
+                              "LogRedWash"="Hand Washing Efficacy Baseline",
+                              "HU_NV_in_Feces"="Norovirus GEC in Feces",
+                           "PrWashingHands" = 'Probability of Washing Hands',
+                           "Reduction_wash"= "Fruit Wash Efficacy",
+                           "Growth_Time"= "Die Off length (h)",
+                           "Ill Exclusion" = "% of Ill Students Excluded from Share Table",
+                           "Hand Sanitizer" = "Hand Sanitizer Station 100% Compliance",
+                            "HanwashingStationEfficacy"= "Hanwashing Station 100% Compliance")) 
+
+  TornadoFull<-ggplot(data = FullSA, aes(x=reorder(Description,Index),y=Index ))+
+    geom_bar(stat = "identity", position = "identity")+
+    ylab("Sensitivity Index")+
+    xlab("Input Name")+
+    ggtitle("Sensitivity Analysis: Food Safety Inputs")+
+    scale_x_discrete(labels=c("mass_feces_hands"="Mass of Feces Hands",
+                           "TrP_H_S"= "Transfer Prob Hand - Surface", 
+                            "TrP_H_F"="Transfer Prob Hand - Food", 
+                             "TrP_F_H"= "Transfer Prob Food-Hand",
+                              "TrP_S_H"= "Transfer Prob Surface-Hand",
+                              "Prevalence_Illness"="Illness Prevalence",
+                              "N_Touched"="Additional Touches When Choosing Fruit",
+                              "LogRedWash"="Hand Washing Efficacy Baseline",
+                              "HU_NV_in_Feces"="Norovirus GEC in Feces",
+                           "PrWashingHands" = 'Probability of Washing Hands',
+                           "Reduction_wash"= "Fruit Wash Efficacy",
+                           "Growth_Time"= "Die Off length (h)",
+                           "Ill Exclusion" = "% of Ill Students Excluded from Share Table",
+                           "Hand Sanitizer" = "Hand Sanitizer Station 100% Compliance",
+                            "HanwashingStationEfficacy"= "Hanwashing Station 100% Compliance")) +
+    coord_flip()+
+    theme(plot.title = element_text(hjust = 0.5))+
+    scale_y_continuous(n.breaks = 10)
+
+ggsave(filename = "Tornado1.png", plot = TornadoFull,path = "D:/Poster Outs", width = 8, height = 6) 
+print(TornadoFull)
+```
+
+
+

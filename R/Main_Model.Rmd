@@ -1,0 +1,186 @@
+---
+title: "Main Model-Run once"
+author: "Gustavo Reyes"
+date: "12/10/2020"
+output: html_document
+---
+
+```{r}
+
+#Setting Working Directory-------------------------------------
+setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-Milk/R") 
+#setwd("G:/Share Table QMRA/Share-Table-QMRA/R")
+```
+
+```{r}
+#Opening Libary and Inputs-------------------------------------
+source("Util_Library.R")
+source("Functions_Full_Analysis.R")
+```
+
+
+#SHARE TABLE ON, No Interventions Main Model. 
+```{r}
+#Inputs and Source Files-------------------------------------
+
+TreatmentNo<-3
+#Inputs
+source("Main_Loop.R")
+source("Input_Static.R")
+NSA_Analysis_Other_Wash<-1
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+#Wash Selection Table Fruit
+Wash_Selection_YN_Fr<-1
+#Wash Share Table Items
+Wash_ST_YN_Fr<-1
+
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+
+source("Main_Loops2.R")
+```
+
+```{r}
+DF_Washed_Vecs<- data.frame(VectorLeft_Before, VectorLeft_After)
+DF_Washed_Vecs_0<-DF_Washed_Vecs %>% 
+  filter(VectorLeft_Before>0)
+
+```
+
+
+```{r}
+#Summary DFs for Future-------------------------------------
+
+#Data Frame without repeats and Consumed Items
+ST_Main_Analysis<-Func_Asys_MainDF(SummaryList = List_Sens_Fr,FoodType = "Fruit")
+  
+#Dose Response
+
+#ST ON-------------------------------------
+ST_Main_Analysis_Copy<-ST_Main_Analysis
+
+#ST_ON_Analysis<-ST_ON_Analysis_Copy
+ST_Main_Analysis<-Func_Asys_ContbyStudent(ST_Main_Analysis)
+
+
+#Drop NAs
+ST_Main_Analysis<- ST_Main_Analysis[!is.na(ST_Main_Analysis$Contamination), ]
+
+#Analysis For weekly Dose Response ON
+
+OutputsDRMain<-Func_DR_Main(AnalysisDF = ST_Main_Analysis, Reps_DR = 100)
+df_inf_Week_Main<-OutputsDRMain$df_inf_Week
+df_ill_Week_Main<-OutputsDRMain$df_ill_Week
+
+#Prevalence
+
+df_ill_Week_Main_Box_Prev<-Func_DF_Prevalence(AnalysisDFCop = ST_Main_Analysis_Copy, df_Ill_Week = df_ill_Week_Main,Intervention = "Main")
+
+mean(df_ill_Week_Main_Box_Prev$Prev)
+
+SanitizerDF<-df_ill_Week_Main_Box_Prev%>% 
+  group_by(variable) %>% 
+  summarise(Prevalence= mean(Prev))
+
+SanitizerDF$Method<-Saniztizer_Method_Tracker
+
+SanitizerDF%>% 
+    group_by(Method) %>% 
+    summarise(Prevalence = mean(Prevalence))
+
+```
+
+
+
+
+#SHARE TABlE washing ON
+```{r}
+#Inputs and Source Files-------------------------------------
+
+
+#Inputs
+source("New_StudentLoop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+
+# Washing Items Effect of washing items
+  
+  #Washing Between Services
+  Wash_Between_Services<-0
+  #Wash Selection Table Fruit
+  Wash_Selection_YN_Fr<-1
+  #Wash Share Table Items
+  Wash_ST_YN_Fr<-1
+
+
+```
+
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+
+source("Main_Loops2.R")
+```
+
+```{r}
+#Summary DFs for Future-------------------------------------
+
+#Data Frame without repeats and Consumed Items
+ST_Wash_Analysis<-Func_Asys_MainDF(SummaryList = List_Sens_Fr,FoodType = "Fruit")
+  
+#Dose Response
+
+#ST ON-------------------------------------
+ST_Wash_Analysis_Copy<-ST_Wash_Analysis
+
+#ST_ON_Analysis<-ST_ON_Analysis_Copy
+ST_Wash_Analysis<-Func_Asys_ContbyStudent(ST_Wash_Analysis)
+
+
+#Drop NAs
+ST_Wash_Analysis<- ST_Wash_Analysis[!is.na(ST_Wash_Analysis$Contamination), ]
+
+#Analysis For weekly Dose Response ON
+
+OutputsDRWash<-Func_DR_Main(AnalysisDF = ST_Wash_Analysis, Reps_DR = 100)
+df_inf_Week_Wash<-OutputsDRWash$df_inf_Week
+df_ill_Week_Wash<-OutputsDRWash$df_ill_Week
+
+#Prevalence
+
+df_ill_Week_Wash_Box_Prev<-Func_DF_Prevalence(AnalysisDFCop = ST_Wash_Analysis_Copy, df_Ill_Week = df_ill_Week_Wash,Intervention = "Wash")
+
+mean(df_ill_Week_Wash_Box_Prev$Prev)
+
+WashDF<-df_ill_Week_Wash_Box_Prev%>% 
+  group_by(variable) %>% 
+  summarise(Prevalence =mean(Prev))
+
+WashDF$Method<-Wash_Method_Tracker
+
+WashDF%>% 
+    group_by(Method) %>% 
+    summarise(Prevalence = mean(Prevalence))
+
+
+
+```
