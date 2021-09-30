@@ -107,14 +107,6 @@ Func_Append_Column_Final<-function(DF = AFr_Summary_DF ){
 }
 
 
-# Code To add Services to Total -------------------------------------------
-
-func_Add_Services<-function(DF){
-  for(i in 1:nrow(DF)){
-    DF[i,colnames(DF)=="TotServices"]<-Func_Index_DF(DF,i,"TotServices")+1
-  }
-  return(DF)
-}
 
 
 #Functions for the Transfer probability. 

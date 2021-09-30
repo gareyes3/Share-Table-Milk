@@ -1,18 +1,19 @@
 
 # Script for Initial Contaminations ---------------------------------------
 
-#Running Student Contamination based on Probability. 
-Is_Student_ill<-0
+#Running Student Contamination based on Probability.
+
+Is_Student_ill<-0 #reseting student ill
 Cont_Student<- ifelse(runif(1)<Pr_Student_iC,do.call(Func_ICont_Student,Inputs_ICont_Student),0) 
 if (Cont_Student>0){
-  Student_Cont_Count<-(Student_Cont_Count+1)
+  #Student_Cont_Count<-(Student_Cont_Count+1) do not need
   Vector_Contaminations_In<-c(Vector_Contaminations_In, Cont_Student)
   if (Hawashing_Station == 1){
-    LogRed_Prior = rpert(1,0.17,0.45,6,shape = 4)
+    LogRed_Prior = rpert(1,0.17,0.45,6,shape = 4) #Reduction due to Hanwashing Stration
     Cont_Student<-round(Cont_Student*10^-LogRed_Prior,0)
   }
-  if (Sanitizing_Station == 1){
-    LogRed_Prior<-Func_Randomize_Sanitizer(Wash_Method = Sanitizer_Method)
+  if (Sanitizing_Station == 1){ 
+    LogRed_Prior<-Func_Randomize_Sanitizer(Wash_Method = Sanitizer_Method) #Reduction due to hand sanitizer
     Cont_Student<-round(Cont_Student*10^-LogRed_Prior,0)
   }
   Is_Student_ill<-1
@@ -54,8 +55,4 @@ if(Toggle_SelfAssigned_Allergens==1){
   }
 }
 
-
-
-
-#Total transfer of particles=================================================================
 

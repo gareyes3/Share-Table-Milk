@@ -211,12 +211,13 @@ Main_Loop<-function(){
     
     if(Pick_YN_Fr==1 && Sum_Fr_Available>0){ 
       #Making sure there was enough fruit. 
-      OutputsFEFr<-Func_Eat_Fr(Eat_YN_Item = Eat_YN_Fr, DF = Fr_Data.Frame,Item_Picked = Fr_Picked,Item = "Fruit")
+      OutputsFEFr<-Func_Eat_Fr(Eat_YN_Item = Eat_YN_Fr, 
+                               DF = Fr_Data.Frame,
+                               Item_Picked = Fr_Picked,
+                               Item = "Fruit", 
+                               Location ="Selection Table")
       Cont_Student<-OutputsFEFr$Cont_Student
       Fr_Data.Frame<-OutputsFEFr$DF
-      if(Eat_YN_Fr==1){
-        Fr_Data.Frame[Fr_Picked,colnames(Fr_Data.Frame)== "ConsumedAt"]<-"ServiceLine"
-      }
     }#end of pick statement
   } #End of Sim Fruit Statement.
   
@@ -229,7 +230,11 @@ Main_Loop<-function(){
     
     #Changing Data Frame for consumption of Pss
     if(Pick_YN_Pss==1 && Sum_Pss_Available>0){
-      OutputsFEPss<-Func_Eat_Pss(Eat_YN_Item = Eat_YN_Pss,DF = Pss_Data.Frame, Item_Picked = Pss_Picked, Item = "PSS")
+      OutputsFEPss<-Func_Eat_Pss(Eat_YN_Item = Eat_YN_Pss,
+                                 DF = Pss_Data.Frame, 
+                                 Item_Picked = Pss_Picked, 
+                                 Item = "PSS",
+                                 Location ="Selection Table")
       Cont_Student<-OutputsFEPss$Cont_Student
       Pss_Data.Frame<-OutputsFEPss$DF
     } #end of If
@@ -244,7 +249,11 @@ Main_Loop<-function(){
     #Changind Data Frame for consumption of Pre
     if(Sum_Pre_Available>0){
       if(Pick_YN_Pre==1){
-        OutputFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_Pre,DF = Pre_Data.Frame, Item_Picked = Pre_Picked, Item = "PRE")
+        OutputFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_Pre,
+                                  DF = Pre_Data.Frame, 
+                                  Item_Picked = Pre_Picked, 
+                                  Item = "PRE",
+                                  Location ="Selection Table")
         Cont_Student<-OutputFEPre$Cont_Student
         Pre_Data.Frame<-OutputFEPre$DF
       }
@@ -476,12 +485,13 @@ Main_Loop<-function(){
             #Did the student consume the Fruit?
             Eat_YN_ST_Fr<-ifelse(runif(1)<Pr_eat_ST_Fr,1,0)
             #Changing Data Frame so it updates when student consumes fruit.
-            OutputsFEFr<-Func_Eat_Fr(Eat_YN_Item = Eat_YN_ST_Fr, DF = Fr_Data.Frame,Item_Picked = Fr_ST_Picked,Item = "Fruit")
+            OutputsFEFr<-Func_Eat_Fr(Eat_YN_Item = Eat_YN_ST_Fr, 
+                                     DF = Fr_Data.Frame,
+                                     Item_Picked = Fr_ST_Picked,
+                                     Item = "Fruit",
+                                     Location = "Share Table")
             Cont_Student<-OutputsFEFr$Cont_Student
             Fr_Data.Frame<-OutputsFEFr$DF
-            if(Eat_YN_ST_Fr==1){
-              Fr_Data.Frame[Fr_ST_Picked,colnames(Fr_Data.Frame)== "ConsumedAt"]<-"ShareTable"
-            }
           }
         }
       } #End of Sim Fruit Statement.
@@ -496,12 +506,13 @@ Main_Loop<-function(){
             #Did the student consume the Fruit?
             Eat_YN_ST_Pss<-ifelse(runif(1)<Pr_eat_ST_Pss,1,0)
             #Changing Data Frame so it updates when student consumes fruit.
-            OutputsFEPss<-Func_Eat_Pss(Eat_YN_Item = Eat_YN_ST_Pss, DF = Pss_Data.Frame,Item_Picked = Pss_ST_Picked,Item = "PSS")
+            OutputsFEPss<-Func_Eat_Pss(Eat_YN_Item = Eat_YN_ST_Pss, 
+                                       DF = Pss_Data.Frame,
+                                       Item_Picked = Pss_ST_Picked,
+                                       Item = "PSS",
+                                       Location = "Share Table")
             Cont_Student<-OutputsFEPss$Cont_Student
             Pss_Data.Frame<-OutputsFEPss$DF
-            if(Eat_YN_ST_Pss==1){
-              Pss_Data.Frame[Pss_ST_Picked,colnames(Pss_Data.Frame)== "ConsumedAt"]<-"ShareTable"
-            } 
           }
         }
       } #End of the Sim PSS if
@@ -515,34 +526,21 @@ Main_Loop<-function(){
             #Did the student consume the Fruit?
             Eat_YN_ST_Pre<-ifelse(runif(1)<Pr_eat_ST_Pre,1,0)
             #Changing Data Frame so it updates when student consumes fruit.
-            OutputsFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_ST_Pre, DF = Pre_Data.Frame,Item_Picked = Pre_ST_Picked,Item = "PRE")
+            OutputsFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_ST_Pre, 
+                                       DF = Pre_Data.Frame,
+                                       Item_Picked = Pre_ST_Picked,
+                                       Item = "PRE",
+                                       Location = "Share Table")
             Cont_Student<-OutputsFEPre$Cont_Student
             Pre_Data.Frame<-OutputsFEPre$DF
-            if(Eat_YN_ST_Pre==1){
-              Pre_Data.Frame[Pre_ST_Picked,colnames(Pre_Data.Frame)== "ConsumedAt"]<-"ShareTable"
-            } 
           }
         }
       } #End of the Sim Pre if
-      
+   
     }#End of ill student exclusion loop  
   }#end of Share Table  toggle loop
   
-  if (Sim_Fruit ==1 && Sim_PRE ==0 && Sim_PSS ==0){
-      Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame) #Fruit on
-  } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==0){
-    Outputs_Student_Loop<-list(Pre_Data.Frame=Pre_Data.Frame) #PRE on
-  } else if (Sim_Fruit ==0 && Sim_PRE ==0 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Pss_Data.Frame=Pss_Data.Frame) #PSS on
-  } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==0){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pre_Data.Frame=Pre_Data.Frame) #Fruit and PRE on
-  } else if (Sim_Fruit ==1 && Sim_PRE ==0 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #Fruit and PSS on
-  } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #PRE and PSS on
-  } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame, Pre_Data.Frame = Pre_Data.Frame) #Fruit, PRE and PSS on
-  }
+  Outputs_Student_Loop<-func_mainloop_outs()
   
 
   return(Outputs_Student_Loop) #Final Return Statement of Main Loop

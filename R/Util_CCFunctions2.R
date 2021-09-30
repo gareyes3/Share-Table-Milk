@@ -50,7 +50,7 @@ Func_Picked_ST<-function(DF,Item_Picked_ST){
 }
 
 
-Func_Eat_Fr<-function(Eat_YN_Item, DF, Item_Picked,Item){
+Func_Eat_Fr<-function(Eat_YN_Item, DF, Item_Picked,Item, Location){
   #Eat_YN_ITem:Eat_YN_Fr
   #DF: Fr_Data.Frame
   #Item_Picked: Fr_Picked
@@ -58,6 +58,7 @@ Func_Eat_Fr<-function(Eat_YN_Item, DF, Item_Picked,Item){
   if(Eat_YN_Item==1){
     DF[Item_Picked,colnames(DF)== "Location"]<-"Consumed"
     DF[Item_Picked,colnames(DF)== "ConsumedBy"]<-(paste(l,"",k,j,z))
+    DF[Item_Picked,colnames(DF)== "ConsumedAt"]<-Location
     DF[Item_Picked,colnames(DF)=="History"]<-paste(DF[Item_Picked,colnames(DF)=="History"], "Consumed")
     #Contamination
     if (Wrapping_Apples == 1){
@@ -87,7 +88,7 @@ Func_Eat_Fr<-function(Eat_YN_Item, DF, Item_Picked,Item){
 }
 
 
-Func_Eat_Pss<-function(Eat_YN_Item,DF,Item_Picked, Item){
+Func_Eat_Pss<-function(Eat_YN_Item,DF,Item_Picked, Item,Location){
   #Eat_YN_Item = Eat_YN_Pss
   #DF=Pss.Data.Frame
   #Item_Picked= Pss_Picked
@@ -95,6 +96,7 @@ Func_Eat_Pss<-function(Eat_YN_Item,DF,Item_Picked, Item){
   if(Eat_YN_Item==1){
     DF[Item_Picked,colnames(DF)== "Location"]<-"Consumed" 
     DF[Item_Picked,colnames(DF)== "ConsumedBy"]<-(paste(l,"",k,j,z))
+    DF[Item_Picked,colnames(DF)== "ConsumedAt"]<-Location
     DF[Item_Picked,colnames(DF)=="History"]<-paste(DF[Item_Picked,colnames(DF)=="History"], "Consumed")
     #Contamination Insdide Pss @Consumption
     OutputsCCFW<-Func_Cross_Contamination_Consumption_Wrapped(Cont_Student=Cont_Student,Data.Frame=DF, Item_Picked= Item_Picked)
@@ -117,10 +119,11 @@ Func_Eat_Pss<-function(Eat_YN_Item,DF,Item_Picked, Item){
 
 
 
-Func_Eat_Pre<-function(Eat_YN_Item,DF, Item_Picked, Item){
+Func_Eat_Pre<-function(Eat_YN_Item,DF, Item_Picked, Item,Location){
   if(Eat_YN_Item==1){
     DF[Item_Picked,colnames(DF)== "Location"]<-"Consumed" 
     DF[Item_Picked,colnames(DF)== "ConsumedBy"]<-(paste(l,"",k,j,z))
+    DF[Item_Picked,colnames(DF)== "ConsumedAt"]<-Location
     DF[Item_Picked,colnames(DF)=="History"]<-paste(DF[Item_Picked,colnames(DF)=="History"], "Consumed")
     #Contamination Container Pre to Mouth @ Consumption
     OutputFCCPre<-Func_Cross_Contamination_Pre_Consumption(Cont_Student=Cont_Student,DF = DF, Item_Picked = Item_Picked)

@@ -10,44 +10,18 @@ for (l in 1:Sens_Iterations){
       source("Util_DataFrames.R")  
       #Beginning of Student Iteration========================================
       for (z in 1:N_Iterations){
-        Outputs_Student_Loop<-Main_Loop()
+        Outputs_Student_Loop<-Main_Loop() #Main Model Loop
         
         Fr_Data.Frame<-Outputs_Student_Loop$Fr_Data.Frame
         Pss_Data.Frame<-Outputs_Student_Loop$Pss_Data.Frame
         Pre_Data.Frame<-Outputs_Student_Loop$Pre_Data.Frame
       }
       
-      #Updated items from not consumed, not shared, etc to wasted. 
-      Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Not Shared"]<-"Discarded"
-      Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Not Consumed"]<-"Discarded"
-      #####  Discard Items from the final service. 
-      if(k==Food_Days && j==Service_No){
-        Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Selection Table"]<-"Discarded"
-        Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Shared"]<-"Discarded"
-        Fr_Data.Frame$Location[Fr_Data.Frame$Location=="SharedAside"]<-"Discarded"
-      }
       
-      #Updated items from not consumed, not shared, etc to wasted.
-      Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Not Shared"]<-"Discarded"
-      Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Not Consumed"]<-"Discarded"
-      ##### Discard Items from the final service.
-      if(k==Food_Days && j==Service_No ){
-        Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Selection Table"]<-"Discarded"
-        Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Shared"]<-"Discarded"
-        Pss_Data.Frame$Location[Pss_Data.Frame$Location=="SharedAside"]<-"Discarded"
-      }
-      
-      #Updated items from not consumed, not shared, etc to wasted.
-      Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Not Shared"]<-"Discarded"
-      Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Not Consumed"]<-"Discarded"
-      ##### Discard Items from the final service.
-      if(k==Food_Days && j==Service_No ){
-        Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Selection Table"]<-"Discarded"
-        Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Shared"]<-"Discarded"
-        Pre_Data.Frame$Location[Pre_Data.Frame$Location=="SharedAside"]<-"Discarded"
-        
-      }
-      
+      #Getting Rid of left over items. End of week.
+      Fr_Data.Frame<-func_update_notcons(Fr_Data.Frame)
+      Pss_Data.Frame<-func_update_notcons(Pss_Data.Frame)
+      Pre_Data.Frame<-func_update_notcons(Pre_Data.Frame)
       
       
       #Adding Services
