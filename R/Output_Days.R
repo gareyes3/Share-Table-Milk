@@ -14,7 +14,7 @@
 
 # ITEMS LEFT ON THE LAST SERVICE ------------------------------------
 
-  
+
   #Fruit that stayed in share table. 
   Left_ST_Fr<-Fr_Data.Frame[which(Fr_Data.Frame$Location == "Shared"),]
   Left_ST_Aside_Fr<-Fr_Data.Frame[which(Fr_Data.Frame$Location == "SharedAside"),]

@@ -1,33 +1,33 @@
 ---
 title: "Main Model-Run once"
 author: "Gustavo Reyes"
-date: "12/10/2020"
+date: "9/30/2021"
 output: html_document
 ---
 
 ```{r}
-
 #Setting Working Directory-------------------------------------
-setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-Milk/R") 
+#setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-Milk/R") 
 #setwd("G:/Share Table QMRA/Share-Table-QMRA/R")
+#setwd(getSrcDirectory()[1])
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #Set working directory to the path of document
 ```
 
-```{r}
+##Loading Libraries
+```{r ,echo=FALSE}
 #Opening Libary and Inputs-------------------------------------
 source("Util_Library.R")
 source("Functions_Full_Analysis.R")
 ```
 
 
-#SHARE TABLE ON, No Interventions Main Model. 
+##Loading Model Necessary Inputs. 
 ```{r}
 #Inputs and Source Files-------------------------------------
 
-TreatmentNo<-3
 #Inputs
 source("Main_Loop.R")
 source("Input_Static.R")
-NSA_Analysis_Other_Wash<-1
 source("Input_Functions.R")
 source("Util_DFFunctions.R")
 source("Util_DFWeekCreation.R")
@@ -36,12 +36,6 @@ source("Util_Counter&Lists.R")
 source("Util_Functions.R")
 source("Util_CCFunctions2.R")
 source("Util_VisualFunctions.R")
-
-#Wash Selection Table Fruit
-Wash_Selection_YN_Fr<-1
-#Wash Share Table Items
-Wash_ST_YN_Fr<-1
-
 
 ```
 

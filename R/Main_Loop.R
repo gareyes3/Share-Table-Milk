@@ -222,7 +222,7 @@ Main_Loop<-function(){
   
 
   
-  if (Sim_Pss==1){ #Pss------------------------------------------------------------------
+  if (Sim_PSS==1){ #Pss------------------------------------------------------------------
 
     #Did student consume the Pss
     Eat_YN_Pss<-ifelse(runif(1)<Pr_eat_Pss,1,0)
@@ -300,7 +300,7 @@ Main_Loop<-function(){
 
       
       #Pre--------------------------------------------------------------------
-      if(Sim_Pre){
+      if(Sim_PRE){
         if(Pick_YN_Pre==1 && Sum_Pre_Available>0){    
           Pre_Data.Frame<-Func_Shared(DF = Pre_Data.Frame, Item_Picked = Pre_Picked,Share_YN_Food=Share_YN_Food, Item ="Pre")
         } 
@@ -541,7 +541,7 @@ Main_Loop<-function(){
   } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==1){
     Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #PRE and PSS on
   } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame, Pre_Data.Frame = PRe_Data.Frame) #Fruit, PRE and PSS on
+    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame, Pre_Data.Frame = Pre_Data.Frame) #Fruit, PRE and PSS on
   }
   
 

@@ -1,7 +1,7 @@
 
 #Week Iteration =============================================================
 for (l in 1:Sens_Iterations){
-  source("Input_RandomWeeks.R") #To change Methods every Week. eh Handwashing, Sandsanitizer.
+  source("Input_RandomWeeks.R") #To change Methods every Week. eh Handwashing, Hand sanitizer.
   #Day Iteration=============================================================
   for (k in 1:Food_Days){
     #Service Iteration ======================================================
@@ -11,41 +11,36 @@ for (l in 1:Sens_Iterations){
       #Beginning of Student Iteration========================================
       for (z in 1:N_Iterations){
         Outputs_Student_Loop<-Main_Loop()
+        
         Fr_Data.Frame<-Outputs_Student_Loop$Fr_Data.Frame
         Pss_Data.Frame<-Outputs_Student_Loop$Pss_Data.Frame
         Pre_Data.Frame<-Outputs_Student_Loop$Pre_Data.Frame
       }
       
       #Updated items from not consumed, not shared, etc to wasted. 
-      
       Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Not Shared"]<-"Discarded"
-      
       Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Not Consumed"]<-"Discarded"
-
-      
-      #####
+      #####  Discard Items from the final service. 
       if(k==Food_Days && j==Service_No){
         Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Selection Table"]<-"Discarded"
         Fr_Data.Frame$Location[Fr_Data.Frame$Location=="Shared"]<-"Discarded"
         Fr_Data.Frame$Location[Fr_Data.Frame$Location=="SharedAside"]<-"Discarded"
       }
       
+      #Updated items from not consumed, not shared, etc to wasted.
       Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Not Shared"]<-"Discarded"
-      
       Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Not Consumed"]<-"Discarded"
-
-      
-      #####
+      ##### Discard Items from the final service.
       if(k==Food_Days && j==Service_No ){
         Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Selection Table"]<-"Discarded"
         Pss_Data.Frame$Location[Pss_Data.Frame$Location=="Shared"]<-"Discarded"
         Pss_Data.Frame$Location[Pss_Data.Frame$Location=="SharedAside"]<-"Discarded"
       }
       
+      #Updated items from not consumed, not shared, etc to wasted.
       Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Not Shared"]<-"Discarded"
       Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Not Consumed"]<-"Discarded"
-
-      #####
+      ##### Discard Items from the final service.
       if(k==Food_Days && j==Service_No ){
         Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Selection Table"]<-"Discarded"
         Pre_Data.Frame$Location[Pre_Data.Frame$Location=="Shared"]<-"Discarded"
@@ -74,7 +69,7 @@ for (l in 1:Sens_Iterations){
       
       #message("Service #", j)
       
-    } #end of second loop
+    } #end of service loop j
     
     #Creation of the Services Data Frames
     Fr_Data = do.call(rbind,datalistFr)
@@ -93,9 +88,7 @@ for (l in 1:Sens_Iterations){
   }#end of day loop k
 
   
-  
-  
-  message("Done Gathering Data", l)
+  message("Done Gathering Week ", l)
   end_time<-Sys.time()
   
   Total_time<-end_time-start_time
