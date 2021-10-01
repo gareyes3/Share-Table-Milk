@@ -540,9 +540,24 @@ Main_Loop<-function(){
     }#End of ill student exclusion loop  
   }#end of Share Table  toggle loop
   
-  Outputs_Student_Loop<-func_mainloop_outs()
   
-
+  if (Sim_Fruit ==1 && Sim_PRE ==0 && Sim_PSS ==0){
+    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame) #Fruit on
+  } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==0){
+    Outputs_Student_Loop<-list(Pre_Data.Frame=Pre_Data.Frame) #PRE on
+  } else if (Sim_Fruit ==0 && Sim_PRE ==0 && Sim_PSS ==1){
+    Outputs_Student_Loop<-list(Pss_Data.Frame=Pss_Data.Frame) #PSS on
+  } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==0){
+    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pre_Data.Frame=Pre_Data.Frame) #Fruit and PRE on
+  } else if (Sim_Fruit ==1 && Sim_PRE ==0 && Sim_PSS ==1){
+    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #Fruit and PSS on
+  } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==1){
+    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #PRE and PSS on
+  } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==1){
+    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame, Pre_Data.Frame = Pre_Data.Frame) #Fruit, PRE and PSS on
+  }
+  
+  
   return(Outputs_Student_Loop) #Final Return Statement of Main Loop
 }
 

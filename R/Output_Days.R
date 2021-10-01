@@ -15,13 +15,13 @@
 # ITEMS LEFT ON THE LAST SERVICE ------------------------------------
   
 if(Sim_Fruit==1){
-  #Fruit that stayed in share table. 
+  #Fruit that stayed in share table.   #Function Done
   Left_ST_Fr<-Fr_Data.Frame[which(Fr_Data.Frame$Location == "Shared"),]
   if(ST_Aside==1){
     Left_ST_Aside_Fr<-Fr_Data.Frame[which(Fr_Data.Frame$Location == "SharedAside"),]
     Left_ST_Fr<-bind_rows(Left_ST_Fr, Left_ST_Aside_Fr)
   }
-  #Fruit that stayed in Selection table
+  #Fruit that stayed in Selection table 
   Left_Selection_Fr<-Fr_Data.Frame[which(Fr_Data.Frame$Location == "Selection Table"),]
   No_Left_ST_Fr<-nrow(Left_ST_Fr)
   No_Left_Selection_Fr<-nrow(Left_Selection_Fr)
@@ -194,7 +194,7 @@ if (Sim_PSS==1){
 }
 
 
-if (sim_PRE==1){
+if (Sim_PRE==1){
   #Pre that stayed in share table. 
   Left_ST_Pre<-Pre_Data.Frame[which(Pre_Data.Frame$Location == "Shared"),]
   #Pre that stayed in Selection table
@@ -282,25 +282,16 @@ if (sim_PRE==1){
     No_Left_Selection_Pre<-nrow(Left_Selection_Pre)
     Left_ST_Pre<-Left_ST_Pre[0,]
   }
-}
-
-
-  if (STtoReservice_YN == 1 ){
-    Left_ST_Fr$Reserviced<-(Left_ST_Fr$Reserviced+1)
-    Left_Selection_Fr<-rbind(Left_Selection_Fr,Left_ST_Fr)
-    No_Left_Selection_Fr<-nrow(Left_Selection_Fr)
-    
-    if(No_Left_Selection_Fr>0){
-      Left_Selection_Fr$Location<-"Selection Table" 
-    }
-    
-    No_Left_Selection_Fr<-nrow(Left_Selection_Fr)
-    Left_ST_Fr<-Left_ST_Fr[0,]
-  }
-
+  
   #ITEMS LEFT EVERY DAY
   Items_left_everyday_Pre[[paste(l,k)]]<-Left_Selection_Pre
+  
 }
+
+
+
+
+
 
 
 

@@ -24,27 +24,25 @@ func_Add_Services<-function(DF){
 }
 
 
-#Selecting Outputs based on Options
+###Function for Output Days: 
 
-func_mainloop_outs<-function(){
-  if (Sim_Fruit ==1 && Sim_PRE ==0 && Sim_PSS ==0){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame) #Fruit on
-  } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==0){
-    Outputs_Student_Loop<-list(Pre_Data.Frame=Pre_Data.Frame) #PRE on
-  } else if (Sim_Fruit ==0 && Sim_PRE ==0 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Pss_Data.Frame=Pss_Data.Frame) #PSS on
-  } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==0){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pre_Data.Frame=Pre_Data.Frame) #Fruit and PRE on
-  } else if (Sim_Fruit ==1 && Sim_PRE ==0 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #Fruit and PSS on
-  } else if (Sim_Fruit ==0 && Sim_PRE ==1 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame) #PRE and PSS on
-  } else if (Sim_Fruit ==1 && Sim_PRE ==1 && Sim_PSS ==1){
-    Outputs_Student_Loop<-list(Fr_Data.Frame=Fr_Data.Frame,Pss_Data.Frame=Pss_Data.Frame, Pre_Data.Frame = Pre_Data.Frame) #Fruit, PRE and PSS on
+#Function to get leftover ST food. 
+Func_Left_ST<-function(df, ST_Aside){
+  #Fruit that stayed in share table. 
+  Left_ST<-df[which(df$Location == "Shared"),]
+  if(ST_Aside==1){
+    Left_ST_Aside<-df[which(df$Location == "SharedAside"),]
+    Left_ST<-bind_rows(Left_ST, Left_ST_Aside)
   }
-  return (Outputs_Student_Loop)
+  return (Left_ST)
 }
 
+Func_Left_Sel<-function(df){
+  #Fruit that stayed in Selection table 
+  Left_Selection<-df[which(df$Location == "Selection Table"),]
+  No_Left_ST_Fr<-nrow(Left_ST_Fr)
+  No_Left_Selection_Fr<-nrow(Left_Selection_Fr)
+}
 
 
 
