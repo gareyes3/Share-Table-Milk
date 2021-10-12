@@ -1,5 +1,8 @@
-#Adding Items in bulk, fruit
 
+#FRUIT---------------------------------------------------------------------------
+if (Sim_Fruit==1){
+  #Adding Items in bulk, fruit
+  
   Fr_Available<-Fr_Data.Frame$Location == "Selection Table" 
   Sum_Fr_Available<-as.numeric(sum(Fr_Available,na.rm = TRUE))
   
@@ -18,9 +21,12 @@
     row.names(Fr_Data.Frame)<-1:nrow(Fr_Data.Frame)
     
   }
+}
 
-#Adding Pss if they run out
-
+#PSS--------------------------------------------------------------------------
+if(Sim_PSS==1){
+  #Adding Pss if they run out
+  
   Pss_Available<-Pss_Data.Frame$Location == "Selection Table" 
   Sum_Pss_Available<-sum(Pss_Available, na.rm = TRUE)
   
@@ -39,10 +45,11 @@
     row.names(Pss_Data.Frame)<-1:nrow(Pss_Data.Frame)
     
   }
+}
 
-
-
-#Adding Pre if they run out
+#PRE--------------------------------------------------------------------------
+if(Sim_PRE==1){
+  #Adding Pre if they run out
   
   Pre_Available<-Pre_Data.Frame$Location == "Selection Table" 
   Sum_Pre_Available<-sum(Pre_Available, na.rm = TRUE)
@@ -63,3 +70,14 @@
     row.names(Pre_Data.Frame)<-1:nrow(Pre_Data.Frame)
     
   }
+}
+
+
+
+
+
+
+
+
+
+

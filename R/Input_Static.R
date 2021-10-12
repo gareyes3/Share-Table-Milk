@@ -197,10 +197,12 @@
 # TOGGLES ==========================================================================
   
 #Toggle to Change Which Foods to Simulate: 
-  Sim_Fruit = 1
-  Sim_PSS = 1
+  Sim_Fruit = 0
+  Sim_PSS = 0
   Sim_PRE = 1 
   
+#Toggle Cross-Contamination Steps. 
+  Cross_Contamination =1
 
 #Toggle for ill students avoiding share table
   Ill_Avoid_ST<-0

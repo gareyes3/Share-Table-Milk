@@ -59,7 +59,7 @@ Main_Loop<-function(){
           
           Cont_Student<-OutputsFT$Cont_Student
           Fr_Data.Frame<-OutputsFT$DF
-        } #End of touching lopp.
+        } #End of touching loop.
       } # End of Sum Available
     } #End of Touch YN Fr
     

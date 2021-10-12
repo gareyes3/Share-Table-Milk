@@ -1,74 +1,60 @@
 # FOOD POOL DATAFRAMES ----------------------------------------------------
 
 
-#SERVICE 1 DAY 1 CREATION ================================================================
-
-
-# Fruit -------------------------------------------------------------------
-
+#SERVICE 1 DAY 1 CREATION OF DATAFRAMES ================================================================
 
 if(j==1 && k== 1){
-  Fr_Data.Frame<-Fuct_DF_Initial(FoodType = "Fruit")
-  
-
-  #Adding Initial Contaminations of fruit Data frame based on initial cont and prevalence CFU/Fruit
-  
-  
-  if(salmonella==1 && Calculated_Cont_Fr==1){
-    #Adding Contamination to the Dataframe
-    Fr_Data.Frame<-func_Cont_cm2(Fr_Data.Frame,Prevalence_Salmonella_Fr,Fr_Contamination_salmonella,Fr_Mean_area)
-  } else if (norovirus == 1 && Calculated_Cont_Fr ==1){
-    #Adding Contamination to Data Fra
-    Fr_Data.Frame<-func_Cont_HuNoV_Fr(Fr_Data.Frame)
+  #Fruit-------------------------------------------------------------
+  if (Sim_Fruit==1){
+    Fr_Data.Frame<-Fuct_DF_Initial(FoodType = "Fruit")
+    #Adding Initial Contaminations of fruit Data frame based on initial cont and prevalence CFU/Fruit
+    
+    if(salmonella==1 && Calculated_Cont_Fr==1){
+      #Adding Contamination to the Dataframe
+      Fr_Data.Frame<-func_Cont_cm2(Fr_Data.Frame,Prevalence_Salmonella_Fr,Fr_Contamination_salmonella,Fr_Mean_area)
+    } else if (norovirus == 1 && Calculated_Cont_Fr ==1){
+      #Adding Contamination to Data Fra
+      Fr_Data.Frame<-func_Cont_HuNoV_Fr(Fr_Data.Frame)
+    }
   }
-  
   
   # Pss ---------------------------------------------------------------------
-  
-  
-  
-  Pss_Data.Frame<-Fuct_DF_Initial(FoodType = "Pss")
-  
-  #Adding initial contamination based on prevalence and area of the item #CFU/Pss
-  
-  if(salmonella==1 && Calculated_Cont_Pss==1){
-    Pss_Data.Frame<-func_Cont_cm2(Pss_Data.Frame,Prevalence_Salmonella_Pss,Pss_Contamination_salmonella,Pss_Mean_area)
-    #Adding items to know Contaminated Items
-  } else if (norovirus == 1 && Calculated_Cont_Fr ==1){
-    Pss_Data.Frame<-func_Cont_cm2(Pss_Data.Frame,Prevalence_Norovirus_Pss,Pss_Contamination_norovirus,Pss_Mean_area)
-    #Adding items to know Contaminated Items
+  if(Sim_PSS==1){
+    Pss_Data.Frame<-Fuct_DF_Initial(FoodType = "Pss")
+    #Adding initial contamination based on prevalence and area of the item #CFU/Pss
+    
+    if(salmonella==1 && Calculated_Cont_Pss==1){
+      Pss_Data.Frame<-func_Cont_cm2(Pss_Data.Frame,Prevalence_Salmonella_Pss,Pss_Contamination_salmonella,Pss_Mean_area)
+      #Adding items to know Contaminated Items
+    } else if (norovirus == 1 && Calculated_Cont_Fr ==1){
+      Pss_Data.Frame<-func_Cont_cm2(Pss_Data.Frame,Prevalence_Norovirus_Pss,Pss_Contamination_norovirus,Pss_Mean_area)
+      #Adding items to know Contaminated Items
+    }
   }
-  
-  
   
   # Pre ---------------------------------------------------------------------
-  
-  
-  Pre_Data.Frame<-Fuct_DF_Initial(FoodType = "Pre")
-  
-  #Adding initial contamination based on prevalence and area of the item #CFU/Pss
-  
-  if(salmonella==1 && Calculated_Cont_Pss==1){
-    Pre_Data.Frame<-func_Cont_cm2(Pre_Data.Frame,Prevalence_Salmonella_Pre,Pre_Contamination_salmonella,Pre_Mean_area)
-  } else if (norovirus == 1 && Calculated_Cont_Pss ==1){
-    Pre_Data.Frame<-func_Cont_cm2(Pre_Data.Frame,Prevalence_Norovirus_Pre,Pre_Contamination_norovirus,Pre_Mean_area)
+  if(Sim_PRE==1){
+    Pre_Data.Frame<-Fuct_DF_Initial(FoodType = "Pre")
+    #Adding initial contamination based on prevalence and area of the item #CFU/Pss
+    
+    if(salmonella==1 && Calculated_Cont_Pss==1){
+      Pre_Data.Frame<-func_Cont_cm2(Pre_Data.Frame,Prevalence_Salmonella_Pre,Pre_Contamination_salmonella,Pre_Mean_area)
+    } else if (norovirus == 1 && Calculated_Cont_Pss ==1){
+      Pre_Data.Frame<-func_Cont_cm2(Pre_Data.Frame,Prevalence_Norovirus_Pre,Pre_Contamination_norovirus,Pre_Mean_area)
+    }
   }
   
-  
-  
 } #end of J1
+
 
 
 #SERVICE >1 DAY 1 ===============================================================
 
 
-
 if(j>1 && k ==1 ){
   
-    # Fruit -------------------------------------------------------------------
-  
-    
-    
+  # Fruit -------------------------------------------------------------------
+  if (Sim_Fruit==1){
     Fr_Data.Frame<-Fuct_DF_Reservice(FoodType = "Fruit")
     
     #Adding Initial Contaminations of fruit
@@ -89,12 +75,10 @@ if(j>1 && k ==1 ){
     row.names(Fr_Data.Frame)<-1:nrow(Fr_Data.Frame)
     Fr_Data.Frame$Service<-j
     Fr_Data.Frame$Day<-k
-    
-    
-    # Pss ---------------------------------------------------------------------
-    
-    
-    
+  }
+  
+  # Pss ---------------------------------------------------------------------
+  if(Sim_PSS==1){
     Pss_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pss")
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
@@ -114,11 +98,10 @@ if(j>1 && k ==1 ){
     row.names(Pss_Data.Frame)<-1:nrow(Pss_Data.Frame)
     Pss_Data.Frame$Service<-j
     Pss_Data.Frame$Day<-k
-    
-    
-    # Pre ---------------------------------------------------------------------
-    
-    
+  }
+  
+  # Pre ---------------------------------------------------------------------
+  if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pre")
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
@@ -138,22 +121,19 @@ if(j>1 && k ==1 ){
     row.names(Pre_Data.Frame)<-1:nrow(Pre_Data.Frame)
     Pre_Data.Frame$Service<-j
     Pre_Data.Frame$Day<-k
-    
-    #Else if statements for no reservice
+  }
   
 }#end of j loop
 
 
 
 
-# SERVICES MULTIPLE AND MULTIPLE DAYS --------------------------------------------
+# SERVICES MULTIPLE AND MULTIPLE DAYS ===============================================================
 
 if(j>0 && k>1 ){
   
-    
-    # Fruit ----------------------------------------------------------------------
-    
-    
+  # Fruit ----------------------------------------------------------------------
+  if (Sim_Fruit==1){
     Fr_Data.Frame<-Fuct_DF_Reservice(FoodType = "Fruit")
     
     #Adding Initial Contaminations of fruit 
@@ -174,13 +154,10 @@ if(j>0 && k>1 ){
     row.names(Fr_Data.Frame)<-1:nrow(Fr_Data.Frame)
     Fr_Data.Frame$Service<-j
     Fr_Data.Frame$Day<-k
-    
-    
-    
-    # Pss ---------------------------------------------------------------------
-    
-    
-    
+  }
+  
+  # Pss ---------------------------------------------------------------------
+  if(Sim_PSS==1){
     Pss_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pss")
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
@@ -200,12 +177,10 @@ if(j>0 && k>1 ){
     row.names(Pss_Data.Frame)<-1:nrow(Pss_Data.Frame)
     Pss_Data.Frame$Service<-j
     Pss_Data.Frame$Day<-k
-    
-    
-    # Pre ---------------------------------------------------------------------
-    
-    
-    
+  }
+  
+  # Pre ---------------------------------------------------------------------
+  if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pre")
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
@@ -225,14 +200,22 @@ if(j>0 && k>1 ){
     row.names(Pre_Data.Frame)<-1:nrow(Pre_Data.Frame)
     Pre_Data.Frame$Service<-j
     Pre_Data.Frame$Day<-k
-    
-    
+  }
   
 }#end of j loop
 
 
 # Vectors -----------------------------------------------------------------
 
-V_Shared_Fr<-c(0)
-V_Shared_Pss<-c(0)
-V_Shared_Pre<-c(0)
+
+if (Sim_Fruit==1){
+ V_Shared_Fr<-c(0) 
+}
+if(Sim_PSS==1){
+ V_Shared_Pss<-c(0) 
+}
+if(Sim_PRE==1){
+  V_Shared_Pre<-c(0)
+}
+
+

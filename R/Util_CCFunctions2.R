@@ -156,7 +156,7 @@ Func_Shared<-function(DF, Item_Picked,Share_YN_Food, Item){
       }
       DF[Item_Picked,colnames(DF)=="History"]<-paste(DF[Item_Picked,colnames(DF)=="History"], "Shared")
       DF[Item_Picked,colnames(DF)=="STtimes"]<-Func_Index_DF(DF,Item_Picked,"STtimes")+1
-      V_Shared_Fr<-(V_Shared_Fr+1)
+      #V_Shared_Fr<-(V_Shared_Fr+1)
       if(Wash_Bucket==1 && Item == "Fruit"){
         Reduction_wash<-Func_Randomize_Wash(Wash_Method = Wash_Method)
         Cont_Item<-as.numeric(DF[Item_Picked,colnames(DF)=="Contamination"])
