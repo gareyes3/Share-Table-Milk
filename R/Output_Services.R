@@ -314,7 +314,7 @@ if(Sim_PRE==1){
     #selection
     Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_Service)
     #Share Table
-    Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_Service)
+    #Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_Service)
   }
   
   
@@ -401,32 +401,35 @@ if(Sim_PRE==1){
   }
   
   # Adding Spilage Growth for Milk ------------------------------------------
-  
-  #After Services
-  if(No_Left_Selection_Pre>0){
-    Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_Selection_Pre, Time_Service)
-    Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
-  }
-  
-  if(No_Left_ST_Pre>0){
-    if(Share_Table_YN==1){
-      Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Service)
-      Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+  if (Milk_Spoilage_YN==TRUE){
+    #After Services
+    if(No_Left_Selection_Pre>0){
+      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service)
+      Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
+    }
+    
+    #Here commendted out the Share table items because it is added through the process. 
+    if(No_Left_ST_Pre>0){
+      if(Share_Table_YN==1){
+        #Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Service)
+        Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+      }
+    }
+    
+    #after Turnaround time
+    if(No_Left_Selection_Pre>0){
+      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_Selection_Pre, Time_Turnaround)
+      Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
+    }
+    
+    if(No_Left_ST_Pre>0){
+      if(Share_Table_YN==1){
+        Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Turnaround)
+        Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+      }
     }
   }
   
-  #after Turnaround time
-  if(No_Left_Selection_Pre>0){
-    Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_Selection_Pre, Time_Turnaround)
-    Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
-  }
-  
-  if(No_Left_ST_Pre>0){
-    if(Share_Table_YN==1){
-      Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Turnaround)
-      Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
-    }
-  }
 } #End of PRE
 
 

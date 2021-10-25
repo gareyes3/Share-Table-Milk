@@ -3,12 +3,22 @@
 
 #Updating not consumed items. 
 func_update_notcons<-function(df){
+  if (Donation_End_Week == FALSE){
   df$Location[df$Location=="Not Shared"]<-"Discarded"
   df$Location[df$Location=="Not Consumed"]<-"Discarded"
   if(k==Food_Days && j==Service_No){
     df$Location[df$Location=="Selection Table"]<-"Discarded"
     df$Location[df$Location=="Shared"]<-"Discarded"
     df$Location[df$Location=="SharedAside"]<-"Discarded"
+    }
+  }  else if (Donation_End_Week == TRUE){
+    df$Location[df$Location=="Not Shared"]<-"Discarded"
+    df$Location[df$Location=="Not Consumed"]<-"Discarded"
+    if(k==Food_Days && j==Service_No){
+      df$Location[df$Location=="Selection Table"]<-"Donated"
+      df$Location[df$Location=="Shared"]<-"Donated"
+      df$Location[df$Location=="SharedAside"]<-"Donated"
+    }
   }
   return(df)
 }

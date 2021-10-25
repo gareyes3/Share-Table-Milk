@@ -1,0 +1,111 @@
+---
+title: "Milk Analysis"
+author: "Gustavo Reyes"
+date: "10/25/2021"
+output: html_document
+---
+#Milk Analysis: 
+
+```{r}
+#Setting Working Directory-------------------------------------
+#setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-Milk/R") 
+#setwd("G:/Share Table QMRA/Share-Table-QMRA/R")
+#setwd(getSrcDirectory()[1])
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #Set working directory to the path of document
+```
+
+##Loading Libraries
+```{r ,echo=FALSE}
+#Opening Libary and Inputs-------------------------------------
+source("Util_Library.R")
+source("Functions_Full_Analysis.R")
+```
+
+
+##Loading Model Necessary Inputs. 
+```{r}
+#Inputs and Source Files-------------------------------------
+
+#Inputs
+source("Main_Loop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+source("Util_Output_Functions.R")
+
+```
+
+##Running the  Model
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+
+source("Main_Loops2.R")
+```
+
+
+##Start of the Mulk Analysis based on outputs'
+
+###How many Items ended up in which locations
+```{r}
+library(scales)
+
+Pre_Data %>% 
+  count(Location) %>% 
+  arrange(desc(n)) %>% 
+  mutate(Location = fct_reorder(Location, n)) %>%
+  ggplot(aes(x =Location, y = n/sum(n)*100))+
+  scale_y_continuous(labels = scales::percent_format(scale = 1) )+
+  geom_col()+
+  labs(x = "Final Food Location", y = "Percent of milk items by location", title= "Final Location for milk-End of week Donation")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  coord_flip()
+  
+```
+
+###What is the distribution of time for the milk items
+
+```{r}
+Pre_Data %>%
+  ggplot(aes(x = TotTime))+
+  geom_histogram()+
+  scale_x_continuous(n.breaks= 10)+
+  labs(x = "Time in Hours", y = "Count ", title= "Time in system by Item week")+
+  theme(plot.title = element_text(hjust = 0.5))
+  
+
+```
+
+###APC Contamination by Items
+
+```{r}
+Pre_Data %>%
+  ggplot(aes(x = SpoilageCon))+
+  geom_histogram()+
+  geom_vline(xintercept =7, color= "Red")+
+  scale_x_continuous(n.breaks= 10)+
+  labs(x = "Time in Hours", y = "Log APC Levels ", title= "APC Levels all milk items")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+#Relationship between Time and APC Levels
+```{r}
+Pre_Data %>% 
+  ggplot(aes(x = SpoilageCon, y= TotTime, color= Location))+
+  geom_point()+
+  geom_vline(xintercept =7, color= "Red")+
+  labs(y = "Time in System", x = "Log APC Levels ", title= "APC Levels vs total time, milk Items- Week")+
+  scale_y_continuous(n.breaks= 10)+
+  scale_x_continuous(n.breaks= 10)+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+
+

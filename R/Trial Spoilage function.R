@@ -1,7 +1,6 @@
 #Function for adding time and Adding Growth
 
-Func_Time_Temp<-function(DF, Item_Picked, Temp){
-  Time<- runif(1,(10/60),(15/60)) #Time between 10 and 15 minutes. Change this.
+Func_Time_Temp<-function(DF, Item_Picked, Temp, Time){
   #Parameters for milk spoilage
   b<-.03772
   Tmin<-(-6.1)
@@ -21,9 +20,6 @@ Func_Time_Temp<-function(DF, Item_Picked, Temp){
   return(DF)
 }
 
-
-#Funct
-DF8<-Func_Time_Temp(DF = Pre_Data.Frame, Item_Picked = 2,Temp = 25)
 
 
 

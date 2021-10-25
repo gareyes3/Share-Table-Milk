@@ -90,26 +90,13 @@
   Pr_eat_Pre<-.674 #.85
 
 
-# Growth Conditions Inputs ------------------------------------------------------------------
-  
 
-  #Storage Infromation for growth
-  
-  #Temperature at Share Table
-  Temp_RT<-25
-  #Temperature at refrigeration
-  Temp_Ref<-4
-  #Time over night storage
-  Time_ON<-12
-  #Time of each service all in hours. 
-  Time_Service<-.17
-  #Time between Services
-  Time_Turnaround<-.17
   
   # Inputs for Milk Spoilage -------------------------------------------------
   
   Initial_Spoilage_Con<-1.0 # Initial Spoilage organism concentration Aerobic Plate Count in log CFU/mL
   Spoilage_Treshold<-7 #Considered spoiled milk. APCs log CFU/g
+  
   
   
   #Inputs for E.coli Growth
@@ -272,4 +259,10 @@
 #Wash Bucket Station toggle. 
   
   Wash_Bucket<-0
+  
+#Milk Spoilage?
+  
+  Milk_Spoilage_YN<-TRUE
+#Donation end of weeks
+  Donation_End_Week <-TRUE
   

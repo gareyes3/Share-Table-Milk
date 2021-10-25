@@ -248,19 +248,22 @@ if (Sim_PRE==1){
   }
   
   # GROWTH SPOILAGE MILK 
-  
-  #GROWTH oVERNIGHT Selection
-  if(No_Left_Selection_Pre>0){
-    Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_Selection_Pre, Time_ON)
-    Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
-  }
-  #GROWTH oVERNIGHT Share Table
-  if(No_Left_ST_Pre>0){
-    if( Share_Table_YN==1){
-      Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_ST_Pre, Time_ON)
-      Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+  if (Milk_Spoilage_YN==TRUE){
+    #GROWTH oVERNIGHT Selection
+    if(No_Left_Selection_Pre>0){
+      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_Selection_Pre, Time_ON)
+      Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
+    }
+    #GROWTH oVERNIGHT Share Table
+    if(No_Left_ST_Pre>0){
+      if( Share_Table_YN==1){
+        Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_ST_Pre, Time_ON)
+        Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+      }
     }
   }
+  
+
   
   # SHARED ASIDE JOINING
   if (STtoReservice_YN == 0 && ST_Aside==1 ){

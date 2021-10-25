@@ -77,7 +77,48 @@ if(salmonella ==1){
   
   Pr_Student_iC<-rpert(1,0.06,0.07,0.09)
   
+ #Times and Temperatures for Spoilage: 
+
+  #Storage Infromation for growth
   
+  #TEMP---------------------------------------
+  
+  #Temperature at Share Table
+  Temp_RT<-20
+  
+  Temp_ST<-rnorm(1,20,3)
+  
+  #Temperature at refrigeration #OVernight
+  Temp_Ref<-4
+  
+  #Temperature Selection Line
+  Temp_SL<-rnorm(1,20,3)
+  
+  #Temperature Sit Down
+  Temp_SD<-rnorm(1,22,3)
+  
+  #Temperature Temp Storage
+  Temp_TS<-runif(1,4,6)
+  
+  #TIME--------------------------------------
+  
+  #Time Selection Table
+  Time_SL<-runif(1,5,12) /60 #min
+  
+  #Time Sit Down
+  Time_SD<- runif(1,5,12) /60 
+  
+  #Time Share Table
+  Time_ST<-runif(1,10,15) /60 #min
+  
+  #Time over night storage
+  Time_ON<-12
+  
+  #Time of each service all in hours. 
+  Time_Service<-30/60
+  
+  #Time between Services
+  Time_Turnaround<- runif(1,10,15) /60
   
   
   

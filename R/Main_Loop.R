@@ -1,5 +1,4 @@
 Main_Loop<-function(){
-  
   #Loading in Dataframes into the initial function.
   #Sim Fruit = Fruit Simulation ON
   #SIm PSS = PSS Simulations ON
@@ -26,7 +25,7 @@ Main_Loop<-function(){
     source("Input_Random.R") #Normal Random Inputs
   }  
   
-
+  
   #Calculations for initial contamination of the student. 
   source("Calc_StudentContamination.R")
   
@@ -146,7 +145,6 @@ Main_Loop<-function(){
   } #End of Sim PSS if
 
   
-  
 
   if(Sim_PRE){ #Pre-------------------------------------------------------------------------------------
 
@@ -192,13 +190,18 @@ Main_Loop<-function(){
                                             Item="PRE")
         Pre_Data.Frame<-OutputFCC$Data.Frame
         Cont_Student<-OutputFCC$Cont_Student
+        #Milk Spoilege Submodel
+        if (Milk_Spoilage_YN==TRUE){
+          Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
+                                         Item_Picked =Pre_Picked , 
+                                         Temp = Temp_SL,
+                                         Time = Time_SL)
+        }
         #Pre_Data.Frame<-Func_Allergen_CC(Pre_Data.Frame,Pre_Picked) #Adding Allergen Contamination from touch.
       }
     }
   } #End of Sim Pre
 
-  
-  
   
   # CONSUMPTION===================================================================================================================
   
@@ -256,11 +259,17 @@ Main_Loop<-function(){
                                   Location ="Selection Table")
         Cont_Student<-OutputFEPre$Cont_Student
         Pre_Data.Frame<-OutputFEPre$DF
+        #Milk Spoilege Submodel
+        if (Milk_Spoilage_YN==TRUE){
+                  Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
+                                       Item_Picked =Pre_Picked , 
+                                       Temp = Temp_SD,
+                                       Time = Time_SD)
+        }
       }
-    }#End of sium available Statement
+    }#End of sum available Statement
   } #End of Sim_PRE
   
-
 
  
   #Avoid Sick Students from ST
@@ -470,6 +479,13 @@ Main_Loop<-function(){
                                                    Item="PRE")
             Pre_Data.Frame<-OutputFCC_ST$Data.Frame
             Cont_Student<-OutputFCC_ST$Cont_Student
+            #Milk Spoilege Submodel
+            if (Milk_Spoilage_YN==TRUE){
+              Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
+                                             Item_Picked =Pre_ST_Picked , 
+                                             Temp = Temp_ST,
+                                             Time = Time_ST)
+            }
             #Pre_Data.Frame<-Func_Allergen_CC(Pre_Data.Frame,Pre_ST_Picked) #Adding Allergen Contamination
           }
         }#End of if there is st items loop
@@ -533,6 +549,8 @@ Main_Loop<-function(){
                                        Location = "Share Table")
             Cont_Student<-OutputsFEPre$Cont_Student
             Pre_Data.Frame<-OutputsFEPre$DF
+            #We might need a milk Step here. 
+       
           }
         }
       } #End of the Sim Pre if
