@@ -121,6 +121,9 @@ if(salmonella ==1){
   Time_Turnaround<- runif(1,10,15) /60
   
   
+  #Initial Levels
+  
+  Initial_Spoilage_Con<-rlnorm(1,1,0.9) # Initial Spoilage organism concentration Aerobic Plate Count in log CFU/mL
   
   
 #####Not Used BACKUP------------------------------------------------------------------------------------------------------------

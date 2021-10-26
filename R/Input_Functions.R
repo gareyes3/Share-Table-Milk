@@ -189,7 +189,7 @@ Func_Growth_Milk_Spoilage<-function(Temp,DF,TimeVar){
   b<-.03772
   Tmin<-(-6.1)
   Tmax<-(41.2)
-  c<-.1719
+  c<-.1709
   k<-(b*(Temp-Tmin)*(1-exp(c*(Temp-Tmax))))^2
   for (i in 1:nrow(DF)){
     Growth<-TimeVar*k
