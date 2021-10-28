@@ -66,7 +66,7 @@ Fuct_DF_Initial<-function(FoodType){
                            "InContamination"  = as.numeric("0"),
                            "ExposedAllergen" = FALSE,
                            "PickTS" = FALSE,
-                           "SpoilageCon" = as.numeric(Initial_Spoilage_Con),
+                           "SpoilageCon" = 0,
                            "SpoiledYN" = FALSE,
                            "TotTime"= as.numeric("0"),
                            "History" = "", 
@@ -155,7 +155,7 @@ Fuct_DF_Reservice<-function(FoodType){
                            "InContamination"  = as.numeric("0"),
                            "ExposedAllergen" = FALSE,
                            "PickTS" = FALSE,
-                           "SpoilageCon" = as.numeric(Initial_Spoilage_Con),
+                           "SpoilageCon" = 0,
                            "SpoiledYN" = FALSE,
                            "TotTime"= as.numeric("0"),
                            "History" = "", 
@@ -244,7 +244,7 @@ Fuct_DF_Feeding<-function(FoodType){
                            "InContamination"  = as.numeric("0"),
                            "ExposedAllergen" = FALSE,
                            "PickTS" = FALSE,
-                           "SpoilageCon" = as.numeric(Initial_Spoilage_Con),
+                           "SpoilageCon" = 0,
                            "SpoiledYN" = FALSE,
                            "TotTime"= as.numeric("0"),
                            "History" = "",
@@ -266,9 +266,24 @@ Fuct_DF_Feeding<-function(FoodType){
   return(Data_Frame)
 }
 
+
+
+
 #Function for adding Contamination of fruit in data frame into the vector
 Func_FoodCont_Vector<-function(DF,Vector){
   Items_Added<-DF$Contamination[which(DF$Contamination>0)]
   Vector<-c(Vector,Items_Added)
   return(Vector)
 }
+
+Func_Adding_Initial_MilkCOnt<-function(df){
+  df$SpoilageCon<-rtri(nrow(df),min=0,mode=1,max=4)
+  # for (i in 1:nrow(df)){
+  #   Levels<-rtri(1,min=0,mode=1,max=4)
+  #   df[i,colnames(df)== "SpoilageCon"]<-Levels
+  # }
+  return(df)
+}
+
+
+

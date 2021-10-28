@@ -35,6 +35,10 @@ if(j==1 && k== 1){
   # Pre ---------------------------------------------------------------------
   if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Initial(FoodType = "Pre")
+    
+    #Adding initial spoilge contamination to the Datafra,e
+    Pre_Data.Frame<-Func_Adding_Initial_MilkCOnt(Pre_Data.Frame)
+    
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
     
     if(salmonella==1 && Calculated_Cont_Pss==1){
@@ -103,6 +107,9 @@ if(j>1 && k ==1 ){
   # Pre ---------------------------------------------------------------------
   if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pre")
+    
+    #Adding initial spoilge contamination to the Datafra,e
+    Pre_Data.Frame<-Func_Adding_Initial_MilkCOnt(Pre_Data.Frame)
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
     
@@ -182,6 +189,8 @@ if(j>0 && k>1 ){
   # Pre ---------------------------------------------------------------------
   if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pre")
+    #Adding initial spoilge contamination to the Datafra,e
+    Pre_Data.Frame<-Func_Adding_Initial_MilkCOnt(Pre_Data.Frame)
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
     

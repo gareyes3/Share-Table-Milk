@@ -189,10 +189,11 @@ Func_Growth_Milk_Spoilage<-function(Temp,DF,TimeVar){
   b<-.03772
   Tmin<-(-6.1)
   Tmax<-(41.2)
-  c<-.1709
+  c<-.1719
   k<-(b*(Temp-Tmin)*(1-exp(c*(Temp-Tmax))))^2
+  k_ad = k*log10(2)
   for (i in 1:nrow(DF)){
-    Growth<-TimeVar*k
+    Growth<-TimeVar*k_ad
     N<-DF[i,colnames(DF)== "SpoilageCon"]
     Con_Final<-N + Growth
     DF[i,colnames(DF)== "SpoilageCon"]<-as.numeric(Con_Final)
@@ -211,8 +212,9 @@ Func_Time_Temp<-function(DF, Item_Picked, Temp, Time){
   Tmax<-(41.2)
   c<-.1719
   k<-(b*(Temp-Tmin)*(1-exp(c*(Temp-Tmax))))^2
+  k_ad = k*log10(2)
   #How much growth
-  Growth<-Time*k
+  Growth<-Time*k_ad
   #N current contamination
   N<-DF[Item_Picked,colnames(DF)== "SpoilageCon"]
   Con_Final<-N + Growth #Growth in log. 
