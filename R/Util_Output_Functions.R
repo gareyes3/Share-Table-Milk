@@ -11,7 +11,7 @@ func_update_notcons<-function(df){
     df$Location[df$Location=="Shared"]<-"Discarded"
     df$Location[df$Location=="SharedAside"]<-"Discarded"
     }
-  }  else if (Donation_End_Week == TRUE){
+  }else if (Donation_End_Week == TRUE){
     df$Location[df$Location=="Not Shared"]<-"Discarded"
     df$Location[df$Location=="Not Consumed"]<-"Discarded"
     if(k==Food_Days && j==Service_No){

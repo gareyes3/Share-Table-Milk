@@ -41,7 +41,7 @@ source("Util_Output_Functions.R")
 
 ```
 
-##Running the  Model
+##Running the  Model for Milk.
 ```{r warning=TRUE}
 #Running Loop First:-------------------------------------
 start_time<-Sys.time()
@@ -50,6 +50,22 @@ source("Main_Loops2.R")
 ```
 
 
+
+```{r}
+  #SummaryLisr = List_Sens_Fr
+  #FoodType= = "Fruit"
+  #1. Start from here
+  Individual_Analysis_Fr<-rbind.fill(List_Sens_Pre)
+  
+  #2. find the dupplicates
+  #this step filters replicated based on the ID
+  Individual_Analysis_Fr<-Individual_Analysis_Fr %>% 
+    group_by(ID) %>% 
+    filter(TotServices==max(TotServices))
+  #3
+  AnalysysDF<-Individual_Analysis_Fr
+```
+
 ##Start of the Mulk Analysis based on outputs'
 
 ###How many Items ended up in which locations
@@ -57,14 +73,14 @@ source("Main_Loops2.R")
 library(scales)
 library(forcats)
 
-Pre_Data %>% 
+AnalysysDF %>% 
   count(Location) %>% 
   arrange(desc(n)) %>% 
   mutate(Location = fct_reorder(Location, n)) %>%
   ggplot(aes(x =Location, y = n/sum(n)*100))+
   scale_y_continuous(labels = scales::percent_format(scale = 1) )+
   geom_col()+
-  labs(x = "Final Food Location", y = "Percent of milk items by location", title= "Final Location for milk-Donation happends end of week")+
+  labs(x = "Final Food Location", y = "Percent of milk items by location", title= "Final Location for milk-Donation happens end of week")+
   theme(plot.title = element_text(hjust = 0.5))+
   coord_flip()
   
@@ -73,7 +89,7 @@ Pre_Data %>%
 ###What is the distribution of time for the milk items
 
 ```{r}
-Pre_Data %>%
+AnalysysDF %>%
   ggplot(aes(x = TotTime))+
   geom_histogram()+
   scale_x_continuous(n.breaks= 10)+
@@ -86,32 +102,41 @@ Pre_Data %>%
 ###APC Contamination by Items
 
 ```{r}
-Pre_Data %>%
+AnalysysDF %>%
   ggplot(aes(x = SpoilageCon))+
-  geom_histogram()+
+  geom_histogram(color="darkblue", fill="lightblue")+
   geom_vline(xintercept =7, color= "Red")+
   scale_x_continuous(n.breaks= 10)+
-  labs(x = "Time in Hours", y = "Log APC Levels ", title= "APC Levels all milk items")+
+  labs(x = "Phsychotroph Population Log CFU/ml", y = "Count", title= "Levels per milk carton")+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 #Relationship between Time and APC Levels
 ```{r}
-Pre_Data %>% 
-  ggplot(aes(y = SpoilageCon, x= TotTime))+
+AnalysysDF %>% 
+  ggplot(aes(y = SpoilageCon, x= TotTime, color = ConsumedAt))+
   geom_point( size =2, fill = "skyblue", shape = 21, alpha = 0.7, fill = "blue")+
   geom_hline(yintercept =7, color= "Red")+
-  facet_wrap(.~Location)+
-  labs(x = "Time in System", y = "Log Psychotroph Population ", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
-  scale_y_continuous(n.breaks= 10)+
-  scale_x_continuous(n.breaks= 10)+
+  facet_wrap(.~Location, scales = "free_x")+
+  labs(x = "Time in System", y = "Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
+  scale_y_continuous()+
+  scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))
+
 ```
+
+#Change in Contamination Levels due to Time
+  ##Need to figure out a way to track contamination chhange. 
+```{r}
+
+```
+
 
 
 #
 ```{r}
-
+Pre_Data_Full %>% 
+  filter(Location=="Shared")
 ```
 
 
