@@ -103,16 +103,16 @@ if(salmonella ==1){
   #TIME--------------------------------------
   
   #Time Selection Table
-  Time_SL<-runif(1,5,12) /60 #min
+  Time_SL<-runif(1,5,12)/60 #min
   
   #Time Sit Down
-  Time_SD<- runif(1,5,12) /60 
+  Time_SD<- runif(1,5,12)/60 
   
   #Time Share Table
   Time_ST<-runif(1,10,15) /60 #min
   
   #Time over night storage
-  Time_ON<-12
+  Time_ON<-16
   
   #Time of each service all in hours. 
   Time_Service<-30/60
