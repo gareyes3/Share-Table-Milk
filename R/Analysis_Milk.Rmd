@@ -120,7 +120,7 @@ AnalysysDF %>%
   facet_wrap(.~Location, scales = "free_x")+
   labs(x = "Time in System", y = "Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
   scale_y_continuous()+
-  #scale_x_log10(n.breaks= 10)+
+  scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))
 
 ```

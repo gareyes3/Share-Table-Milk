@@ -67,6 +67,7 @@ Fuct_DF_Initial<-function(FoodType){
                            "ExposedAllergen" = FALSE,
                            "PickTS" = FALSE,
                            "SpoilageCon" = 0,
+                           "InSpoilageCon" = 0,
                            "SpoiledYN" = FALSE,
                            "TotTime"= as.numeric("0"),
                            "History" = "", 
@@ -156,6 +157,7 @@ Fuct_DF_Reservice<-function(FoodType){
                            "ExposedAllergen" = FALSE,
                            "PickTS" = FALSE,
                            "SpoilageCon" = 0,
+                           "InSpoilageCon" = 0,
                            "SpoiledYN" = FALSE,
                            "TotTime"= as.numeric("0"),
                            "History" = "", 
@@ -245,6 +247,7 @@ Fuct_DF_Feeding<-function(FoodType){
                            "ExposedAllergen" = FALSE,
                            "PickTS" = FALSE,
                            "SpoilageCon" = 0,
+                           "InSpoilageCon" = 0,
                            "SpoiledYN" = FALSE,
                            "TotTime"= as.numeric("0"),
                            "History" = "",
@@ -278,6 +281,7 @@ Func_FoodCont_Vector<-function(DF,Vector){
 
 Func_Adding_Initial_MilkCOnt<-function(df){
   df$SpoilageCon<-rtri(nrow(df),min=0,mode=1,max=4)
+  df$InSpoilageCon<-df$SpoilageCon
   # for (i in 1:nrow(df)){
   #   Levels<-rtri(1,min=0,mode=1,max=4)
   #   df[i,colnames(df)== "SpoilageCon"]<-Levels
