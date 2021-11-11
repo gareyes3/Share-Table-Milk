@@ -1,0 +1,145 @@
+---
+title: "Spoilage Model Validations"
+author: "Gustavo Reyes"
+date: "11/10/2021"
+output: html_document
+---
+#Validation of spoilage Model
+
+##Shaffner:
+Monte Carlo Simulation of the Shelf Life of Pasteurized Milk as Affected by Temperature and Initial Concentration of Spoilage Organisms
+###Psychotrophic Organisms: 
+```{r}
+#Validation of their model, obtaining similar Histograms as theirs for spoilage
+shelf_life<-c()
+for (i in 1:1000){
+  Temp<-rnorm(1,4.4,2)
+  Growth_variability <- 1-(rnorm(1,0,17)/100)
+  Initial_pop <- rtriang(1,0,1,4)
+  GrowthNeedforspoilage<-7-Initial_pop
+  Tmin <- -1.19
+  bval <-0.03578
+  growthRate <- ((Temp-Tmin)*bval)^2
+  Adjusted_GrowthRate<-growthRate+Growth_variability
+  LogGrowthRate<-Adjusted_GrowthRate*log10(2)
+  
+  Shelflifedays<-(GrowthNeedforspoilage/LogGrowthRate)
+  shelf_life<-c(shelf_life,Shelflifedays)
+}
+
+hist(shelf_life,breaks = 100)
+abline(v=14, col = "red")
+mean(shelf_life)
+
+
+
+
+```
+
+##Sabani
+#Simlating APC Spoilage
+Sabani et al
+Monitoring Shelf Life of Pasteurized Whole MilkUnder Refrigerated Storage Conditions:Predictive Models for Quality Loss
+```{r}
+
+log10(2)
+
+10^3
+
+log10(1000)
+
+log(1000)/2.303
+
+```
+
+
+#Torres Model for both P Putida and L.Monocytogenes
+```{r}
+
+#P Putida
+bval = 0.03347 #+-0.0002
+T_min = -7.7
+Coef= 0.1719#+-1.22 C
+Tmax<-41.2
+
+Temp<-5
+
+#rate= ((bval*(Temp-T_min))*(1-exp(Coef*(Temp-Tmax))))^(2/2.303)
+rate = (bval*(Temp-T_min))^2
+print(rate)
+adrate = rate/log(10)
+print(adrate)
+adrate2 = rate*log(2)
+print(adrate2)
+
+Time = 175
+
+(adrate*Time)
+
+
+#Validation
+
+Initial = 4.01
+Final = 
+Fina-Initial
+
+
+log(2)
+
+
+```
+
+Neumeyer
+```{r}
+
+bval <- 0.03347 #+-0.0002
+T_min <- -7.7
+
+Time<-24
+Temp<- 4
+rate = (bval*(Temp-T_min))^2/2.303
+rate
+LagTime = 1/rate
+LagTime
+
+Temp = 25
+Time = 24
+rate = 0.1709*(Temp+6.1)*(1-exp(0.1723*(Temp-41.2)))*(0.996-0.977)
+rate = 0.1539*(Temp+7.6)*(0.996-0.947)
+rate*Time
+
+lagtime = 1/((bval*(Temp-T_min))^2)
+
+Spoilage<-rate*Time
+
+
+
+```
+
+
+```{r}
+#Ratworsky
+bval <-0.023
+Tmin <--5.647
+Temp<-10
+ratemax<-(bval*(Temp-T_min))^2/2.303
+ratemax
+
+sqrtrate<-c()
+Timeseq<-seq(-5,35)
+for (i in Timeseq){
+  ratemax<-(bval*(i-T_min))
+  sqrtrate<-c(sqrtrate,ratemax)
+}
+
+
+plot(x = Timeseq, y = sqrtrate)
+
+1/0.035
+
+1/1.1
+
+```
+
+
+
