@@ -124,6 +124,9 @@ if(salmonella ==1){
   #Initial Levels
   
   Initial_Spoilage_Con<-rtri(1,min=0,mode=1,max=4) # Initial Spoilage organism concentration Aerobic Plate Count in log CFU/mL
+  #Spoilage Variability
+  Growth_variability <- 1-(rnorm(1,0,17)/100)
+  
   
 #####Not Used BACKUP------------------------------------------------------------------------------------------------------------
   

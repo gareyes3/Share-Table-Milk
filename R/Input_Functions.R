@@ -185,15 +185,15 @@ Func_Growth_Sto_Norovirus<-function(Condition,DF,TimeVar){
 # Spoilage of Organisms. ----------------------------------------------
 #No variability
 
-Func_Growth_Milk_Spoilage<-function(Temp,DF,TimeVar){
-  b<-.03772
-  Tmin<-(-6.1)
+Func_Growth_Milk_Spoilage<-function(Temp,DF,TimeVar, GrowthVar){
+  b<-0.03578
+  Tmin<-(-1.19)
   Tmax<-(41.2)
   c<-.1719
-  k<-(b*(Temp-Tmin)*(1-exp(c*(Temp-Tmax))))^2
+  k<-(((Temp-Tmin)*b)^2)+GrowthVar
   k_ad = k*log10(2)
   for (i in 1:nrow(DF)){
-    Growth<-TimeVar*k_ad
+    Growth<-TimeVar/24*k_ad
     N<-DF[i,colnames(DF)== "SpoilageCon"]
     Con_Final<-N + Growth
     DF[i,colnames(DF)== "SpoilageCon"]<-as.numeric(Con_Final)

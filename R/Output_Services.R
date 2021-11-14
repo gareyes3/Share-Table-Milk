@@ -404,7 +404,7 @@ if(Sim_PRE==1){
   if (Milk_Spoilage_YN==TRUE){
     #After Services
     if(No_Left_Selection_Pre>0){
-      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service)
+      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service,Growth_variability)
       Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
     }
     
@@ -418,13 +418,13 @@ if(Sim_PRE==1){
     
     #after Turnaround time
     if(No_Left_Selection_Pre>0){
-      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_Selection_Pre, Time_Turnaround)
+      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_Selection_Pre, Time_Turnaround,Growth_variability)
       Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
     }
     
     if(No_Left_ST_Pre>0){
       if(Share_Table_YN==1){
-        Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Turnaround)
+        Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Turnaround,Growth_variability)
         Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
       }
     }
