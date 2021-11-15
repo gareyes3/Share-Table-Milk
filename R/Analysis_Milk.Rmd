@@ -103,13 +103,27 @@ AnalysysDF %>%
 
 ```{r}
 AnalysysDF %>%
-  ggplot(aes(x = SpoilageCon))+
-  geom_histogram(color="darkblue", fill="lightblue")+
+  ggplot()+
+  geom_histogram(aes(x = SpoilageCon),color="darkblue", fill="lightblue",alpha= 0.3)+
+  geom_histogram(aes(x = InSpoilageCon),color="darkblue", fill="lightgreen", alpha= 0.3)+
   geom_vline(xintercept =7, color= "Red")+
   scale_x_continuous(n.breaks= 10)+
   labs(x = "Phsychotroph Population Log CFU/ml", y = "Count", title= "Levels per milk carton")+
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
+
+```{r}
+AnalysysDF %>% 
+  group_by(ConsumedAt) %>% 
+  summarise(ChangeCon = SpoilageCon-InSpoilageCon) %>% 
+  filter(ConsumedAt!="") %>% 
+  ggplot(aes(x = ChangeCon, fill = ConsumedAt))+
+  geom_histogram(bins=50)+
+  labs(x = "Change in population log CFU/ml")
+
+```
+
 
 #Relationship between Time and APC Levels
 ```{r}
@@ -118,7 +132,7 @@ AnalysysDF %>%
   geom_point( size =2, fill = "skyblue", shape = 21, alpha = 0.7, fill = "blue")+
   geom_hline(yintercept =7, color= "Red")+
   facet_wrap(.~Location, scales = "free_x")+
-  labs(x = "Time in System", y = "Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
+  labs(x = "Log Time in System (hrs)", y = "Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
   scale_y_continuous()+
   scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))
@@ -133,9 +147,8 @@ AnalysysDF %>%
   mutate(Change_Cont = SpoilageCon-InSpoilageCon) %>% 
   ggplot(aes(y = Change_Cont, x= TotTime, color = ConsumedAt))+
   geom_point( size =2, fill = "skyblue", shape = 21, alpha = 0.7, fill = "blue")+
-  geom_hline(yintercept =7, color= "Red")+
   facet_wrap(.~Location, scales = "free_x")+
-  labs(x = "Time in System", y = "Change Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
+  labs(x = "Log Time in System (hrs)", y = "Change Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
   scale_y_continuous()+
   scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))

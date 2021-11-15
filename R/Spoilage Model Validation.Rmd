@@ -31,6 +31,14 @@ hist(shelf_life,breaks = 100)
 abline(v=14, col = "red")
 mean(shelf_life)
 
+data_frameSL<-data.frame(shelf_life)
+
+
+ggplot(data_frameSL, aes(x = shelf_life))+
+  geom_histogram(bins = 50, fill = "skyblue", color = "black")+
+  geom_vline(xintercept = 14, color = "red")+
+  labs(x= "shelf life days")
+
 
 
 
