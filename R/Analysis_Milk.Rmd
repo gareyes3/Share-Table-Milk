@@ -155,6 +155,23 @@ AnalysysDF %>%
 
 
 ```
+```{r}
+
+Normal<-AnalysysDF %>% 
+  mutate(Change_Cont = SpoilageCon-InSpoilageCon)
+
+mean(Normal$Change_Cont)
+quantile(Normal$Change_Cont)
+
+MostExtreme<-AnalysysDF %>% 
+  mutate(Change_Cont = SpoilageCon-InSpoilageCon)
+
+mean(MostExtreme$Change_Cont)
+quantile(MostExtreme$Change_Cont)
+
+
+
+```
 
 
 
