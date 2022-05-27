@@ -84,35 +84,35 @@ if(salmonella ==1){
   #TEMP---------------------------------------
   
   #Temperature at Share Table
-  Temp_RT<-20
+  Temp_RT<-26 #25 worse case scenario
   
-  Temp_ST<-rnorm(1,20,3)
+  Temp_ST<-26 #runif(1,20.5,26)
   
   #Temperature at refrigeration #OVernight
-  Temp_Ref<-4
+  Temp_Ref<-runif(1,5,6) #runif(1,1,3)#
   
   #Temperature Selection Line
-  Temp_SL<-rnorm(1,20,3)
+  Temp_SL<- 26 #runif(1,20.5,26)
   
   #Temperature Sit Down
-  Temp_SD<-rnorm(1,22,3)
+  Temp_SD<-26 # runif (1,20.5,26)#
   
   #Temperature Temp Storage
-  Temp_TS<-runif(1,4,6)
+  Temp_TS<-runif(1,5,6) #runif(1,1,3)#
   
   #TIME--------------------------------------
   
   #Time Selection Table
-  Time_SL<-runif(1,5,12)/60 #min
+  Time_SL<-runif(1,6,7)/60 #min
   
   #Time Sit Down
-  Time_SD<- runif(1,5,12)/60 
+  Time_SD<- runif(1,11,13)/60 
   
   #Time Share Table
-  Time_ST<-runif(1,10,15) /60 #min
+  Time_ST<-runif(1,8,10) /60 #min
   
   #Time over night storage
-  Time_ON<-16
+  Time_ON<-20
   
   #Time of each service all in hours. 
   Time_Service<-30/60
