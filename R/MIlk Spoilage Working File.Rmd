@@ -1,0 +1,300 @@
+
+
+```{r}
+library(tidyverse)
+library(ExtDist)
+library(jmuOutlier)
+library(truncnorm)
+```
+
+
+```{r}
+
+```
+
+```{r}
+#Function for growth and lag phase
+new_growth_rate<-function(newTemp, oldMu,oldTemp = 6, T0 = -4.15){
+  newMu<-((newTemp-T0)/(oldTemp-T0))* oldMu
+  return (newMu)
+}
+
+new_lag_time <- function (newTemp, oldLag, oldTemp = 6, T0 = -4.15) {
+  numerator <- oldTemp -T0
+  denom <- newTemp - T0
+  newLag <- ( (numerator / denom)^2) * oldLag
+  return(newLag)
+}
+
+#Automatic Time + Change function
+look_for_st<-function(df = SpeciesDF,ST, par_of_int){
+  if (par_of_int == "lagt"){
+    x<-df %>% 
+      filter(Species_St == ST) %>% 
+      pull(lag_h)
+  } else if (par_of_int == "mumax"){
+    x<-df %>% 
+      filter(Species_St == ST) %>% 
+      pull(mumax)
+  } else if (par_of_int == "Nmax"){
+    x<-df %>% 
+      filter(Species_St == ST) %>% 
+      pull(Nmax)
+  } else if (par_of_int == "GModel"){
+    x<-df %>% 
+      filter(Species_St == ST) %>% 
+      pull(GModel)
+  }else {
+    stop(paste0(par_of_int, " is not a valid parameter name. Must be one of lagt, mumax, Nmax"))
+  }
+  return(x)
+}
+
+Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,ST_Iter,Interval){
+  #In_Lag_Consumed= Total lag time consumed
+  #Time_Temp_df = dataframe with time and temperature conditions
+  #ST_Iter = The ST that corresponds to this milk carton
+  #Interval = time interval in the time_temp_df in hrs. 
+  Total_Lag_Consumed<-In_Lag_Consumed
+  Total_Growth  <- 0
+  old_lag = look_for_st(ST= ST_Iter, par_of_int = "lagt")
+  old_mumax = look_for_st(ST= ST_Iter, par_of_int = "mumax")
+  for (i in 1:nrow(Time_Temp_df)){
+    if (Total_Lag_Consumed <1 && old_lag!=0){
+      Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df$Temperature[i], oldLag = old_lag)
+      Lag_Consumed<-Interval/Lag_t_interval
+      Total_Lag_Consumed<-Total_Lag_Consumed+Lag_Consumed
+      Growth = 0
+    } else if (Total_Lag_Consumed>=1 | old_lag == 0){
+      Growth = ((new_growth_rate(newTemp = Time_Temp_df$Temperature[i], oldMu = old_mumax))/2.303)*0.684 #Converted log10 from log ln
+      Total_Growth = Total_Growth + (Growth*Interval)
+    }
+  }
+  return(c(Total_Growth,Total_Lag_Consumed))
+}
+
+####Working space
+
+Iterating_Over_Time_Temp<-function(Time_Temp_df,Total_Lag_Consumed, Total_Growth, old_lag,old_mumax){
+    if (Total_Lag_Consumed <1 && old_lag!=0){
+    Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df[2], oldLag = old_lag)
+    Lag_Consumed<-Interval/Lag_t_interval
+    Total_Lag_Consumed<-Total_Lag_Consumed+Lag_Consumed
+    Growth = 0
+  } else if (Total_Lag_Consumed>=1 | old_lag == 0){
+    Growth = new_growth_rate(newTemp = Time_Temp_df[2], oldMu = old_mumax)
+    Total_Growth = Total_Growth + (Growth*Interval)
+  }
+  return(c(Total_Growth,Total_Lag_Consumed))
+}
+
+#apply(X =  Time_Temp_df, MARGIN = 1,FUN = Iterating_Over_Time_Temp, Total_Lag_Consumed = 0, Total_Growth = 0, old_lag = 7, #old_mumax = 0.25)
+
+####Working end
+
+
+Time_Temp_Creation<-function(Total_Time, Interval, Initial_Temperature, Final_Temperature){
+  Time_Temp_df<-data.frame("Time_h"= seq(0,Total_Time,by = Interval),
+                         "Temperature"  = seq(Initial_Temperature,Final_Temperature, by = ((Final_Temperature - Initial_Temperature)/(length(seq(0,Total_Time,by = Interval)) - 1) )))
+}
+
+```
+
+```{r}
+#Creating a dataframe where the 17 species have therr relevant parameters
+
+#Creating a dataframe with milk values. 
+Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+
+Species_St<-c(13,9,52,23,100,6,24,48,36,17,81,75,56,92,102,2,41)
+lag_h<-c(25.2,0,11.6,25.5,0,20.9,7.4,34.9,0,26.3,28.4,0,11.2,12.3,0,20.4,7.4)
+mumax<-c(0.1,0.107,0.089,0.125,0.141,0.098,0.086,0.081,0.114,0.079,0.078,0.085,0.122,0.133,0.058,0.094,0.075)
+Nmax<-c(9.07,9.39,8.38,8.08,8.04,7.81,8.32,8.51,9.04,9.08,9.20,8.57,8.24,8.89,7.82,7.35,8.17)
+GModel<-c("G","G","G","G","G","G","G","B","G","G","G","G","B", "G","G","G","B")
+
+#Frequencies and adjusted frequencies based on the 17 strains to randomize
+freq<-c(8.93,8.93,6.97,4.36,3.05,1.31,1.09,0.22,1.31,1.53,0.65,0.87,1.31,0.22,0.22,2.18,2.18)
+freq<-freq/sum(freq)
+
+SpeciesDF<-data.frame(Species_St,lag_h,mumax,Nmax, GModel)
+
+
+#Assigning Milk DF
+
+Milkdf$Species<-sample(Species_St,size = length(Milkdf$Species), prob = freq, replace = T)
+Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
+
+#hist(rtruncnorm(1000, b = 3, mean =0.3817872, sd=1.108859))
+
+hist(Milkdf$SpoilageCon)
+
+
+
+
+```
+
+
+
+```{r}
+
+#Creating dataframe of time and temperature profiles. 
+
+Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*10, Interval = 0.5, Initial_Temperature = 4.06, Final_Temperature = 4.06)
+
+start_time <- Sys.time()
+
+for(i in 1:nrow(Milkdf)){
+  In_Lag_Consumed<-Milkdf$LagCon[i]
+  ST_Iter<-Milkdf$Species[i]
+  Pop_Max<-look_for_st(ST= ST_Iter,par_of_int = "Nmax")
+  #Creating Time Temp Df
+
+  Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  while (Temperature_Static > 15 | Temperature_Static < -1) {
+    Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  }
+  Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*10, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = Temperature_Static)
+  
+  Interval <- Time_Temp_df$Time_h[2]
+  
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
+  
+  Milkdf$LagCon[i]<-Output_Milk[2]
+  Milkdf$SpoilageCon[i]<-Output_Milk[1]+Milkdf$SpoilageCon[i]
+  if(Milkdf$SpoilageCon[i]>Pop_Max){
+    Milkdf$SpoilageCon[i]<-Pop_Max
+  }
+}
+
+end_time <- Sys.time()
+end_time - start_time
+
+hist(Milkdf$SpoilageCon, 40)
+mean(Milkdf$SpoilageCon)
+sum(Milkdf$SpoilageCon>5)
+
+
+
+###############
+
+buchanan_log10N = function(t,lag,mumax,LOG10N0,LOG10Nmax){
+  ans <- LOG10N0 + (t >= lag) * (t <= (lag + (LOG10Nmax - LOG10N0) *     log(10)/mumax)) * mumax * (t - lag)/log(10) + (t >= lag) * (t > (lag + (LOG10Nmax - LOG10N0) * log(10)/mumax)) * (LOG10Nmax - LOG10N0)
+  return(ans)
+}
+
+gompertz_log10N = function(t,lag,mumax,LOG10N0,LOG10Nmax) {
+  ans <- LOG10N0 + (LOG10Nmax - LOG10N0) * exp(-exp(mumax * exp(1) * 
+                                                      (lag - t)/((LOG10Nmax - LOG10N0) * log(10)) + 1))
+  return(ans)
+}
+
+
+baranyi_log10N = function(t,lag,mumax,LOG10N0,LOG10Nmax) {
+  ans <- LOG10Nmax + log10((-1 + exp(mumax * lag) + exp(mumax * t))/(exp(mumax * t) - 1 + exp(mumax * lag) * 10^(LOG10Nmax -LOG10N0)))
+  return(ans)
+}
+
+
+new_lag_time(4,11.6)
+new_lag_time(12,0.089)
+
+gompertz_log10N(2,2,0.04579407,1,8.38)
+
+gompertz_log10N(2,0,0.04579407,1.48,8.38)
+
+gompertz_log10N(20,4.581894,0.03515419,1,8.38)
+
+Time_Model<-24*7
+
+for(i in 1:nrow(Milkdf)){
+  In_Lag_Consumed<-Milkdf$LagCon[i]
+  ST_Iter<-Milkdf$Species[i]
+  Pop_Max<-look_for_st(ST= ST_Iter,par_of_int = "Nmax")
+  Old_Lag<-look_for_st(ST= ST_Iter,par_of_int = "lagt")
+  Oldmumax<-look_for_st(ST= ST_Iter,par_of_int = "mumax")
+  GModel_Run<-look_for_st(ST= ST_Iter,par_of_int = "GModel")
+  #Creating Time Temp Df
+
+  Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  while (Temperature_Static > 15 | Temperature_Static < -1) {
+    Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  }
+  Newlag<-new_lag_time(newTemp =Temperature_Static,oldLag = Old_Lag)
+  NewMumax<-(new_growth_rate(newTemp = Temperature_Static,oldMu = Oldmumax))*0.685
+    
+  if(GModel_Run=="G"){
+    Pop<-gompertz_log10N(t=Time_Model,lag = Newlag,mumax = NewMumax,LOG10N0 =Milkdf$SpoilageCon[i], LOG10Nmax = Pop_Max )
+  } else if (GModel_Run =="B"){
+    Pop<-baranyi_log10N(t=Time_Model,lag = Newlag,mumax = NewMumax,LOG10N0 =Milkdf$SpoilageCon[i], LOG10Nmax = Pop_Max )
+  }
+  
+  Milkdf$SpoilageCon[i]<-Pop
+}
+
+end_time <- Sys.time()
+end_time - start_time
+
+hist(Milkdf$SpoilageCon, 30)
+mean(Milkdf$SpoilageCon)
+sum(Milkdf$SpoilageCon>5)
+
+####
+
+
+
+
+
+
+
+
+Iterating_Over_Milk<-function(Milkdf, Time_Temp_df){
+  In_Lag_Consumed<-Milkdf[3]
+  ST_Iter<-Milkdf[4]
+  Pop_Max<-look_for_st(ST= ST_Iter,par_of_int = "Nmax")
+  Interval <- Time_Temp_df$Time_h[2]
+  
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
+  
+  Milkdf[3]<-Output_Milk[2]
+  Milkdf[2]<-Output_Milk[1]+Milkdf[2]
+  if(Milkdf[2]>Pop_Max){
+    Milkdf[2]<-Pop_Max
+  }
+  return(Milkdf)
+}
+
+
+
+start_time <- Sys.time()
+
+MilkDf2<-as.data.frame(t(apply(X = Milkdf, FUN = Iterating_Over_Milk, MARGIN = 1,Time_Temp_df)))
+
+end_time <- Sys.time()
+end_time - start_time
+
+hist(MilkDf2$SpoilageCon)
+
+#Calculations without time intervals.
+
+hist(Milkdf$SpoilageCon,30)
+
+
+for (i in temps){
+  if(frac_lt_con <1){
+    lt = new_lag_time(newTemp = i,oldLag = 25.2)
+    iter_lt_con<-0.0166/lt
+    frac_lt_con<-frac_lt_con + iter_lt_con
+    if(frac_lt_con>1){
+      extra_no_lag = (frac_lt_con-1)*lt
+    }
+  }
+  if(frac_lt_con =>1){
+    mu = new_growth_rate()
+  }
+
+}
+
+
+
+```
+
