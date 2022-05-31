@@ -104,7 +104,7 @@ Time_Temp_Creation<-function(Total_Time, Interval, Initial_Temperature, Final_Te
 #Creating a dataframe where the 17 species have therr relevant parameters
 
 #Creating a dataframe with milk values. 
-Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+Milkdf<-data.frame("MilkID" = seq(0,10000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
 
 Species_St<-c(13,9,52,23,100,6,24,48,36,17,81,75,56,92,102,2,41)
 lag_h<-c(25.2,0,11.6,25.5,0,20.9,7.4,34.9,0,26.3,28.4,0,11.2,12.3,0,20.4,7.4)
@@ -153,7 +153,7 @@ for(i in 1:nrow(Milkdf)){
   while (Temperature_Static > 15 | Temperature_Static < -1) {
     Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
   }
-  Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*10, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = Temperature_Static)
+  Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = Temperature_Static)
   
   Interval <- Time_Temp_df$Time_h[2]
   
@@ -195,16 +195,9 @@ baranyi_log10N = function(t,lag,mumax,LOG10N0,LOG10Nmax) {
 }
 
 
-new_lag_time(4,11.6)
-new_lag_time(12,0.089)
 
-gompertz_log10N(2,2,0.04579407,1,8.38)
 
-gompertz_log10N(2,0,0.04579407,1.48,8.38)
-
-gompertz_log10N(20,4.581894,0.03515419,1,8.38)
-
-Time_Model<-24*7
+Time_Model<-24*14
 
 for(i in 1:nrow(Milkdf)){
   In_Lag_Consumed<-Milkdf$LagCon[i]
@@ -234,7 +227,7 @@ for(i in 1:nrow(Milkdf)){
 end_time <- Sys.time()
 end_time - start_time
 
-hist(Milkdf$SpoilageCon, 30)
+hist(Milkdf$SpoilageCon,  ylim=c(0,800), 35)
 mean(Milkdf$SpoilageCon)
 sum(Milkdf$SpoilageCon>5)
 
