@@ -62,16 +62,16 @@ Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,ST_Iter,Interval){
   #Interval = time interval in the time_temp_df in hrs. 
   Total_Lag_Consumed<-In_Lag_Consumed
   Total_Growth  <- 0
-  old_lag = look_for_st(ST= ST_Iter, par_of_int = "lagt")
-  old_mumax = look_for_st(ST= ST_Iter, par_of_int = "mumax")
+  old_lag = look_for_st(st= ST_Iter, par_of_int = "lagt")
+  old_mumax = look_for_st(st= ST_Iter, par_of_int = "mumax")
   for (i in 1:nrow(Time_Temp_df)){
     if (Total_Lag_Consumed <1 && old_lag!=0){
-      Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df$Temperature[i], oldLag = old_lag)
+      Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df$means[i], oldLag = old_lag)
       Lag_Consumed<-Interval/Lag_t_interval
       Total_Lag_Consumed<-Total_Lag_Consumed+Lag_Consumed
       Growth = 0
     } else if (Total_Lag_Consumed>=1 | old_lag == 0){
-      Growth = ((new_growth_rate(newTemp = Time_Temp_df$Temperature[i], oldMu = old_mumax))/2.303)*0.684 #Converted log10 from log ln
+      Growth = ((new_growth_rate(newTemp = Time_Temp_df$means[i], oldMu = old_mumax))/2.303)*0.684 #Converted log10 from log ln
       Total_Growth = Total_Growth + (Growth*Interval)
     }
   }
@@ -96,7 +96,7 @@ SpeciesDF$Prev<-Prevs
 
 ## Creating a Milk Df
 ```{r}
-Milkdf<-data.frame("MilkID" = seq(0,10000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+Milkdf<-data.frame("MilkID" = seq(0,100),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
 Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
 Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
 
@@ -105,24 +105,26 @@ hist(Milkdf$SpoilageCon)
 
 ## Time and Temperature profile data frame
 ```{r}
-Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*10, Interval = 0.5, Initial_Temperature = 4.06, Final_Temperature = 4.06)
+#Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*10, Interval = 0.5, Initial_Temperature = 4.06, Final_Temperature = 4.06)
+Time_Temp_df<-TI_L_NT_L1
 ```
 
 ## Buchanan Spoilage
 ```{r}
+
 for(i in 1:nrow(Milkdf)){
   In_Lag_Consumed<-Milkdf$LagCon[i]
   ST_Iter<-Milkdf$Species[i]
-  Pop_Max<-look_for_st(ST= ST_Iter,par_of_int = "Nmax")
+  Pop_Max<-look_for_st(st= ST_Iter,par_of_int = "Nmax")
   #Creating Time Temp Df
 
-  Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
-  while (Temperature_Static > 15 | Temperature_Static < -1) {
-    Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
-  }
-  Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = Temperature_Static)
+  #Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  #while (Temperature_Static > 15 | Temperature_Static < -1) {
+   # Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  #}
+  #Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = `#Temperature_Static)
   
-  Interval <- Time_Temp_df$Time_h[2]
+  Interval <- Time_Temp_df$min[2]/60
   
   Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
   
@@ -132,6 +134,92 @@ for(i in 1:nrow(Milkdf)){
     Milkdf$SpoilageCon[i]<-Pop_Max
   }
 }
+
+Spoilage_Function<-function(Milkdf,Time_Temp_df){
+  for(i in 1:nrow(Milkdf)){
+  In_Lag_Consumed<-Milkdf$LagCon[i]
+  ST_Iter<-Milkdf$Species[i]
+  Pop_Max<-look_for_st(st= ST_Iter,par_of_int = "Nmax")
+  #Creating Time Temp Df
+
+  #Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  #while (Temperature_Static > 15 | Temperature_Static < -1) {
+   # Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
+  #}
+  #Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = `#Temperature_Static)
+  
+  Interval <- Time_Temp_df$min[2]/60
+  
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
+  
+  Milkdf$LagCon[i]<-Output_Milk[2]
+  Milkdf$SpoilageCon[i]<-Output_Milk[1]+Milkdf$SpoilageCon[i]
+  if(Milkdf$SpoilageCon[i]>Pop_Max){
+    Milkdf$SpoilageCon[i]<-Pop_Max
+  }
+}
+return(Milkdf)
+}
+
+Spoilage_Function(Milkdf,Time_Temp_df)
+```
+
+#Experiment Worse case scenario with Tray with Ice
+```{r}
+Milkdf<-data.frame("MilkID" = seq(0,100),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
+Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
+Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
+
+
+N_Days = 5
+
+for (i in 1:N_Days){
+ #Service 1:
+Milkdf<-Spoilage_Function(Milkdf,TI_L_NT_L1)
+#Break 1:
+Milkdf<-Spoilage_Function(Milkdf,TI_L_NT_B1)
+#Lunch 2:
+Milkdf<-Spoilage_Function(Milkdf,TI_L_NT_B1) 
+}
+
+
+
+```
+
+##Experiment worse case scenario room temp B: 
+
+```{r}
+Milkdf<-data.frame("MilkID" = seq(0,100),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
+Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
+Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
+
+
+N_Days = 5
+
+for (i in 1:N_Days){
+ #Service 1:
+Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_L1)
+#Break 1:
+Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1)
+#Lunch 2:
+Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1) 
+}
+
+library(reshape2)
+
+Milkdf_Melted<-melt(Milkdf, id.vars = c("MilkID", "LagCon", "Species"))
+
+Milkdf_Melted %>% 
+  ggplot(aes(x =value, group= variable, fill= variable))+
+  geom_density( alpha = 0.5)
+
+Milkdf_Melted %>% 
+  ggplot(aes(y =value , group= variable, x= variable))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")
+  
 ```
 
 
