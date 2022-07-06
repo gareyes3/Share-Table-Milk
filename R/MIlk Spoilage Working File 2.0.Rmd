@@ -161,7 +161,25 @@ Spoilage_Function<-function(Milkdf,Time_Temp_df){
 return(Milkdf)
 }
 
-Spoilage_Function(Milkdf,Time_Temp_df)
+Spoilage_Function_Apply<-function(Milkdf,Time_Temp_df){
+  In_Lag_Consumed<-Milkdf[3] #Lag Con
+  ST_Iter<-Milkdf[4] #Species
+  Pop_Max<-look_for_st(st= ST_Iter,par_of_int = "Nmax")
+  
+  Interval <- 1/60
+  
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
+  
+  Milkdf[3]<-Output_Milk[2]
+  Milkdf[2]<-Output_Milk[1]+Milkdf[2]
+  if(Milkdf[2]>Pop_Max){
+    Milkdf[2]<-Pop_Max
+  }
+  return(Milkdf)
+}
+
+aaaa<-as.data.frame(apply(Milkdf,1,Spoilage_Function_Apply, Time_Temp_df = RTB_L_NT_B1))
+t(aaaa)
 ```
 
 #Experiment Worse case scenario with Tray with Ice
@@ -198,13 +216,17 @@ Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
 
 N_Days = 5
 
+
 for (i in 1:N_Days){
  #Service 1:
 Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_L1)
 #Break 1:
 Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1)
 #Lunch 2:
-Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1) 
+Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1)
+#ON Storage
+Milkdf<-Spoilage_Function(Milkdf,OvernightSto_C)
+print(paste("Day", i))
 }
 
 library(reshape2)
@@ -218,8 +240,49 @@ Milkdf_Melted %>%
 Milkdf_Melted %>% 
   ggplot(aes(y =value , group= variable, x= variable))+
   geom_boxplot()+
-  labs(y = "log CFU/mL")
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)
+
+sum(Milkdf$SpoilageCon>4.30)/(100)
   
+```
+
+```{r}
+Milkdf<-data.frame("MilkID" = seq(0,100),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
+Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
+Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
+
+
+N_Days = 1
+
+
+for (i in 1:N_Days){
+  #Service 1:
+  Milkdf<-t(as.data.frame(apply(Milkdf,1,Spoilage_Function_Apply, Time_Temp_df = RTB_L_NT_L1)))
+  #Break 1:
+  Milkdf<-t(as.data.frame(apply(Milkdf,1,Spoilage_Function_Apply, Time_Temp_df = RTB_L_NT_B1)))
+  #Lunch 2:
+  Milkdf<-t(as.data.frame(apply(Milkdf,1,Spoilage_Function_Apply, Time_Temp_df = RTB_L_NT_L2)))
+  #ON Storage
+  Milkdf<-  Milkdf<-t(as.data.frame(apply(Milkdf,1,Spoilage_Function_Apply, Time_Temp_df = OvernightSto_C)))
+  print(paste("Day", i))
+}
+
+library(reshape2)
+
+Milkdf_Melted<-melt(Milkdf, id.vars = c("MilkID", "LagCon", "Species"))
+
+Milkdf_Melted %>% 
+  ggplot(aes(x =value, group= variable, fill= Var2))+
+  geom_density( alpha = 0.5)
+
+Milkdf_Melted %>% 
+  ggplot(aes(y =value , group= Var2, x= Var2))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)
+
 ```
 
 
