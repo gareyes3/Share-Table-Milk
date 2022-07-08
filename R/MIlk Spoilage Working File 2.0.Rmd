@@ -115,7 +115,7 @@ Spoilage_Function<-function(Milkdf,Time_Temp_df){
   #}
   #Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = `#Temperature_Static)
   
-  Interval <- Time_Temp_df$min[2]/60
+  Interval <- 1/60
   
   Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
   
@@ -164,6 +164,8 @@ Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
 
 mean(Milkdf$SpoilageConIn)
 
+N_Days = 1
+
 for (i in 1:N_Days){
   Milkdf<-Spoilage_Function(Milkdf,Time_Temp_df)
 }
@@ -174,11 +176,10 @@ mean(Milkdf$SpoilageCon)
 ```
 
 
-
-
-#Experiment Worse case scenario with Tray with Ice
+#Tray with Ice Results
 ```{r}
-Milkdf<-data.frame("MilkID" = seq(0,100),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
+#Tray with Ice All Time in Condition
+Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
 Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
 Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
 Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
@@ -187,21 +188,23 @@ mean(Milkdf$SpoilageCon)
   
 N_Days = 5
 
+Milkdf_TI_FT<-Milkdf
+
 for (i in 1:N_Days){
  #Service 1:
-Milkdf<-Spoilage_Function(Milkdf,TI_L_FT_L1)
+Milkdf_TI_FT<-Spoilage_Function(Milkdf,TI_L_FT_L1)
 #Break 1:
-Milkdf<-Spoilage_Function(Milkdf,TI_L_FT_B1)
+Milkdf_TI_FT<-Spoilage_Function(Milkdf_TI_FT,TI_L_FT_B1)
 #Lunch 2:
-Milkdf<-Spoilage_Function(Milkdf,TI_L_FT_L2) 
+Milkdf_TI_FTf<-Spoilage_Function(Milkdf_TI_FT,TI_L_FT_L2) 
 #Overnight
-Milkdf<-Spoilage_Function(Milkdf,OvernightSto_C)
+Milkdf_TI_FT<-Spoilage_Function(Milkdf_TI_FT,OvernightSto_C)
 print(paste("Day", i))
 }
 
-Milkdf$Change  = Milkdf$SpoilageCon-Milkdf$SpoilageConIn
+#Milkdf$Change  = Milkdf$SpoilageCon-Milkdf$SpoilageConIn
 
-mean(Milkdf$Change)
+#mean(Milkdf$Change)
 
 Milkdf_Melted<-melt(Milkdf, id.vars = c("MilkID", "LagCon", "Species"))
 
@@ -216,6 +219,10 @@ Milkdf_Melted %>%
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
 sum(Milkdf$SpoilageCon>4.30)/(100)
+
+Milkdf$Change  = Milkdf$SpoilageCon-Milkdf$SpoilageConIn
+
+mean(Milkdf$Change)
 
 ```
 
@@ -237,7 +244,7 @@ Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_L1)
 #Break 1:
 Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1)
 #Lunch 2:
-Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_B1)
+Milkdf<-Spoilage_Function(Milkdf,RTB_L_NT_L2)
 #ON Storage
 Milkdf<-Spoilage_Function(Milkdf,OvernightSto_C)
 print(paste("Day", i))
@@ -258,6 +265,10 @@ Milkdf_Melted %>%
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
 sum(Milkdf$SpoilageCon>4.30)/(100)
+
+Milkdf$Change  = Milkdf$SpoilageCon-Milkdf$SpoilageConIn
+
+mean(Milkdf$Change)
   
 ```
 

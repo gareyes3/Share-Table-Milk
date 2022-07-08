@@ -106,22 +106,32 @@ Time_Temp_Creation<-function(Total_Time, Interval, Initial_Temperature, Final_Te
 #Creating a dataframe with milk values. 
 Milkdf<-data.frame("MilkID" = seq(0,10000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
 
-Species_St<-c(13,9,52,23,100,6,24,48,36,17,81,75,56,92,102,2,41)
-lag_h<-c(25.2,0,11.6,25.5,0,20.9,7.4,34.9,0,26.3,28.4,0,11.2,12.3,0,20.4,7.4)
-mumax<-c(0.1,0.107,0.089,0.125,0.141,0.098,0.086,0.081,0.114,0.079,0.078,0.085,0.122,0.133,0.058,0.094,0.075)
-Nmax<-c(9.07,9.39,8.38,8.08,8.04,7.81,8.32,8.51,9.04,9.08,9.20,8.57,8.24,8.89,7.82,7.35,8.17)
-GModel<-c("G","G","G","G","G","G","G","B","G","G","G","G","B", "G","G","G","B")
+#Species_St<-c(13,9,52,23,100,6,24,48,36,17,81,75,56,92,102,2,41)
+#lag_h<-c(25.2,0,11.6,25.5,0,20.9,7.4,34.9,0,26.3,28.4,0,11.2,12.3,0,20.4,7.4)
+#mumax<-c(0.1,0.107,0.089,0.125,0.141,0.098,0.086,0.081,0.114,0.079,0.078,0.085,0.122,0.133,0.058,0.094,0.075)
+#Nmax<-c(9.07,9.39,8.38,8.08,8.04,7.81,8.32,8.51,9.04,9.08,9.20,8.57,8.24,8.89,7.82,7.35,8.17)
+#GModel<-c("G","G","G","G","G","G","G","B","G","G","G","G","B", "G","G","G","B")
+
+
 
 #Frequencies and adjusted frequencies based on the 17 strains to randomize
-freq<-c(8.93,8.93,6.97,4.36,3.05,1.31,1.09,0.22,1.31,1.53,0.65,0.87,1.31,0.22,0.22,2.18,2.18)
-freq<-freq/sum(freq)
+#freq<-c(8.93,8.93,6.97,4.36,3.05,1.31,1.09,0.22,1.31,1.53,0.65,0.87,1.31,0.22,0.22,2.18,2.18)
+#freq<-freq/sum(freq)
 
-SpeciesDF<-data.frame(Species_St,lag_h,mumax,Nmax, GModel)
+#SpeciesDF<-data.frame(Species_St,lag_h,mumax,Nmax, GModel)
+
+SpeciesDF<-read_csv("SpeciesData.csv")
+Prevs<-c(8.93,0.65,1.53,0.87,8.93,0.22,1.31,1.31,0.22,0.22,2.18,2.18)
+Prevs<-Prevs/sum(Prevs)
+SpeciesDF$Prev<-Prevs
+SpeciesDF<-SpeciesDF %>% 
+  rename(Species_St = ST)
+SpeciesDF$mumax = SpeciesDF$mumax*0.685
 
 
 #Assigning Milk DF
 
-Milkdf$Species<-sample(Species_St,size = length(Milkdf$Species), prob = freq, replace = T)
+Milkdf$Species<-sample(SpeciesDF$Species_St,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
 Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
 
 #hist(rtruncnorm(1000, b = 3, mean =0.3817872, sd=1.108859))
@@ -139,7 +149,7 @@ hist(Milkdf$SpoilageCon)
 
 #Creating dataframe of time and temperature profiles. 
 
-Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*10, Interval = 0.5, Initial_Temperature = 4.06, Final_Temperature = 4.06)
+Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*7, Interval = 0.5, Initial_Temperature = 4.06, Final_Temperature = 4.06)
 
 start_time <- Sys.time()
 
@@ -153,7 +163,7 @@ for(i in 1:nrow(Milkdf)){
   while (Temperature_Static > 15 | Temperature_Static < -1) {
     Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
   }
-  Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature = Temperature_Static, Final_Temperature = Temperature_Static)
+  Time_Temp_df<-Time_Temp_Creation(Total_Time = 24*14, Interval = 0.5, Initial_Temperature =Temperature_Static, Final_Temperature = Temperature_Static)
   
   Interval <- Time_Temp_df$Time_h[2]
   
@@ -169,14 +179,14 @@ for(i in 1:nrow(Milkdf)){
 end_time <- Sys.time()
 end_time - start_time
 
-hist(Milkdf$SpoilageCon, 40)
+hist(Milkdf$SpoilageCon, 30)
 mean(Milkdf$SpoilageCon)
-sum(Milkdf$SpoilageCon>5)
-
+sum(Milkdf$SpoilageCon>log10(20000))/10000
+```
 
 
 ###############
-
+```{r}
 buchanan_log10N = function(t,lag,mumax,LOG10N0,LOG10Nmax){
   ans <- LOG10N0 + (t >= lag) * (t <= (lag + (LOG10Nmax - LOG10N0) *     log(10)/mumax)) * mumax * (t - lag)/log(10) + (t >= lag) * (t > (lag + (LOG10Nmax - LOG10N0) * log(10)/mumax)) * (LOG10Nmax - LOG10N0)
   return(ans)
@@ -197,7 +207,7 @@ baranyi_log10N = function(t,lag,mumax,LOG10N0,LOG10Nmax) {
 
 
 
-Time_Model<-24*14
+Time_Model<-24*10
 
 for(i in 1:nrow(Milkdf)){
   In_Lag_Consumed<-Milkdf$LagCon[i]
@@ -205,20 +215,23 @@ for(i in 1:nrow(Milkdf)){
   Pop_Max<-look_for_st(ST= ST_Iter,par_of_int = "Nmax")
   Old_Lag<-look_for_st(ST= ST_Iter,par_of_int = "lagt")
   Oldmumax<-look_for_st(ST= ST_Iter,par_of_int = "mumax")
-  GModel_Run<-look_for_st(ST= ST_Iter,par_of_int = "GModel")
+  #GModel_Run<-look_for_st(ST= ST_Iter,par_of_int = "GModel")
   #Creating Time Temp Df
+  GModel_Run<-"Bu"
 
   Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
   while (Temperature_Static > 15 | Temperature_Static < -1) {
     Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
   }
   Newlag<-new_lag_time(newTemp =Temperature_Static,oldLag = Old_Lag)
-  NewMumax<-(new_growth_rate(newTemp = Temperature_Static,oldMu = Oldmumax))*0.685
+  NewMumax<-((new_growth_rate(newTemp = Temperature_Static,oldMu = Oldmumax)))
     
   if(GModel_Run=="G"){
     Pop<-gompertz_log10N(t=Time_Model,lag = Newlag,mumax = NewMumax,LOG10N0 =Milkdf$SpoilageCon[i], LOG10Nmax = Pop_Max )
   } else if (GModel_Run =="B"){
     Pop<-baranyi_log10N(t=Time_Model,lag = Newlag,mumax = NewMumax,LOG10N0 =Milkdf$SpoilageCon[i], LOG10Nmax = Pop_Max )
+  }else if (GModel_Run =="Bu"){
+    Pop<-buchanan_log10N(t=Time_Model,lag = Newlag,mumax = NewMumax,LOG10N0 =Milkdf$SpoilageCon[i], LOG10Nmax = Pop_Max )
   }
   
   Milkdf$SpoilageCon[i]<-Pop
@@ -227,18 +240,18 @@ for(i in 1:nrow(Milkdf)){
 end_time <- Sys.time()
 end_time - start_time
 
-hist(Milkdf$SpoilageCon,  ylim=c(0,800), 35)
+hist(Milkdf$SpoilageCon, 100)
 mean(Milkdf$SpoilageCon)
-sum(Milkdf$SpoilageCon>5)
+sum(Milkdf$SpoilageCon>4.3)
+
 
 ####
 
+```
 
 
 
-
-
-
+```{r}
 
 Iterating_Over_Milk<-function(Milkdf, Time_Temp_df){
   In_Lag_Consumed<-Milkdf[3]
