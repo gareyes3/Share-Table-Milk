@@ -199,15 +199,20 @@ TI_L_HT %>%
 
 ```
 
-
+#Creating the same Milk DF for all
 ```{r}
-#Tray with Ice All Time in Condition
 Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
 Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
 Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
 Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
 
 mean(Milkdf$SpoilageCon)
+
+```
+
+
+```{r}
+#Tray with Ice All Time in Condition
   
 N_Days = 5
 
@@ -230,6 +235,8 @@ print(paste("Day", i))
 #mean(Milkdf$Change)
 
 Milkdf_Melted_TI_FT<-melt(Milkdf_TI_FT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_Melted_TI_FT$type<-"Tray with Ice Full Time"
+
 
 Milkdf_Melted_TI_FT %>% 
   ggplot(aes(x =value, group= variable, fill= variable))+
@@ -241,6 +248,7 @@ Milkdf_Melted_TI_FT %>%
   labs(y = "log CFU/mL")+
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
+mean(Milkdf_TI_FT$SpoilageCon)
 median(Milkdf_TI_FT$SpoilageCon)
 quantile(Milkdf_TI_FT$SpoilageCon, c(0.95, 0.05))
 
@@ -255,12 +263,6 @@ mean(Milkdf_TI_FT$Change)
 
 ```{r}
 #Tray with Ice half condition
-Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
-Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
-Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
-Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
-
-mean(Milkdf$SpoilageCon)
   
 N_Days = 5
 
@@ -268,11 +270,11 @@ Milkdf_TI_HT<-Milkdf
 
 for (i in 1:N_Days){
  #Service 1:
-Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,TI_L_FT_L1)
+Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,TI_L_HT_L1)
 #Break 1:
-Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,TI_L_FT_B1)
+Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,TI_L_HT_B1)
 #Lunch 2:
-Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,TI_L_FT_L2) 
+Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,TI_L_HT_L2) 
 #Overnight
 Milkdf_TI_HT<-Spoilage_Function(Milkdf_TI_HT,OvernightSto_C)
 print(paste("Day", i))
@@ -283,6 +285,7 @@ print(paste("Day", i))
 #mean(Milkdf$Change)
 
 Milkdf_Melted_TI_HT<-melt(Milkdf_TI_HT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_Melted_TI_HT$type<-"Tray with Ice Half Time"
 
 Milkdf_Melted_TI_HT %>% 
   ggplot(aes(x =value, group= variable, fill= variable))+
@@ -294,6 +297,7 @@ Milkdf_Melted_TI_HT %>%
   labs(y = "log CFU/mL")+
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
+mean(Milkdf_TI_HT$SpoilageCon)
 median(Milkdf_TI_HT$SpoilageCon)
 quantile(Milkdf_TI_HT$SpoilageCon, c(0.95, 0.05))
 
@@ -309,13 +313,7 @@ mean(Milkdf_TI_HT$Change)
 ##Experiment worse case scenario room temp B: 
 
 ```{r}
-Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
-Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
-Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
-Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
-
-
-
+#Full time
 N_Days = 5
 
 Milkdf_RTB_FT<-Milkdf
@@ -335,6 +333,7 @@ print(paste("Day", i))
 library(reshape2)
 
 Milkdf_RTB_FT_Melted<-melt(Milkdf_RTB_FT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_RTB_FT_Melted$type<-"Room Temp B"
 
 Milkdf_RTB_FT_Melted %>% 
   ggplot(aes(x =value, group= variable, fill= variable))+
@@ -346,6 +345,7 @@ Milkdf_RTB_FT_Melted %>%
   labs(y = "log CFU/mL")+
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
+mean(Milkdf_RTB_FT$SpoilageCon)
 median(Milkdf_RTB_FT$SpoilageCon)
 quantile(Milkdf_RTB_FT$SpoilageCon, c(0.95, 0.05))
 
@@ -361,11 +361,6 @@ mean(Milkdf_RTB_FT$Change)
 ## Worse case scenario Ref Tray
 ```{r}
 #Long FT in Condition
-Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
-Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
-Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
-Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
-
 
 N_Days = 5
 
@@ -373,11 +368,11 @@ Milkdf_RefT_FT<-Milkdf
 
 for (i in 1:N_Days){
 #Service 1:
-Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,RefT_L_NT_L1)
+Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,RefT_L_FT_L1)
 #Break 1:
-Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,RefT_L_NT_B1)
+Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,RefT_L_FT_B1)
 #Lunch 2:
-Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,RefT_L_NT_B1)
+Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,RefT_L_FT_B1)
 #ON Storage
 Milkdf_RefT_FT<-Spoilage_Function(Milkdf_RefT_FT,OvernightSto_C)
 print(paste("Day", i))
@@ -385,6 +380,7 @@ print(paste("Day", i))
 
 
 Milkdf_RefT_FT_Melted<-melt(Milkdf_RefT_FT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_RefT_FT_Melted$type<-"Refrigerated Tray Full Time"
 
 Milkdf_RefT_FT_Melted %>% 
   ggplot(aes(x =value, group= variable, fill= variable))+
@@ -396,6 +392,7 @@ Milkdf_RefT_FT_Melted %>%
   labs(y = "log CFU/mL")+
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
+mean(Milkdf_RefT_FT$SpoilageCon)
 median(Milkdf_RefT_FT$SpoilageCon)
 quantile(Milkdf_RefT_FT$SpoilageCon, c(0.95, 0.05))
 
@@ -410,11 +407,6 @@ mean(Milkdf_RefT_FT$Change)
 
 ```{r}
 #Long Half Time in Condition
-Milkdf<-data.frame("MilkID" = seq(0,1000),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
-Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
-Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
-Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
-
 
 N_Days = 5
 
@@ -422,11 +414,11 @@ Milkdf_RefT_HT<-Milkdf
 
 for (i in 1:N_Days){
 #Service 1:
-Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,RefT_L_NT_L1)
+Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,RefT_L_HT_L1)
 #Break 1:
-Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,RefT_L_NT_B1)
+Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,RefT_L_HT_B1)
 #Lunch 2:
-Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,RefT_L_NT_B1)
+Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,RefT_L_HT_B1)
 #ON Storage
 Milkdf_RefT_HT<-Spoilage_Function(Milkdf_RefT_HT,OvernightSto_C)
 print(paste("Day", i))
@@ -434,6 +426,7 @@ print(paste("Day", i))
 
 
 Milkdf_RefT_HT_Melted<-melt(Milkdf_RefT_HT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_RefT_HT_Melted$type<-"Refrigerated Tray Half Time"
 
 Milkdf_RefT_HT_Melted %>% 
   ggplot(aes(x =value, group= variable, fill= variable))+
@@ -445,6 +438,7 @@ Milkdf_RefT_HT_Melted %>%
   labs(y = "log CFU/mL")+
   geom_hline(yintercept = 4.30, color = "red", size = 1)
 
+mean(Milkdf_RefT_HT$SpoilageCon)
 median(Milkdf_RefT_HT$SpoilageCon)
 quantile(Milkdf_RefT_HT$SpoilageCon, c(0.95, 0.05))
 
@@ -457,20 +451,240 @@ mean(Milkdf_RefT_HT$Change)
 ```
 
 
+## Tray with Ice Packs
+```{r}
+#Long FT in Condition
+
+N_Days = 5
+
+Milkdf_TIP_FT<-Milkdf
+
+for (i in 1:N_Days){
+#Service 1:
+Milkdf_TIP_FT<-Spoilage_Function(Milkdf_TIP_FT,TIP_L_FT_L1)
+#Break 1:
+Milkdf_TIP_FT<-Spoilage_Function(Milkdf_TIP_FT,TIP_L_FT_B1)
+#Lunch 2:
+Milkdf_TIP_FT<-Spoilage_Function(Milkdf_TIP_FT,TIP_L_FT_B1)
+#ON Storage
+Milkdf_TIP_FT<-Spoilage_Function(Milkdf_TIP_FT,OvernightSto_C)
+print(paste("Day", i))
+}
+
+
+Milkdf_TIP_FT_Melted<-melt(Milkdf_TIP_FT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_TIP_FT_Melted$type<-"Tray with Ice Packs Full Time"
+
+Milkdf_TIP_FT_Melted %>% 
+  ggplot(aes(x =value, group= variable, fill= variable))+
+  geom_density( alpha = 0.5)
+
+Milkdf_TIP_FT_Melted %>% 
+  ggplot(aes(y =value , group= variable, x= variable))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)
+
+mean(Milkdf_TIP_FT$SpoilageCon)
+median(Milkdf_TIP_FT$SpoilageCon)
+quantile(Milkdf_TIP_FT$SpoilageCon, c(0.95, 0.05))
+
+sum(Milkdf_TIP_FT$SpoilageCon>4.30)/(1000)
+
+Milkdf_TIP_FT$Change  = Milkdf_TIP_FT$SpoilageCon-Milkdf_TIP_FT$SpoilageConIn
+
+mean(Milkdf_TIP_FT$Change)
+
+```
+
+
+```{r}
+#Long HT in Condition
+
+N_Days = 5
+
+Milkdf_TIP_HT<-Milkdf
+
+for (i in 1:N_Days){
+#Service 1:
+Milkdf_TIP_HT<-Spoilage_Function(Milkdf_TIP_HT,TIP_L_HT_L1)
+#Break 1:
+Milkdf_TIP_HT<-Spoilage_Function(Milkdf_TIP_HT,TIP_L_HT_B1)
+#Lunch 2:
+Milkdf_TIP_HT<-Spoilage_Function(Milkdf_TIP_HT,TIP_L_HT_B1)
+#ON Storage
+Milkdf_TIP_HT<-Spoilage_Function(Milkdf_TIP_HT,OvernightSto_C)
+print(paste("Day", i))
+}
+
+
+Milkdf_TIP_HT_Melted<-melt(Milkdf_TIP_HT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_TIP_HT_Melted$type<-"Tray with Ice Packs Half Time"
+
+Milkdf_TIP_HT_Melted %>% 
+  ggplot(aes(x =value, group= variable, fill= variable))+
+  geom_density( alpha = 0.5)
+
+Milkdf_TIP_HT_Melted %>% 
+  ggplot(aes(y =value , group= variable, x= variable))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)
+
+mean(Milkdf_TIP_HT$SpoilageCon)
+median(Milkdf_TIP_HT$SpoilageCon)
+quantile(Milkdf_TIP_HT$SpoilageCon, c(0.95, 0.05))
+
+sum(Milkdf_TIP_HT$SpoilageCon>4.30)/(1000)
+
+Milkdf_TIP_HT$Change  = Milkdf_TIP_HT$SpoilageCon-Milkdf_TIP_HT$SpoilageConIn
+
+mean(Milkdf_TIP_HT$Change)
+
+```
 
 
 
+## Cooler with Ice
+```{r}
+#Long FT in Condition
+
+N_Days = 5
+
+Milkdf_CI_FT<-Milkdf
+
+for (i in 1:N_Days){
+#Service 1:
+Milkdf_CI_FT<-Spoilage_Function(Milkdf_CI_FT,CI_L_FT_L1)
+#Break 1:
+Milkdf_CI_FT<-Spoilage_Function(Milkdf_CI_FT,CI_L_FT_B1)
+#Lunch 2:
+Milkdf_CI_FT<-Spoilage_Function(Milkdf_CI_FT,CI_L_FT_B1)
+#ON Storage
+Milkdf_CI_FT<-Spoilage_Function(Milkdf_CI_FT,OvernightSto_C)
+print(paste("Day", i))
+}
+
+
+Milkdf_CI_FT_Melted<-melt(Milkdf_CI_FT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_CI_FT_Melted$type<-"Cooler with Ice Full Time"
+
+Milkdf_CI_FT_Melted %>% 
+  ggplot(aes(x =value, group= variable, fill= variable))+
+  geom_density( alpha = 0.5)
+
+Milkdf_CI_FT_Melted %>% 
+  ggplot(aes(y =value , group= variable, x= variable))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)
+
+mean(Milkdf_CI_FT$SpoilageCon)
+median(Milkdf_CI_FT$SpoilageCon)
+quantile(Milkdf_CI_FT$SpoilageCon, c(0.95, 0.05))
+
+sum(Milkdf_CI_FT$SpoilageCon>4.30)/(1000)
+
+Milkdf_CI_FT$Change  = Milkdf_CI_FT$SpoilageCon-Milkdf_CI_FT$SpoilageConIn
+
+mean(Milkdf_CI_FT$Change)
+
+```
+
+```{r}
+#Long HT in Condition
+
+N_Days = 5
+
+Milkdf_CI_HT<-Milkdf
+
+for (i in 1:N_Days){
+#Service 1:
+Milkdf_CI_HT<-Spoilage_Function(Milkdf_CI_HT,CI_L_HT_L1)
+#Break 1:
+Milkdf_CI_HT<-Spoilage_Function(Milkdf_CI_HT,CI_L_HT_B1)
+#Lunch 2:
+Milkdf_CI_HT<-Spoilage_Function(Milkdf_CI_HT,CI_L_HT_B1)
+#ON Storage
+Milkdf_CI_HT<-Spoilage_Function(Milkdf_CI_HT,OvernightSto_C)
+print(paste("Day", i))
+}
+
+
+Milkdf_CI_HT_Melted<-melt(Milkdf_CI_HT, id.vars = c("MilkID", "LagCon", "Species"))
+Milkdf_CI_HT_Melted$type<-"Cooler with Ice Half Time"
+
+Milkdf_CI_HT_Melted %>% 
+  ggplot(aes(x =value, group= variable, fill= variable))+
+  geom_density( alpha = 0.5)
+
+Milkdf_CI_HT_Melted %>% 
+  ggplot(aes(y =value , group= variable, x= variable))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)
+
+mean(Milkdf_CI_HT$SpoilageCon)
+median(Milkdf_CI_HT$SpoilageCon)
+quantile(Milkdf_CI_HT$SpoilageCon, c(0.95, 0.05))
+
+sum(Milkdf_CI_HT$SpoilageCon>4.30)/(1000)
+
+Milkdf_CI_HT$Change  = Milkdf_CI_HT$SpoilageCon-Milkdf_CI_HT$SpoilageConIn
+
+mean(Milkdf_CI_HT$Change)
+
+```
+
+
+#Plotting the comparisons
+
+```{r}
+All_Combined_Plots<-rbind(Milkdf_RTB_FT_Melted,Milkdf_Melted_TI_FT, Milkdf_Melted_TI_HT,Milkdf_RefT_FT_Melted,Milkdf_RefT_HT_Melted,
+      Milkdf_TIP_HT_Melted,Milkdf_TIP_FT_Melted,Milkdf_CI_HT_Melted,Milkdf_CI_FT_Melted )
+
+unique(All_Combined_Plots$type)
+
+Initial_1<-All_Combined_Plots[c(1002:2002),]
+Initial_1$type<-"Initial"
+Initial_1$variable<-"SpoilageCon"
+
+All_Combined_Plots<-rbind(All_Combined_Plots,Initial_1)
+
+All_Combined_Plots$type<-factor(All_Combined_Plots$type, levels = c("Initial","Room Temp B","Tray with Ice Full Time","Tray with Ice Half Time","Refrigerated Tray Full Time" ,"Refrigerated Tray Half Time","Tray with Ice Packs Full Time","Tray with Ice Packs Half Time","Cooler with Ice Full Time","Cooler with Ice Half Time"))
 
 
 
+All_Combined_Plots %>%
+  filter(variable == "SpoilageCon") %>% 
+  ggplot(aes(y =value, x = type))+
+  geom_boxplot()+
+  labs(y = "log CFU/mL")+
+  geom_hline(yintercept = 4.30, color = "red", size = 1)+
+  geom_hline(yintercept = 1.99, color = "blue", size = 1, alpha = 0.7, linetype='dashed')+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  labs(x = "Condition Type")
+
+```
+
+
+```{r}
+All_Temperatures_Combined<-rbind(RTB_L_NT,TI_L_FT,RefT_L_FT,TIP_L_FT,CI_L_FT, TI_L_HT, RefT_L_HT,TIP_L_HT,CI_L_HT)
+
+All_Temperatures_Combined$condition<-factor(All_Temperatures_Combined$condition, levels =c( "Room Temp B", "Tray with Ice", "Refrigerated Tray", "Tray with Ice Packs", "Cooler with Ice"))
+
+All_Temperatures_Combined %>% 
+  ggplot(aes(x = min, y = means, color = treatment))+
+  geom_smooth()+
+  facet_wrap(~condition)
+  
+```
 
 
 
-
-
-
-
-
+```{r}
+0.5/1.1
+```
 
 
 
