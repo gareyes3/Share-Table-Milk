@@ -1,0 +1,97 @@
+---
+title: "Untitled"
+output: html_document
+date: '2022-07-25'
+---
+
+#Milk Temperature Curves Validation
+
+loadig the Hs
+```{r}
+#Standard Inputs
+rho <-1.033 #kg/L
+C <- 4.2 #kj/KgC
+V <- 0.236 #L
+A <- 0.004275 #m2
+
+#Negative Slopes
+Neg_Slope_RTB<-(-0.0124)
+
+
+get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
+  neg_h =  ((Neg_slope*rho*C*V)/A)
+  return(- neg_h)
+} 
+
+#Getting the Hs
+h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
+
+
+get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236 ){
+  #Time in minutes
+  #Tinf = External Temp
+  #To = Initial temperature of the milk
+  # h = convection trans coeff for that codition
+  return (exp(-(h*A/rho*C*V)*(time))*(To-Tinf)+Tinf)
+}
+
+get_temp(h = h_RTB, To = 1.55, Tinf =  20, time = 5)
+
+```
+##Function to create time and temp profiles vector
+
+```{r}
+#Constant outside temperature
+
+predict_temp<-function(Initial_Temp, Room_temp, Total_min, h_condition){
+  #Returns a vector of tempepratures
+  Total_Time_min = Total_min
+  Temp_Initial = Initial_Temp
+  T_inf = Room_temp
+  Temp_V<-c()
+  for (i in 1:Total_Time_min){
+    if (i == 1){
+      New_Temp = Temp_Initial
+    }else if (i == 2){
+      New_Temp = get_temp(h = h_condition, To = Temp_Initial, Tinf =  T_inf, time = 1)
+    }else{
+      New_Temp = get_temp(h = h_condition, To = New_Temp, Tinf =  T_inf, time = 1)
+    }
+    Temp_V<-c(Temp_V, New_Temp)
+  }
+  return (Temp_V)
+}
+
+
+predict_temp(Initial_Temp = 4.5,Room_temp = 22, Total_min = 42, h_condition = h_RTB)
+
+
+predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
+  Time_Temp_Profile<-Time_Temp_Prof
+  Temp_Initial = Initial_Temp
+  Temp_V<-c()
+  for (i in 1:length(Time_Temp_Profile)){
+    T_inf<-Time_Temp_Profile[i]
+    if (i == 1){
+      New_Temp = Temp_Initial
+    }else if (i == 2){
+      New_Temp = get_temp(h = h_condition, To = Temp_Initial, Tinf =  T_inf, time = 1)
+    }else{
+      New_Temp = get_temp(h = h_condition, To = New_Temp, Tinf =  T_inf, time = 1)
+    }
+    Temp_V<-c(Temp_V, New_Temp)
+  }
+  return(Temp_V)
+}
+
+
+Time_Temp_Profile<-c(21.6, 20.8, 20.5,20.6,20.8,20.7,20.8,20.8,20.7,20.8,20.8,20.8, 20.9,20.6,20.7,21)
+
+predict_temp_fromProf(Time_Temp_Prof = Time_Temp_Profile, Initial_Temp = 1.55, h_condition = h_RTB)
+
+#From Time and Temp Profile (Vector of temperatures)
+
+
+
+```
+
