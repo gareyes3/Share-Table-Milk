@@ -37,6 +37,8 @@ get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236
 
 get_temp(h = h_RTB, To = 1.55, Tinf =  20, time = 5)
 
+
+get_temp(h = h_RTB, To = 8, Tinf =  23, time = 120)
 ```
 ##Function to create time and temp profiles vector
 
@@ -64,6 +66,7 @@ predict_temp<-function(Initial_Temp, Room_temp, Total_min, h_condition){
 
 
 predict_temp(Initial_Temp = 4.5,Room_temp = 22, Total_min = 42, h_condition = h_RTB)
+
 
 
 predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
