@@ -90,11 +90,27 @@ predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
 
 Time_Temp_Profile<-c(21.6, 20.8, 20.5,20.6,20.8,20.7,20.8,20.8,20.7,20.8,20.8,20.8, 20.9,20.6,20.7,21)
 
+#From Time and Temp Profile (Vector of temperatures)
 predict_temp_fromProf(Time_Temp_Prof = Time_Temp_Profile, Initial_Temp = 1.55, h_condition = h_RTB)
 
-#From Time and Temp Profile (Vector of temperatures)
+```
 
 
+```{r}
+calc_rmse=function(actual, predicted) {
+  sqrt(mean((actual - predicted) ^ 2))
+}
+
+Dec_Day1<-read.csv("Dec_Day1_Temps.csv")
+
+RT_Temp_DecD1<-Dec_Day1$tempR
+MT_Temp_DecD1<-Dec_Day1$tempM
+
+PredictedMT_Temp_DecD1<-predict_temp_fromProf(Time_Temp_Prof = RT_Temp_DecD1, Initial_Temp = 7.8, h_condition = h_RTB)
+
+calc_rmse(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
+
+plot(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
 
 ```
 

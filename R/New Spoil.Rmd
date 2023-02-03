@@ -1,0 +1,72 @@
+---
+title: "Milk Spoilage New"
+output: html_document
+date: "2023-02-01"
+---
+
+#Milk Spoilage working file
+
+## Loading all the libraries.
+
+```{r}
+library(tidyverse)
+library(ExtDist)
+library(jmuOutlier)
+library(truncnorm)
+library(reshape2)
+```
+
+
+## Fucntions for growth and lag phases 
+```{r}
+#Function for growth and lag phase
+new_growth_rate<-function(newTemp, oldMu,oldTemp = 6, T0 = -4.15){
+  newMu<-((newTemp-T0)/(oldTemp-T0))* oldMu
+  return (newMu)
+}
+
+#Calculation of the new lag time.
+new_lag_time <- function (newTemp, oldLag, oldTemp = 6, T0 = -4.15) {
+  numerator <- oldTemp -T0
+  denom <- newTemp - T0
+  newLag <- ( (numerator / denom)^2) * oldLag
+  return(newLag)
+}
+```
+
+```{r}
+#This function calculates thee growth based on a time and temperature profile for 1 specific milk with R100084
+Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,Interval){
+  #In_Lag_Consumed= Total lag time consumed
+  #Time_Temp_df = dataframe with time and temperature conditions
+  #ST_Iter = The ST that corresponds to this milk carton
+  #Interval = time interval in the time_temp_df in hrs. 
+  Total_Lag_Consumed<-In_Lag_Consumed
+  Total_Growth  <- 0
+  old_lag = 0
+  old_mumax = 0.083558
+  for (i in 1:nrow(Time_Temp_df)){
+    if (Total_Lag_Consumed <1 && old_lag!=0){
+      Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df$tempM[i], oldLag = old_lag)
+      Lag_Consumed<-Interval/Lag_t_interval
+      Total_Lag_Consumed<-Total_Lag_Consumed+Lag_Consumed
+      Growth = 0
+    } else if (Total_Lag_Consumed>=1 | old_lag == 0){
+      Growth = ((new_growth_rate(newTemp = Time_Temp_df$tempM[i], oldMu = old_mumax))/2.303)*0.684 #Converted log10 from log ln
+      Total_Growth = Total_Growth + (Growth*Interval)
+    }
+  }
+  return(c(Total_Growth,Total_Lag_Consumed))
+}
+```
+
+```{r}
+
+Dec_Day1<-read.csv("Dec_Day1_Temps.csv")
+
+
+Func_Growth_LagCon(In_Lag_Consumed =0, Time_Temp_df= Dec_Day1,Interval =1/60)
+
+```
+
+

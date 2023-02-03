@@ -161,13 +161,13 @@ Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
 while (Temperature_Static > 15 | Temperature_Static < -1) {
   Temperature_Static<- rlaplace(1,m=4.06,s=2.31)
 }
-Time_Temp_df<-data.frame("min"= seq(1,10080))
+Time_Temp_df<-data.frame("min"= seq(1,1060*5))
 Time_Temp_df$means = 4.06
 
 
 Milkdf<-data.frame("MilkID" = seq(0,100),"SpoilageCon" =NA, "LagCon" = 0, "Species" = NA)
-Milkdf$Species<-sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
-Milkdf$SpoilageCon<-rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
+Milkdf$Species<-9#sample(SpeciesDF$ST,size = length(Milkdf$Species), prob = SpeciesDF$Prev, replace = T)
+Milkdf$SpoilageCon<-2.1#rtruncnorm(n = length(Milkdf$SpoilageCon),b = 3, mean =0.3817872, sd=1.108859)
 Milkdf$SpoilageConIn<-Milkdf$SpoilageCon
 
 mean(Milkdf$SpoilageConIn)
