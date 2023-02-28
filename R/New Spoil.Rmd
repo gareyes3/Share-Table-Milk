@@ -8,7 +8,7 @@ date: "2023-02-01"
 
 ## Loading all the libraries.
 
-```{r}
+```{r }
 library(tidyverse)
 library(ExtDist)
 library(jmuOutlier)
@@ -34,17 +34,33 @@ new_lag_time <- function (newTemp, oldLag, oldTemp = 6, T0 = -4.15) {
 }
 ```
 
+#functions to Create a random time temp df linear. 
 ```{r}
-#This function calculates thee growth based on a time and temperature profile for 1 specific milk with R100084
+#Not in use, function to create a data frame based on interval and initial and final temperature
+Time_Temp_Creation<-function(Total_Time, Interval, Initial_Temperature, Final_Temperature){
+  Time_Temp_df<-data.frame("min"= seq(0,Total_Time,by = Interval),
+                         "tempM"  = seq(Initial_Temperature,Final_Temperature, by = ((Final_Temperature - Initial_Temperature)/(length(seq(0,Total_Time,by = Interval)) - 1) )))
+}
+
+Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temperature){
+  Time_Temp_df<-data.frame("min"= seq(0,Total_Time,by = Interval),
+                         "tempM"= rnorm(n =Total_Time+1, mean = Mean_Temperature, sd= SD_Temperature))
+  return (Time_Temp_df)
+}
+```
+
+
+```{r}
+#This function calculates thee growth based on a time and temperature profile for 1 specific milk with R100084 P Paoae
 Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,Interval){
   #In_Lag_Consumed= Total lag time consumed
   #Time_Temp_df = dataframe with time and temperature conditions
-  #ST_Iter = The ST that corresponds to this milk carton
   #Interval = time interval in the time_temp_df in hrs. 
-  Total_Lag_Consumed<-In_Lag_Consumed
-  Total_Growth  <- 0
+  Total_Lag_Consumed = In_Lag_Consumed
+  Total_Growth = 0
   old_lag = 0
-  old_mumax = 0.083558
+  NMax = 8.14
+  old_mumax = 0.083508
   for (i in 1:nrow(Time_Temp_df)){
     if (Total_Lag_Consumed <1 && old_lag!=0){
       Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df$tempM[i], oldLag = old_lag)
@@ -58,7 +74,61 @@ Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,Interval){
   }
   return(c(Total_Growth,Total_Lag_Consumed))
 }
+
+
+
+#Buchanan spoilage function
+Spoilage_Function<-function(Milkdf,Time_Temp_df){
+  for(i in 1:nrow(Milkdf)){
+  In_Lag_Consumed<-Milkdf$LagCon[i] #selecting lag for specific milk
+  ST_Iter<-Milkdf$Species[i] #selecting the ST of interest
+  Pop_Max<-look_for_st(st= ST_Iter,par_of_int = "Nmax") #Population max for given ST
+
+  Interval <- 1/60 #Interval in hours. means 0.01666 hours. maybe need is an input? 
+  
+  #this function provides two outputs, the total growth, and the new updated lag phase consumed. 
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = In_Lag_Consumed ,Time_Temp_df = Time_Temp_df,ST_Iter = ST_Iter,Interval = Interval)
+  
+  #updating the total lag consumed
+  Milkdf$LagCon[i]<-Output_Milk[2]
+  #Updating the spoilage contamination of milk
+  Milkdf$SpoilageCon[i]<-Output_Milk[1]+Milkdf$SpoilageCon[i]
+  #Updating, that is Pop max is reached, then the current population is at population max. 
+  if(Milkdf$SpoilageCon[i]>Pop_Max){
+    Milkdf$SpoilageCon[i]<-Pop_Max
+  }
+  }
+  #Returns the updated milk data frame
+  return(Milkdf)
+}
+
+
+
+#Buchanan spoilage function
+Spoilage_Function_Single_Milk<-function(Cont, Pop_Max, Time_Temp_df, Interval =1/60){
+  Lag_Consumed = 0
+  #this function provides two outputs, the total growth, and the new updated lag phase consumed. 
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = Lag_Consumed ,Time_Temp_df = Time_Temp_df,Interval = Interval)
+  Lag_Consumed = Output_Milk[2]
+  Cont<-Output_Milk[1]+Cont
+  if( Cont>Pop_Max){
+     Cont = Pop_Max
+  }
+  return (Cont)
+}
 ```
+
+
+##Running a simple scenario Refrigerates temperature for 5 days. 
+```{r}
+Time_Temp_Df<-Time_Temp_Creation_Var(Total_Time = 96*60, Interval = 1,Mean_Temperature = 4.36,SD_Temperature = 0.1591)
+
+Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Time_Temp_Df, Interval =1/60)
+
+```
+
+
+
 
 ```{r}
 
