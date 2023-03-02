@@ -180,6 +180,8 @@ for (i in 1:N_Days){
 
 mean(Milkdf$SpoilageCon)
 
+hist(Milkdf$SpoilageCon)
+
 ```
 
 
@@ -202,7 +204,6 @@ Midfbu<-Milkdf
 OvernightSto_C %>% 
   ggplot(aes(x = min, y = means))+
   geom_point()
-
 
 OvernightSto_C_Ext<-rbind(OvernightSto_C,OvernightSto_C[c(1039:1104),],OvernightSto_C[c(1039:1104),])
 OvernightSto_C_Ext$min<-c(1:1308)
@@ -252,7 +253,7 @@ Milkdf_ON_FT_Melted %>%
   ggplot(aes(y =value , group= variable, x= variable))+
   geom_boxplot()+
   labs(y = "log CFU/mL")+
-  geom_hline(yintercept = 4.30, color = "red", size = 1)
+  geom_hline(yintercept = 6, color = "red", size = 1)
 
 mean(Milkdf_ON_FT$SpoilageCon)
 median(Milkdf_ON_FT$SpoilageCon)
@@ -271,7 +272,7 @@ Milkdf_ON_FT_Melted %>%
   ggplot(aes(y =value , group= variable, x= variable))+
   geom_boxplot()+
   labs(y = "log CFU/mL")+
-  geom_hline(yintercept = 4.30, color = "red", size = 1)
+  geom_hline(yintercept = 6, color = "red", size = 1)
   
 ```
 
@@ -324,7 +325,7 @@ Milkdf_Melted_TI_FT %>%
   ggplot(aes(y =value , group= variable, x= variable))+
   geom_boxplot()+
   labs(y = "log CFU/mL")+
-  geom_hline(yintercept = 4.30, color = "red", size = 1)
+  geom_hline(yintercept = 6, color = "red", size = 1)
 
 mean(Milkdf_TI_FT$SpoilageCon)
 median(Milkdf_TI_FT$SpoilageCon)
@@ -343,7 +344,7 @@ Milkdf_Melted_TI_FT %>%
   ggplot(aes(y =value , group= variable, x= variable))+
   geom_boxplot()+
   labs(y = "log CFU/mL")+
-  geom_hline(yintercept = 4.30, color = "red", size = 1)
+  geom_hline(yintercept = 6, color = "red", size = 1)
   
 
 ```
@@ -927,19 +928,20 @@ All_Combined_Plots$variable<-factor(All_Combined_Plots$variable, levels = c("Spo
 All_Combined_Plots %>%
   filter(variable == "SpoilageCon") %>% 
   ggplot(aes(y =value, x = type))+
-  geom_point(position = "jitter", alpha = 0.1)+
+  #geom_point(position = "jitter", alpha = 0.1)+
   geom_boxplot(alpha = 0.8)+
   labs(y = "log CFU/mL")+
-  geom_hline(yintercept = 4.30, color = "red", size = 1)+
+  geom_hline(yintercept = 6, color = "red", size = 1)+
   geom_hline(yintercept =  1.56494, color = "blue", size = 1, alpha = 0.7, linetype='dashed')+
   scale_x_discrete(guide = guide_axis(angle = 90)) +
-  labs(x = "Condition Type")
+  labs(x = "Condition Type")+
+  theme_bw()
 
 
 All_Combined_Plots %>%
   filter(variable != "SpoilageCon") %>% 
   ggplot(aes(y =value, x = variable))+
-  geom_point(position = "jitter", alpha = 0.03)+
+  #geom_point(position = "jitter", alpha = 0.03)+
   geom_boxplot()+
   labs(y = "log CFU/mL")+
   geom_hline(yintercept = 4.30, color = "red", size = 1)+
@@ -955,7 +957,7 @@ All_Combined_Plots %>%
   ggplot(aes(y =value, x = type, fill = variable))+
   geom_boxplot()+
   labs(y = "log CFU/mL")+
-  geom_hline(yintercept = 4.30, color = "red", size = 1)+
+  geom_hline(yintercept = 6, color = "red", size = 1)+
   geom_hline(yintercept = 1.63, color = "blue", size = 1, alpha = 0.7, linetype='dashed')+
   scale_x_discrete(guide = guide_axis(angle = 90)) +
   labs(x = "Condition Type")

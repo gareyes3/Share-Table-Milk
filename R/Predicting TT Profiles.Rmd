@@ -16,6 +16,7 @@ A <- 0.004275 #m2
 
 #Negative Slopes
 Neg_Slope_RTB<-(-0.0124)
+Neg_Slope_Ref<-(-0.0099)
 
 
 get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
@@ -25,6 +26,8 @@ get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
 
 #Getting the Hs
 h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
+
+h_ref = get_h(Neg_slope = Neg_Slope_Ref)
 
 
 get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236 ){
@@ -38,7 +41,9 @@ get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236
 get_temp(h = h_RTB, To = 1.55, Tinf =  20, time = 5)
 
 
-get_temp(h = h_RTB, To = 8, Tinf =  23, time = 120)
+get_temp(h = h_ref, To = 17, Tinf =  4, time = 120)
+
+
 ```
 ##Function to create time and temp profiles vector
 
@@ -93,6 +98,13 @@ Time_Temp_Profile<-c(21.6, 20.8, 20.5,20.6,20.8,20.7,20.8,20.8,20.7,20.8,20.8,20
 #From Time and Temp Profile (Vector of temperatures)
 predict_temp_fromProf(Time_Temp_Prof = Time_Temp_Profile, Initial_Temp = 1.55, h_condition = h_RTB)
 
+
+Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temperature){
+  Time_Temp_df<-data.frame("min"= seq(0,Total_Time,by = Interval),
+                         "tempM"= rnorm(n =Total_Time+1, mean = Mean_Temperature, sd= SD_Temperature))
+  return (Time_Temp_df)
+}
+
 ```
 
 
@@ -110,7 +122,79 @@ PredictedMT_Temp_DecD1<-predict_temp_fromProf(Time_Temp_Prof = RT_Temp_DecD1, In
 
 calc_rmse(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
 
+DF_val_rt<-data.frame("Observed" = MT_Temp_DecD1, 
+                      "Predicted" = PredictedMT_Temp_DecD1)
+
+ggplot(aes(x = Predicted, y = Observed),data = DF_val_rt)+
+  geom_point()+
+  geom_line()+
+  theme_bw()+
+  labs(x = "Predicted Milk Internal Temperature °C",y = "Observed Milk Internal Temperature °C", title = "Validation of RT heat trasnfer equation with December Trial Data: 2hr at RT")
+
+
+
+
+#Validation of Refrigeration.
+
+Dec_Day1<-read.csv("March_Day1_Temps.csv")
+
+RT_Temp_DecD1<-Dec_Day1$tempR
+MT_Temp_DecD1<-Dec_Day1$tempM
+
+PredictedMT_Temp_DecD1<-predict_temp_fromProf(Time_Temp_Prof = RT_Temp_DecD1, Initial_Temp = 18.1, h_condition = h_ref)
+
+calc_rmse(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
+
 plot(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
 
+DF_val_rt<-data.frame("Observed" = MT_Temp_DecD1, 
+                      "Predicted" = PredictedMT_Temp_DecD1)
+
+ggplot(aes(x = Predicted, y = Observed),data = DF_val_rt)+
+  geom_point()+
+  geom_line()+
+  theme_bw()+
+  labs(x = "Predicted Milk Internal Temperature °C",y = "Observed Milk Internal Temperature °C", title = "Validation of RT heat trasnfer equation with December Trial Data: 2hr at RT")
+
+
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+Actual_Temps<-read.csv("Validation Milk Temps.csv")
+
+Simulated_RT<-Time_Temp_Creation_Var(Total_Time = 125, Interval = 1, Mean_Temperature = 22.1, SD_Temperature = 0.77)
+Simulated_Ref<-Time_Temp_Creation_Var(Total_Time = 300, Interval = 1, Mean_Temperature = 3.71, SD_Temperature = 1.04)
+
+
+Simulated_M_1<-predict_temp_fromProf(Time_Temp_Prof = Simulated_RT$tempM, Initial_Temp = 4.2, h_condition = h_RTB)
+Simulated_M_2<-predict_temp_fromProf(Time_Temp_Prof = Simulated_Ref$tempM, Initial_Temp = 17.98, h_condition = h_ref)
+
+Full_df<-data.frame("Simulated Temps" = c(Simulated_M_1,Simulated_M_2),
+                    "Actual Temps" = Actual_Temps,
+                    "Time" = c(1:427))
+
+Full_df_melted<-melt(Full_df, id.vars = "Time")
+
+ggplot(aes(x = Time, y= value, color= variable ), data = Full_df_melted)+
+  geom_point()
+
+predict_temp(Initial_Temp = 4.5,Room_temp = 25, Total_min = 600, h_condition = h_RTB)
+plot(predict_temp(Initial_Temp = 18,Room_temp = 8, Total_min = 600, h_condition = h_ref))
+
+
+```
+
 
