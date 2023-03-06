@@ -16,7 +16,7 @@ A <- 0.004275 #m2
 
 #Negative Slopes
 Neg_Slope_RTB<-(-0.0124)
-Neg_Slope_Ref<-(-0.0099)
+Neg_Slope_Ref<-(-0.0141)
 
 
 get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
@@ -136,7 +136,9 @@ ggplot(aes(x = Predicted, y = Observed),data = DF_val_rt)+
 
 #Validation of Refrigeration.
 
+#Dec_Day1<-read.csv("March_6_Ref_Validation.csv")
 Dec_Day1<-read.csv("March_Day1_Temps.csv")
+
 
 RT_Temp_DecD1<-Dec_Day1$tempR
 MT_Temp_DecD1<-Dec_Day1$tempM
@@ -152,9 +154,10 @@ DF_val_rt<-data.frame("Observed" = MT_Temp_DecD1,
 
 ggplot(aes(x = Predicted, y = Observed),data = DF_val_rt)+
   geom_point()+
+  geom_abline(slope=1, intercept=0)+
   geom_line()+
   theme_bw()+
-  labs(x = "Predicted Milk Internal Temperature °C",y = "Observed Milk Internal Temperature °C", title = "Validation of RT heat trasnfer equation with December Trial Data: 2hr at RT")
+  labs(x = "Predicted Milk Internal Temperature °C",y = "Observed Milk Internal Temperature °C", title = "Validation of Refrigeration heat transfer equation with MarchData 2hr at RT")
 
 
 ```
