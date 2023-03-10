@@ -34,7 +34,7 @@
   #Initial Number of fruit
   Initial_Fr<-50 #Number of fruit 
   Initial_Pss<-50 #number of Packaged shelf stable
-  Initial_Pre<-50 #number of packaged refrigirated
+  Initial_Pre<-50 #number of packaged refrigerated
   
   #row size in selection table
   Row_size_Fr<-20
@@ -42,7 +42,7 @@
   Row_size_Pre<-20  
   
   
-# Inputs for Calculation if student is contminated -------------------------
+# Inputs for Calculation if student is contaminated -------------------------
   
 
   
@@ -68,7 +68,7 @@
 
 # Inputs Behavioral Probabilities -----------------------------------------
 
-  #Porbability of Student touching other line items before picking their food. 
+  #Probability of Student touching other line items before picking their food. 
   Pr_touch_Food<-1
   
   #Pr
@@ -84,7 +84,7 @@
   Pr_select_Pre<-.96 #0.78 other source
 
 
-  #Proabbility of consuming Food
+  #Probability of consuming Food
   Pr_eat_Fr<-.63 #.48  
   Pr_eat_Pss<-.627 #.77
   Pr_eat_Pre<-.674 #.85

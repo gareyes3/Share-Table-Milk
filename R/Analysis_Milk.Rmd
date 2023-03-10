@@ -65,7 +65,7 @@ source("Main_Loops2.R")
   AnalysysDF<-Individual_Analysis_Fr
 ```
 
-##Start of the Mulk Analysis based on outputs'
+##Start of the Milk Analysis based on outputs'
 
 ###How many Items ended up in which locations
 ```{r}
@@ -154,6 +154,7 @@ AnalysysDF %>%
 
 
 ```
+
 ```{r}
 
 Normal<-AnalysysDF %>% 
