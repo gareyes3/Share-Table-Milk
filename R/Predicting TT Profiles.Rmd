@@ -51,7 +51,7 @@ get_temp(h = h_ref, To = 17, Tinf =  4, time = 120)
 #Constant outside temperature
 
 predict_temp<-function(Initial_Temp, Room_temp, Total_min, h_condition){
-  #Returns a vector of tempepratures
+  #Returns a vector of temperatures
   Total_Time_min = Total_min
   Temp_Initial = Initial_Temp
   T_inf = Room_temp

@@ -18,6 +18,14 @@ get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
   return(- neg_h)
 } 
 
+get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236 ){
+  #Time in minutes
+  #Tinf = External Temp
+  #To = Initial temperature of the milk
+  # h = convection trans coeff for that codition
+  return (exp(-(h*A/rho*C*V)*(time))*(To-Tinf)+Tinf)
+}
+
 #Function to get the temperature profile from an external temperature vector
 predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
   Time_Temp_Profile<-Time_Temp_Prof
@@ -86,7 +94,7 @@ Create_Temperature_Profile_days<-function(First_Cond, Second_Cond,
 Time_Temp_Df<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
                                 Second_Cond = "Refrigeration", 
                                 First_Cond_Total_Time = 124,
-                                Second_Cond_Total_Time = 1194,
+                                Second_Cond_Total_Time = 1314,
                                 First_Cond_Mean_Temperature = 22.1, 
                                 First_Cond_SD_Temperature = 0.77,
                                 Second_Cond_Mean_Temperature= 3.71, 
@@ -94,19 +102,34 @@ Time_Temp_Df<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                 Interval  =1, 
                                 Cycles = 5)
 
-
-
-for (i in 1:length(ST_Condition_DF$Min)){
-  Time_Temp_Profile = ST_Condition_DF$Rtemp
-  Temp_Initial = 4.2
-  T_inf<-Time_Temp_Profile[i]
-  if (i == 1){
-    New_Temp = Temp_Initial
-  }else if (i == 2){
-    New_Temp = get_temp(h = h_condition, To = Temp_Initial, Tinf =  T_inf, time = 1)
-  }else{
-    New_Temp = get_temp(h = h_condition, To = New_Temp, Tinf =  T_inf, time = 1)
+Temp_Milk_Vectors<-c()
+Temp_Initial = 4.2
+Temp_Milk_Vectors<-c(Temp_Initial)
+T_inf = Time_Temp_Df$Rtemp[1]
+for (i in 2:length(Time_Temp_Df$Rtemp)){
+  #Selecting the condition that applies
+  if (Time_Temp_Df$Condition[i] == "Room Temp"){
+    h_condition = h_RTB
+  } else if (Time_Temp_Df$Condition[i] == "Refrigeration"){
+    h_condition = h_ref
   }
-  Temp_V<-c(Temp_V, New_Temp)
+  #Checking if condition changed
+  if(Time_Temp_Df$Condition[i] != Time_Temp_Df$Condition[i-1]){
+    Condition_Change = 1
+    T_inf = Time_Temp_Df$Rtemp[i]
+  } else {
+    Condition_Change = 0
+  }
+  
+  #Predicting the new temperature
+  New_Temp = get_temp(h = h_condition, To = New_Temp, Tinf =  T_inf, time = 1)
+  Temp_Milk_Vectors<-c(Temp_Milk_Vectors,New_Temp)
 }
+
+plot(Temp_Milk_Vectors, type = "S", col = "red")
+lines(Time_Temp_Df$Rtemp, type = "S", col = "blue")
+
+
+
+
 

@@ -408,7 +408,7 @@ if(Sim_PRE==1){
       Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
     }
     
-    #Here commendted out the Share table items because it is added through the process. 
+    #Here commented out the Share table items because it is added through the process. 
     if(No_Left_ST_Pre>0){
       if(Share_Table_YN==1){
         #Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Service)
