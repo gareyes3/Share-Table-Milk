@@ -190,14 +190,13 @@ Main_Loop<-function(){
                                             Item="PRE")
         Pre_Data.Frame<-OutputFCC$Data.Frame
         Cont_Student<-OutputFCC$Cont_Student
-        #Milk Spoilege Submodel
+        #Milk Spoilage Submodel
         if (Milk_Spoilage_YN==TRUE){
           Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
                                          Item_Picked =Pre_Picked , 
                                          Temp = Temp_SL,
                                          Time = Time_SL)
         }
-        #Pre_Data.Frame<-Func_Allergen_CC(Pre_Data.Frame,Pre_Picked) #Adding Allergen Contamination from touch.
       }
     }
   } #End of Sim Pre
@@ -224,8 +223,6 @@ Main_Loop<-function(){
     }#end of pick statement
   } #End of Sim Fruit Statement.
   
-
-  
   if (Sim_PSS==1){ #Pss------------------------------------------------------------------
 
     #Did student consume the Pss
@@ -249,7 +246,7 @@ Main_Loop<-function(){
     #Did student consume the Pre
     Eat_YN_Pre<-ifelse(runif(1)<Pr_eat_Pre,1,0)
     
-    #Changind Data Frame for consumption of Pre
+    #Changing Data Frame for consumption of Pre
     if(Sum_Pre_Available>0){
       if(Pick_YN_Pre==1){
         OutputFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_Pre,
@@ -259,7 +256,7 @@ Main_Loop<-function(){
                                   Location ="Selection Table")
         Cont_Student<-OutputFEPre$Cont_Student
         Pre_Data.Frame<-OutputFEPre$DF
-        #Milk Spoilege Submodel
+        #Milk Spoilage Sub model for time during regarless of if item got consumer or not
         if (Milk_Spoilage_YN==TRUE){
                   Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
                                        Item_Picked =Pre_Picked , 
@@ -287,7 +284,7 @@ Main_Loop<-function(){
 
     if(Student_Allowed==1){
       
-      #Hand_Sanitizing or handwashing Station for allowed student. 
+      #Hand_Sanitizing or hand washing Station for allowed student. 
       if (Hawashing_Station_ST == 1){
         LogRed_Prior = rpert(1,0.17,0.45,6,shape = 4)
         Cont_Student<-round(Cont_Student*10^-LogRed_Prior,0)
@@ -298,7 +295,7 @@ Main_Loop<-function(){
         Cont_Student<-round(Cont_Student*10^-LogRed_Prior,0)
       }
 
-      #Proability of the student sharing their food. 
+      #Probability of the student sharing their food. 
       Share_YN_Food<-ifelse(runif(1)<Pr_share_Food,1,0)
       
       #Fruit--------------------------------------------------------------------
@@ -310,7 +307,7 @@ Main_Loop<-function(){
 
       
       #Pss--------------------------------------------------------------------
-      if (Sim_PSS){
+      if (Sim_PSS==1){
         if(Pick_YN_Pss==1 && Sum_Pss_Available>0){  
           Pss_Data.Frame<-Func_Shared(DF = Pss_Data.Frame, Item_Picked = Pss_Picked,Share_YN_Food=Share_YN_Food, Item ="Pss")
         }
@@ -318,7 +315,7 @@ Main_Loop<-function(){
 
       
       #Pre--------------------------------------------------------------------
-      if(Sim_PRE){
+      if(Sim_PRE==1){
         if(Pick_YN_Pre==1 && Sum_Pre_Available>0){    
           Pre_Data.Frame<-Func_Shared(DF = Pre_Data.Frame, Item_Picked = Pre_Picked,Share_YN_Food=Share_YN_Food, Item ="Pre")
         } 
@@ -479,7 +476,7 @@ Main_Loop<-function(){
                                                    Item="PRE")
             Pre_Data.Frame<-OutputFCC_ST$Data.Frame
             Cont_Student<-OutputFCC_ST$Cont_Student
-            #Milk Spoilege Submodel
+            #Milk Spoilage Sub model
             if (Milk_Spoilage_YN==TRUE){
               Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
                                              Item_Picked =Pre_ST_Picked , 
@@ -489,7 +486,7 @@ Main_Loop<-function(){
             #Pre_Data.Frame<-Func_Allergen_CC(Pre_Data.Frame,Pre_ST_Picked) #Adding Allergen Contamination
           }
         }#End of if there is st items loop
-      } #End of if Sim PRe statemnt
+      } #End of if Sim PRe statement
 
       
       #CONSUMPTION OF ST ITEMS ===================================================================================================== 
@@ -550,7 +547,6 @@ Main_Loop<-function(){
             Cont_Student<-OutputsFEPre$Cont_Student
             Pre_Data.Frame<-OutputsFEPre$DF
             #We might need a milk Step here. 
-       
           }
         }
       } #End of the Sim Pre if

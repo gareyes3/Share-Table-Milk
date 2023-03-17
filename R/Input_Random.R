@@ -13,7 +13,7 @@ Inputs_ICont_Student<-list(
   LogRed = rpert(1,0.17,0.45,6,shape = 4)
 )
 
-# Transfer Efficiencies ---------------------------------------------------
+# Transfer Efficiency ---------------------------------------------------
 
 Res_Trans<-1.97
 
@@ -79,16 +79,16 @@ if(salmonella ==1){
   
  #Times and Temperatures for Spoilage: 
 
-  #Storage Infromation for growth
+  #Storage Information for growth
   
   #TEMP---------------------------------------
   
   #Temperature at Share Table
-  Temp_RT<-26 #25 worse case scenario
+  Temp_RT<-26 # worse case scenario
   
   Temp_ST<-26 #runif(1,20.5,26)
   
-  #Temperature at refrigeration #OVernight
+  #Temperature at refrigeration #Overnight
   Temp_Ref<-runif(1,5,6) #runif(1,1,3)#
   
   #Temperature Selection Line
@@ -112,7 +112,7 @@ if(salmonella ==1){
   Time_ST<-runif(1,8,10) /60 #min
   
   #Time over night storage
-  Time_ON<-20
+  Time_ON<-22
   
   #Time of each service all in hours. 
   Time_Service<-30/60

@@ -249,12 +249,12 @@ if (Sim_PRE==1){
   
   # GROWTH SPOILAGE MILK 
   if (Milk_Spoilage_YN==TRUE){
-    #GROWTH oVERNIGHT Selection
+    #GROWTH overnights Selection
     if(No_Left_Selection_Pre>0){
       Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_Selection_Pre, Time_ON,Growth_variability)
       Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
     }
-    #GROWTH oVERNIGHT Share Table
+    #GROWTH overnights Share Table
     if(No_Left_ST_Pre>0){
       if( Share_Table_YN==1){
         Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_ST_Pre, Time_ON,Growth_variability)

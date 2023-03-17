@@ -185,6 +185,7 @@ Func_Growth_Sto_Norovirus<-function(Condition,DF,TimeVar){
 # Spoilage of Organisms. ----------------------------------------------
 #No variability
 
+#this is for applying it to the whole dataframe
 Func_Growth_Milk_Spoilage<-function(Temp,DF,TimeVar, GrowthVar){
   b<-0.03578
   Tmin<-(-1.19)
@@ -220,7 +221,7 @@ Func_Time_Temp<-function(DF, Item_Picked, Temp, Time){
   Con_Final<-N + Growth #Growth in log. 
   #Refreshing the contamination in the RoW
   DF[Item_Picked,colnames(DF)== "SpoilageCon"]<-as.numeric(Con_Final)
-  #Adding time to the Dataframe? 
+  #Adding time to the Data frame
   Current_Time = DF[Item_Picked,colnames(DF)== "TotTime"]
   DF[Item_Picked,colnames(DF)== "TotTime"]<-Current_Time+Time
   DF[Item_Picked,colnames(DF)== "PickTS"]<-TRUE

@@ -400,7 +400,7 @@ if(Sim_PRE==1){
     }
   }
   
-  # Adding Spilage Growth for Milk ------------------------------------------
+  # Adding Spoilage Growth for Milk ------------------------------------------
   if (Milk_Spoilage_YN==TRUE){
     #After Services
     if(No_Left_Selection_Pre>0){
