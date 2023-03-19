@@ -206,9 +206,13 @@ if (Sim_PRE==1){
   # OVERNIGHT TIME TO ITEMS 
   
   #Overnight Pre Selection
-  Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_ON)
-  #Overnight Pre Selection Table
-  Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_ON)
+  #Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_ON)
+  Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
+                                      Time = 1315)
+  #Overnight Pre share table Table
+  #Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_ON)
+  Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
+                                      Time = 1315)
   
   #GROWTH OVERNIGHT STORAGE
 
@@ -247,18 +251,18 @@ if (Sim_PRE==1){
     }
   }
   
-  # GROWTH SPOILAGE MILK 
+  # GROWTH SPOILAGE MILK  #Commented out because we are doing differently now. Doing based on time. 
   if (Milk_Spoilage_YN==TRUE){
-    #GROWTH overnights Selection
-    if(No_Left_Selection_Pre>0){
-      Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_Selection_Pre, Time_ON,Growth_variability)
-      Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
-    }
+    # #GROWTH overnights Selection
+    # if(No_Left_Selection_Pre>0){
+    #   Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_Selection_Pre, Time_ON,Growth_variability)
+    #   Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
+    # }
     #GROWTH overnights Share Table
     if(No_Left_ST_Pre>0){
       if( Share_Table_YN==1){
-        Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_ST_Pre, Time_ON,Growth_variability)
-        Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+        # Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_Ref, Left_ST_Pre, Time_ON,Growth_variability)
+        # Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
       }
     }
   }

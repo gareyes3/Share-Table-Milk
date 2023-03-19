@@ -228,6 +228,22 @@ Func_Time_Temp<-function(DF, Item_Picked, Temp, Time){
   return(DF)
 }
 
+#Adding time to consumed milk milks. 
+Func_Adding_Time_ConItem<-function(DF, Item_Picked, Time){
+  #Adding time to the Data frame
+  Current_Time = DF[Item_Picked,colnames(DF)== "TotTime"]
+  DF[Item_Picked,colnames(DF)== "TotTime"]<-Current_Time+Time
+  #DF[Item_Picked,colnames(DF)== "PickTS"]<-TRUE
+  return(DF)
+}
+
+Func_Adding_Time_alldf<-function(DF, Time){
+  #Adding time to the Data frame
+  Current_Time = DF[,colnames(DF)== "TotTime"]
+  DF[,colnames(DF)== "TotTime"]<-Current_Time+Time
+  #DF[,colnames(DF)== "PickTS"]<-TRUE
+  return(DF)
+}
 
 
 #Dose Response Function----------------------------------------
