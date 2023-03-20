@@ -280,7 +280,7 @@ Func_FoodCont_Vector<-function(DF,Vector){
 }
 
 Func_Adding_Initial_MilkCOnt<-function(df){
-  df$SpoilageCon<-rtri(nrow(df),min=0,mode=1,max=4)
+  df$SpoilageCon<-rnorm(nrow(df), mean = 0.38, sd= 1.1)#rtri(nrow(df),min=0,mode=1,max=4)
   df$InSpoilageCon<-df$SpoilageCon
   # for (i in 1:nrow(df)){
   #   Levels<-rtri(1,min=0,mode=1,max=4)
