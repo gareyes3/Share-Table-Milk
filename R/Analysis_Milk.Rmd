@@ -45,9 +45,10 @@ source("Util_Output_Functions.R")
 #Generating Change from T and Temp Data
 ```{r}
 Time_Temp_Profile<-read_csv("5Days-Adjusted-Temp-2hr-Cycles.csv")
+Time_Temp_Profile_RC<-read_csv("5Days-Adjusted-Temp-RC.csv")
 ```
 
-## Fucntions for growth and lag phases 
+## Functions for growth and lag phases 
 ```{r}
 #Function for growth and lag phase
 new_growth_rate<-function(newTemp, oldMu,oldTemp = 6, T0 = -4.15){
@@ -108,12 +109,20 @@ Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,Interval){
 }
 
 
+```
+
+#Calculating changes over time for milk in different conditions. 
+```{r}
+#Growth of milk over the 2 hr periods
 Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = 0 ,Time_Temp_df = Time_Temp_Profile,Interval = 1/60)
 
 Changes_Over_Time<-Output_Milk[[3]]
 
-Changes_Over_Time[1419]
+plot(Changes_Over_Time)
 
+#Growth of milk using overnight storage
+Output_Milk_RC<-Func_Growth_LagCon(In_Lag_Consumed = 0 ,Time_Temp_df =Time_Temp_Profile_RC,Interval = 1/60)
+Changes_Over_Time_RC<-Output_Milk_RC[[3]]
 ```
 
 
@@ -127,6 +136,8 @@ source("Main_Loops2.R")
 
 
 ```{r}
+#AnalysysDF_RON<-AnalysysDF
+
   #SummaryLisr = List_Sens_Fr
   #FoodType= = "Fruit"
   #1. Start from here
@@ -139,6 +150,9 @@ source("Main_Loops2.R")
     filter(TotServices==max(TotServices))
   #3
   AnalysysDF<-Individual_Analysis_Fr
+  
+  
+  AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
 ```
 
 
@@ -224,13 +238,13 @@ AnalysysDF %>%
 #Relationship between Time and APC Levels
 ```{r}
 AnalysysDF %>% 
-  ggplot(aes(y = SpoilageCon, x= TotTime, fill= ConsumedAt))+
+  ggplot(aes(y = SpoilageCon, x= TotTime, fill= Shared))+
   geom_point( size =2, shape = 21, alpha = 0.7, color = "black")+
   geom_hline(yintercept =6)+
   facet_wrap(.~Location)+
-  labs(x = "Time in Cafeteria System (Min)", y = "Pseudomonas Poae Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items- Week")+
+  labs(x = "Time in Cafeteria System (Min)", y = "Pseudomonas Poae Population Log CFU/ml", title= "Pseudomonas Poae Population vs total time in system")+
   scale_y_continuous()+
-  scale_x_log10(n.breaks= 10)+
+  #scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
@@ -239,18 +253,16 @@ AnalysysDF %>%
 #Change in Contamination Levels due to Time
   ##Need to figure out a way to track contamination change. 
 ```{r}
-
 AnalysysDF %>% 
   mutate(Change_Cont = SpoilageCon-InSpoilageCon) %>% 
-  ggplot(aes(y = Change_Cont, x= TotTime, color = ConsumedAt))+
-  geom_point( size =2, fill = "skyblue", shape = 21, alpha = 0.7, fill = "blue")+
+  ggplot(aes(y = Change_Cont, x= TotTime, fill = Shared))+
+  geom_point( size =2, shape = 21, alpha = 0.7)+
   facet_wrap(.~Location, scales = "free_x")+
-  labs(x = "Log Time in System (min)", y = "Change Phsychotroph Population Log CFU/ml", title= "Psychotrophic Population vs total time in system, milk Items")+
+  labs(x = "Time in System (min)", y = "Change Pseudomonas Poae Population Log CFU/ml", title= "Pseudomonas Poae Population vs total time in system, milk Items")+
   scale_y_continuous()+
   scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
-
 
 ```
 
@@ -268,7 +280,10 @@ MostExtreme<-AnalysysDF %>%
 mean(MostExtreme$Change_Cont)
 quantile(MostExtreme$Change_Cont)
 
+mean((AnalysysDF$TotTime))
+quantile(AnalysysDF$TotTime)
 
+sum(AnalysysDF$Shared == "Yes")/ length(AnalysysDF$Shared)
 
 ```
 
