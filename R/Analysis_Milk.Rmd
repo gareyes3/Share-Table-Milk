@@ -373,8 +373,18 @@ quantile(AnalysysDF$TotTime, 0.975)
 sum(AnalysysDF$Shared == "Yes")/ length(AnalysysDF$Shared)
 
 AnalysysDF %>% 
+  filter(Shared == "Yes") %>% 
+  summarize(median(TotTime), q25 = quantile(TotTime, 0.025), q975 = quantile(TotTime, 0.975))
+
+AnalysysDF %>% 
   filter(Shared == "No") %>% 
-  summarise(mean(Total_time), q25 = quantile(TotTime, 0.025), q975 = quantile(TotTime, 0.975))
+  summarize(median(SpoilageCon - InSpoilageCon), q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), q975 = quantile(SpoilageCon - InSpoilageCon, 0.975))
+
+AnalysysDF %>% 
+  #filter(Shared == "No") %>% 
+  summarize(sum(SpoilageCon>6))
+
+1/114949 *100
 
 ```
 
