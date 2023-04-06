@@ -340,16 +340,15 @@ AnalysysDF %>%
   mutate(Change_Cont = SpoilageCon-InSpoilageCon) %>% 
   ggplot(aes(y = Change_Cont, x= TotTime, fill = Shared))+
   geom_point( size =2, shape = 21, alpha = 0.7)+
-geom_text(aes(200,6.5,label = "Quality Threshold = 6.0"), color = "black", size  = 3,check_overlap = TRUE)+
-  geom_hline(yintercept =6)+
-  facet_wrap(.~Location, scales = "free_x")+
-  labs(x = "Time in System (min)", y = expression("Pseudomonas Poae Population log"[10]~"CFU/ml"), title= "Pseudomonas Poae Population vs total time in system, milk Items")+
+  facet_wrap(.~Location)+
+  labs(x = "Residence Time in Cafeteria System (min)", y = expression("Pseudomonas Poae Population Change log"[10]~"CFU/ml"))+
   scale_y_continuous()+
   scale_x_log10(n.breaks= 10)+
   theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw()
+  theme_bw()+
+  theme(legend.position="bottom")
 
-ggsave("Predicted vs Experimental.jpg", width =7, height = 5, units = "in", dpi = 300)
+ggsave("growth over time.jpg", width =8, height = 5, units = "in", dpi = 300)
 
 
 ```
@@ -369,9 +368,13 @@ mean(MostExtreme$Change_Cont)
 quantile(MostExtreme$Change_Cont)
 
 mean((AnalysysDF$TotTime))
-quantile(AnalysysDF$TotTime)
+quantile(AnalysysDF$TotTime, 0.975)
 
 sum(AnalysysDF$Shared == "Yes")/ length(AnalysysDF$Shared)
+
+AnalysysDF %>% 
+  filter(Shared == "No") %>% 
+  summarise(mean(Total_time), q25 = quantile(TotTime, 0.025), q975 = quantile(TotTime, 0.975))
 
 ```
 
