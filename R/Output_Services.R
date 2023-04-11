@@ -407,7 +407,7 @@ if(Sim_PRE==1){
       #Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service,Growth_variability)
       #Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
       Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
-                                                 Time = 25)
+                                                 Time = 20)
     }
     
     #Here commented out the Share table items because it is added through the process. 
@@ -417,21 +417,26 @@ if(Sim_PRE==1){
         #Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
         #Adding time to items that were left in ST
         Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
-                                                   Time = 25)
+                                                   Time = 20)
       }
     }
     
     #Commenting these two out since we are assuming just 25 mins straight. 
+    
     #after Turnaround time
     if(No_Left_Selection_Pre>0){
       #Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_Selection_Pre, Time_Turnaround,Growth_variability)
       #Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
+      Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
+                                                 Time = 5)
     }
     
     if(No_Left_ST_Pre>0){
       if(Share_Table_YN==1){
         #Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Turnaround,Growth_variability)
         #Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+        Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
+                                            Time = 5)
       }
     }
   }

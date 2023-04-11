@@ -250,10 +250,12 @@ Main_Loop<-function(){
       if(Pick_YN_Pre==1){
         
         #if student consumed pre, then adding consumption time #NEW
-        if ( Eat_YN_Pre==1){
+        if (Eat_YN_Pre==1){
           Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                                    Item_Picked = Pre_Picked, 
-                                                   Time = round(runif(1,1,25),0))
+                                                   Time = round(runif(1,1,20),0))
+          
+          
         }
         
         OutputFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_Pre,
@@ -263,6 +265,7 @@ Main_Loop<-function(){
                                   Location ="Selection Table")
         Cont_Student<-OutputFEPre$Cont_Student
         Pre_Data.Frame<-OutputFEPre$DF
+        
         #Milk Spoilage Sub model for time during regardless of if item got consumer or not
         # if (Milk_Spoilage_YN==TRUE){
         #           Pre_Data.Frame<-Func_Time_Temp(DF =Pre_Data.Frame , 
@@ -317,6 +320,7 @@ Main_Loop<-function(){
       if (Sim_PSS==1){
         if(Pick_YN_Pss==1 && Sum_Pss_Available>0){  
           Pss_Data.Frame<-Func_Shared(DF = Pss_Data.Frame, Item_Picked = Pss_Picked,Share_YN_Food=Share_YN_Food, Item ="Pss")
+          
         }
       }
 
@@ -325,6 +329,12 @@ Main_Loop<-function(){
       if(Sim_PRE==1){
         if(Pick_YN_Pre==1 && Sum_Pre_Available>0){    
           Pre_Data.Frame<-Func_Shared(DF = Pre_Data.Frame, Item_Picked = Pre_Picked,Share_YN_Food=Share_YN_Food, Item ="Pre")
+          if (Pre_Data.Frame[Pre_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Shared"){
+            Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
+                                     Item_Picked = Pre_Picked, 
+                                     Time = round(runif(1,1,20),0))
+          }
+           
         } 
       }
     
@@ -548,7 +558,7 @@ Main_Loop<-function(){
             if (Eat_YN_ST_Pre==1){
               Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                                        Item_Picked = Pre_ST_Picked, 
-                                                       Time = round(runif(1,1,25),0)) #time in minutes. 
+                                                       Time = round(runif(1,1,20),0)) #time in minutes. 
             }
             
             #Changing Data Frame so it updates when student consumes fruit.

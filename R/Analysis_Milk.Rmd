@@ -226,6 +226,7 @@ source("Main_Loops2.R")
   #3
   AnalysysDF<-Individual_Analysis_Fr
   
+  #Adding the time of the services for those milks that were added to the service line during the lunch period. 
   AnalysysDF[AnalysysDF$Initial.Service>1,]
   AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*25
 
