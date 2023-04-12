@@ -1,7 +1,7 @@
 
 #Week Iteration =============================================================
 for (l in 1:Sens_Iterations){
-  source("Input_RandomWeeks.R") #To change Methods every Week. eh Handwashing, Hand sanitizer.
+  source("Input_RandomWeeks.R") #To change Methods every Week. eh Hand washing, Hand sanitizer.
   #Day Iteration=============================================================
   for (k in 1:Food_Days){
     #Service Iteration ======================================================
@@ -39,7 +39,7 @@ for (l in 1:Sens_Iterations){
         Fr_Data.Frame<-func_Add_Services(Fr_Data.Frame)
         #Adding the data to the datalist
         datalistFr[[j]]<-Fr_Data.Frame
-        #SensitivityList
+        #Sensitivity List
         
       }
       if (Sim_PSS == 1){

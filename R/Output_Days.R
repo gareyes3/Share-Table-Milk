@@ -205,14 +205,39 @@ if (Sim_PRE==1){
   
   # OVERNIGHT TIME TO ITEMS 
   
-  #Overnight Pre Selection
-  #Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_ON)
-  Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
-                                      Time = 1315)
-  #Overnight Pre share table Table
-  #Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_ON)
-  Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
-                                      Time = 1315)
+  if (Milk_Spoilage_YN==TRUE){
+    #Adding final service end of day time
+    #print(paste0(j, "service-full"))
+    #Adding time or Milk spoilage to items that are leftover in service line.
+    if(No_Left_Selection_Pre>0){
+      #Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service,Growth_variability)
+      #Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
+      Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
+                                                 Time = 20)
+    }
+    
+    #Here commented out the Share table items because it is added through the process. 
+    if(No_Left_ST_Pre>0){
+      if(Share_Table_YN==1){
+        #Left_ST_Pre<-Func_Growth_Milk_Spoilage(Temp_RT, Left_ST_Pre, Time_Service) #comment out if accounted in service
+        #Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
+        #Adding time to items that were left in ST
+        Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
+                                            Time = 20)
+      }
+    }
+    
+    #Overnight Pre Selection
+    #Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_ON)
+    Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
+                                               Time = 1320)  #overnight + last 5 minutes of service
+    #Overnight Pre share table Table
+    #Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_ON)
+    Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
+                                        Time = 1320) #overnight + last 5 minutes of service
+  }
+  
+
   
   #GROWTH OVERNIGHT STORAGE
 

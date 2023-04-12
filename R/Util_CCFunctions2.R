@@ -134,7 +134,7 @@ Func_Eat_Pre<-function(Eat_YN_Item,DF, Item_Picked, Item,Location){
     DF[Item_Picked,colnames(DF)== "Location"]<-"Not Consumed"  
     DF[Item_Picked,colnames(DF)=="History"]<-paste(DF[Item_Picked,colnames(DF)=="History"], "NotConsumed")
     
-    #Contaminationat Pre Container
+    #Contamination at Pre Container
     OutputsCCF<-Func_Cross_Contamination(Cont_Student=Cont_Student,Data.Frame=DF, Item_Picked= Item_Picked, Item=Item)
     Cont_Student<-OutputsCCF$Cont_Student
     DF<-OutputsCCF$Data.Frame
