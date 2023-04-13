@@ -44,8 +44,8 @@ source("Util_Output_Functions.R")
 
 #Generating Change from T and Temp Data
 ```{r}
-Time_Temp_Profile<-read_csv("5-Day-Milk-Data.csv")
-Time_Temp_Profile_RC<-read_csv("5Days-Adjusted-Temp-RC.csv")
+Time_Temp_Profile<-read.csv("5-Day-Milk-Data.csv")
+Time_Temp_Profile_RC<-read.csv("5Days-Adjusted-Temp-RC.csv")
 ```
 
 ## Functions for growth and lag phases 

@@ -329,7 +329,7 @@ Main_Loop<-function(){
       if(Sim_PRE==1){
         if(Pick_YN_Pre==1 && Sum_Pre_Available>0){    
           Pre_Data.Frame<-Func_Shared(DF = Pre_Data.Frame, Item_Picked = Pre_Picked,Share_YN_Food=Share_YN_Food, Item ="Pre")
-          if (Pre_Data.Frame[Pre_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Shared"){
+          if ((Pre_Data.Frame[Pre_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Shared")|(Pre_Data.Frame[Pre_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Consumed")){
             Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                      Item_Picked = Pre_Picked, 
                                      Time = round(runif(1,1,20),0))
@@ -559,9 +559,9 @@ Main_Loop<-function(){
               Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                                        Item_Picked = Pre_ST_Picked, 
                                                        Time = round(runif(1,1,20),0)) #time in minutes. 
-            }
+            } 
             
-            #Changing Data Frame so it updates when student consumes fruit.
+            #Changing Data Frame so it updates when student consumes milk.
             OutputsFEPre<-Func_Eat_Pre(Eat_YN_Item = Eat_YN_ST_Pre, 
                                        DF = Pre_Data.Frame,
                                        Item_Picked = Pre_ST_Picked,
@@ -569,9 +569,29 @@ Main_Loop<-function(){
                                        Location = "Share Table")
             Cont_Student<-OutputsFEPre$Cont_Student
             Pre_Data.Frame<-OutputsFEPre$DF
+            
+            if (Eat_YN_ST_Pre== 0){ 
+              #Deciding to share to ST one more time if they decide not to eat, if not discard
+              if(Pick_ST_YN_Pre==1){  
+                #print("this happened")
+                Pre_Data.Frame<-Func_Shared(DF = Pre_Data.Frame, Item_Picked = Pre_ST_Picked,Share_YN_Food=Share_YN_Food, Item ="Pre")
+                #print(Pre_Data.Frame[Pre_ST_Picked,colnames(Pre_Data.Frame)== "Location"])
+                if (Pre_Data.Frame[Pre_ST_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Shared"){
+                  #print("happened")
+                  Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
+                                                           Item_Picked = Pre_ST_Picked, 
+                                                           Time = round(runif(1,1,20),0))
+                }
+                
+              }
+            }
+            
           }
+          
         }
       } #End of the Sim Pre if
+      
+      
    
     }#End of ill student exclusion loop  
   }#end of Share Table  toggle loop
