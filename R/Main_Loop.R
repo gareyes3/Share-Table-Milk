@@ -253,7 +253,7 @@ Main_Loop<-function(){
         if (Eat_YN_Pre==1){
           Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                                    Item_Picked = Pre_Picked, 
-                                                   Time = round(runif(1,1,20),0))
+                                                   Time = round(runif(1,1,50),0))
           
           
         }
@@ -332,7 +332,7 @@ Main_Loop<-function(){
           if ((Pre_Data.Frame[Pre_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Shared")|(Pre_Data.Frame[Pre_Picked,colnames(Pre_Data.Frame)== "Location"]=="Not Consumed")){
             Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                      Item_Picked = Pre_Picked, 
-                                     Time = round(runif(1,1,20),0))
+                                     Time = round(runif(1,1,50),0))
           }
            
         } 
@@ -558,7 +558,7 @@ Main_Loop<-function(){
             if (Eat_YN_ST_Pre==1){
               Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                                        Item_Picked = Pre_ST_Picked, 
-                                                       Time = round(runif(1,1,20),0)) #time in minutes. 
+                                                       Time = round(runif(1,1,50),0)) #time in minutes. 
             } 
             
             #Changing Data Frame so it updates when student consumes milk.
@@ -580,7 +580,7 @@ Main_Loop<-function(){
                   #print("happened")
                   Pre_Data.Frame<-Func_Adding_Time_ConItem(DF = Pre_Data.Frame, 
                                                            Item_Picked = Pre_ST_Picked, 
-                                                           Time = round(runif(1,1,20),0))
+                                                           Time = round(runif(1,1,50),0))
                 }
                 
               }

@@ -229,7 +229,7 @@ source("Main_Loops2.R")
   
   #Adding the time of the services for those milks that were added to the service line during the lunch period. 
   AnalysysDF[AnalysysDF$Initial.Service>1,]
-  AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*25
+  AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*75
 
   
   AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
@@ -336,13 +336,14 @@ geom_text(aes(100,6.5,label = "Quality Threshold = 6.0"), color = "black", size 
   theme(plot.title = element_text(hjust = 0.5))+
   theme(axis.text.x = element_text(angle = -45, vjust = -0.3))+
   theme(legend.position="bottom")+
-  geom_segment(aes(x = 1440 , y = -Inf, xend = 1440, yend = 6), linetype = "dotted")+
-    geom_segment(aes(x = 2880 , y = -Inf, xend = 2880, yend = 6), linetype = "dotted") +
-    geom_segment(aes(x = 4320 , y = -Inf, xend = 4320, yend = 6), linetype = "dotted") +
-    geom_segment(aes(x = 0 , y = -Inf, xend = 0, yend = 6), linetype = "dotted")  +
-    geom_segment(aes(x = 5760 , y = -Inf, xend = 5760, yend = 6), linetype = "dotted") 
+  geom_segment(aes(x = 1440 , y = -Inf, xend = 1440, yend = 6,linetype = "Start of Day"))+
+  geom_segment(aes(x = 2880 , y = -Inf, xend = 2880, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 4320 , y = -Inf, xend = 4320, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 0 , y = -Inf, xend = 0, yend = 6), linetype = "dotted")  +
+  geom_segment(aes(x = 5760 , y = -Inf, xend = 5760, yend = 6), linetype = "dotted") +
+  scale_linetype_manual(name = "",values = c("dotted"))
 
-ggsave("Share Table Spoilage-2.0 log.jpg", width =8, height = 5, units = "in", dpi = 300)
+ggsave("Share Table Spoilage-log.jpg", width =8, height = 5, units = "in", dpi = 300)
 
 
 p_1<-AnalysysDF%>%
@@ -369,7 +370,7 @@ geom_text(aes(2000,6.5,label = "Quality Threshold = 6.0"), color = "black", size
 
 
 
-ggsave("Share Table Spoilage-3.0.jpg", width =8, height = 5, units = "in", dpi = 300)
+ggsave("Share Table Spoilage-NonLog.jpg", width =8, height = 5, units = "in", dpi = 300)
 
 
 ```
@@ -414,20 +415,24 @@ quantile(AnalysysDF$TotTime, 0.975)
 
 sum(AnalysysDF$Shared == "Yes")/ length(AnalysysDF$Shared)
 
-AnalysysDF %>% 
-  #filter(Shared == "Yes") %>% 
-  summarize(median(TotTime), q25 = quantile(TotTime, 0.025), q975 = quantile(TotTime, 0.975))
 
-AnalysysDF %>% 
-  #filter(Shared == "No") %>% 
-  summarize(median(SpoilageCon - InSpoilageCon), q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), q975 = quantile(SpoilageCon - InSpoilageCon, 0.975))
-
+#Total Time
 AnalysysDF %>% 
   filter(Shared == "No") %>% 
+  summarize(median(TotTime), q25 = quantile(TotTime, 0.025), q975 = quantile(TotTime, 0.975))
+
+#Population Change
+AnalysysDF %>% 
+  filter(Shared == "Yes") %>% 
+  summarize(median(SpoilageCon - InSpoilageCon), q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), q975 = quantile(SpoilageCon - InSpoilageCon, 0.975))
+
+#Spoiled Milks
+AnalysysDF %>% 
+  filter(Shared == "Yes") %>% 
   summarize(sum(SpoilageCon>6))
 
-(24/258558) *100
-(24/1131016) *100
+(4/450806) *100
+(4/103309) *100
 
 #Percent of consumed milk
 
@@ -443,19 +448,19 @@ AnalysysDF %>%
 
 #Summaries
 AnalysysDF %>% 
-  filter(Location == "Consumed") %>% 
+  #filter(Location == "Consumed") %>% 
   nrow()
-969021/1131016
+385701/450806
 
 AnalysysDF %>% 
   filter(Location == "Discarded") %>% 
   nrow()
-131845/1131016
+52856/450806
 
 AnalysysDF %>% 
   filter(Location == "Donated") %>% 
   nrow()
-30150/1131016
+12249/450806
 
 #Summaries
 AnalysysDF %>% 
@@ -463,30 +468,30 @@ AnalysysDF %>%
   #filter(TotTime<1440) %>% 
   #filter(TotTime>1440 && TotTime<2280) %>% 
   #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
-  #filter(TotTime>1440*3 && TotTime<1440*4) %>%
-  filter(TotTime>1440*4 && TotTime<1440*5) %>%
+  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*4 && TotTime<1440*5) %>%
   nrow()
-(28/969021)*100
+(13/385701)*100
 
 AnalysysDF %>% 
   filter(Location == "Discarded") %>%
   #filter(TotTime<1440) %>% 
   #filter(TotTime>1440 && TotTime<2280) %>% 
   #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
-  #filter(TotTime>1440*3 && TotTime<1440*4) %>%
-  filter(TotTime>1440*4 && TotTime<1440*5) %>%
+  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*4 && TotTime<1440*5) %>%
   nrow()
-(3/131845)*100
+(2/52856)*100
 
 AnalysysDF %>% 
   filter(Location == "Donated") %>% 
   #filter(TotTime<1440) %>% 
   #filter(TotTime>1440 && TotTime<2280) %>% 
   #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
-  #filter(TotTime>1440*3 && TotTime<1440*4) %>%
-  filter(TotTime>1440*4 && TotTime<1440*5) %>%
+  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*4 && TotTime<1440*5) %>%
   nrow()
-(3/30150)*100
+(5/12249)*100
 
 ```
 

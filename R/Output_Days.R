@@ -213,7 +213,7 @@ if (Sim_PRE==1){
       #Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service,Growth_variability)
       #Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
       Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
-                                                 Time = 20)
+                                                 Time = 50)
     }
     
     #Here commented out the Share table items because it is added through the process. 
@@ -223,18 +223,18 @@ if (Sim_PRE==1){
         #Left_ST_Pre<-Func_Spoilage_YN(Left_ST_Pre)
         #Adding time to items that were left in ST
         Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
-                                            Time = 20)
+                                            Time = 50)
       }
     }
     
     #Overnight Pre Selection
     #Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_ON)
     Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
-                                               Time = 1320)  #overnight + last 5 minutes of service
+                                               Time = 1315)  #overnight + last 5 minutes of service
     #Overnight Pre share table Table
     #Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_ON)
     Left_ST_Pre= Func_Adding_Time_alldf(DF = Left_ST_Pre, 
-                                        Time = 1320) #overnight + last 5 minutes of service
+                                        Time = 1315) #overnight + last 5 minutes of service
   }
   
 

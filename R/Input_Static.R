@@ -20,7 +20,7 @@
   N_Iterations<-round((Students_p_grade*NSLP_rate),0) #65
   
   #Serivices, number of days we are trying to iterate. Lunch periods per day
-  Service_No<-5
+  Service_No<-2
   
   #Days we are trying to Iterate. Days
   Food_Days<-5
