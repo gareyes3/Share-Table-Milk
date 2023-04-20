@@ -6,17 +6,22 @@ date: '2022-07-25'
 
 #Milk Temperature Curves Validation
 
-loading the Hs
+loading the Heat Transfer Coefficients
 ```{r}
 #Standard Inputs
 rho <-1.033 #kg/L
-C <- 4.2 #kj/KgC
+C <- 4.2 #kj/KgC°
 V <- 0.236 #L
 A <- 0.004275 #m2
 
 #Negative Slopes
-Neg_Slope_RTB<-(-0.0124)
-Neg_Slope_Ref<-(-0.0141)
+Neg_Slope_RTB<-(-0.0124) #Room Temperature
+Neg_Slope_Ref<-(-0.0141) #Refrigeration
+Neg_Slope_RT<-(-0.0141) #Refrigerated Tray
+Neg_Slope_TIC<-(-0.0141) #Tray with Ice 
+Neg_Slope_TIP<-(-0.0141) #Tray with Ice Packs
+Neg_Slope_CI<-(-0.0141) #Cooler with Ice
+
 
 
 get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
@@ -24,32 +29,32 @@ get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
   return(- neg_h)
 } 
 
-#Getting the Hs
+#Getting the Heat Transfer Coefficients for each Temp
 h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
-
 h_ref = get_h(Neg_slope = Neg_Slope_Ref)
+h_RT = get_h(Neg_slope = Neg_Slope_RT)
+h_TIC = get_h(Neg_slope = Neg_Slope_TIC)
+h_TIP = get_h(Neg_slope = Neg_Slope_TIP)
+h_CI = get_h(Neg_slope = Neg_Slope_CI)
 
 
+#Function to get temperature as a constant time and temperature
 get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236 ){
   #Time in minutes
   #Tinf = External Temp
   #To = Initial temperature of the milk
-  # h = convection trans coeff for that codition
+  # h = convection trans coefficient for that condition
   return (exp(-(h*A/rho*C*V)*(time))*(To-Tinf)+Tinf)
 }
 
 get_temp(h = h_RTB, To = 1.55, Tinf =  20, time = 5)
-
-
 get_temp(h = h_ref, To = 17, Tinf =  4, time = 120)
 
 
 ```
 ##Function to create time and temp profiles vector
-
 ```{r}
 #Constant outside temperature
-
 predict_temp<-function(Initial_Temp, Room_temp, Total_min, h_condition){
   #Returns a vector of temperatures
   Total_Time_min = Total_min
@@ -73,7 +78,7 @@ predict_temp<-function(Initial_Temp, Room_temp, Total_min, h_condition){
 predict_temp(Initial_Temp = 4.5,Room_temp = 22, Total_min = 42, h_condition = h_RTB)
 
 
-
+#Predicting the temperature from a complete time and temperature profile.
 predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
   Time_Temp_Profile<-Time_Temp_Prof
   Temp_Initial = Initial_Temp
