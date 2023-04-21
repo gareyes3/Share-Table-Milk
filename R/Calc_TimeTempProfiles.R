@@ -13,7 +13,7 @@ Neg_Slope_CI<-(-0.0019) #Cooler with Ice
 
 
 #Determining room temperature vs refrigeration
-ST_Condition_DF$Condition<-ifelse(ST_Condition_DF$Rtemp>10, "Room Temp", "Refrigeration")
+#ST_Condition_DF$Condition<-ifelse(ST_Condition_DF$Rtemp>10, "Room Temp", "Refrigeration")
 
 ##Functions
 
@@ -386,6 +386,16 @@ Spoilage_Function_Single_Milk<-function(Cont, Pop_Max, Time_Temp_df, Interval =1
 }
 
 
+#Export all Time and Temp Profiles.
+
+Df_RT_MT
+write.csv(Df_RT_MT, file = "Pedicted Time and Temp Profiles/Df_RT_MT.csv")
+
+Df_RT_MT_RT
+Df_RT_MT_TIC
+Df_RT_MT_TIP
+Df_RT_MT_CI
+
 ##Spoilage Prediction
 
 #Room Temp 2 hr -----
@@ -409,6 +419,26 @@ ggplot(data = new_dat, aes(x = Time))+
   facet_wrap(~Type, scales = "free_y", ncol= 1,labeller = as_labeller(c(`Population Changes` = "Population (log CFU/g)", `Temperature Profiles` = "Temperature (°C)") ),strip.position = "left", )
 ggsave("Pedicted Time and Temp Profiles/TempandChange_RTB.png", height = 4, width = 8, dpi = 300)
 
+#Refrigerated Tray 2 hr -----
+Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RT, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RT<-2.44+Output_Milk[[2]]
+
+Df_RT_MT_RT_melted$Type<-"Temperature Profiles"
+
+data_Milk_G_RT<-data.frame("Time" = 1:length(Changes_Over_Time_RT),
+                            "variable" = "Population Change",
+                            "value" = Changes_Over_Time_RT,
+                            "Type" = "Population Changes")
+
+new_dat_RT = rbind(Df_RT_MT_RT_melted,data_Milk_G_RT)
+
+ggplot(data = new_dat_RT, aes(x = Time))+
+  geom_line(aes(y = value, color = variable),size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "", title= "125 min Room Temp - 21 hr 55 min Refrigerated Overnight")+
+  scale_color_discrete(name = "Line Description")+
+  facet_wrap(~Type, scales = "free_y", ncol= 1,labeller = as_labeller(c(`Population Changes` = "Population (log CFU/g)", `Temperature Profiles` = "Temperature (°C)") ),strip.position = "left", )
+ggsave("Pedicted Time and Temp Profiles/TempandChange_RTB.png", height = 4, width = 8, dpi = 300)
 
 
 

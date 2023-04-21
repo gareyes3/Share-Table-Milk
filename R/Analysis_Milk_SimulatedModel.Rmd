@@ -1,0 +1,429 @@
+ins---
+title: "Milk Analysis"
+author: "Gustavo Reyes"
+date: "10/25/2021"
+output: html_document
+---
+#Milk Analysis: 
+
+```{r}
+#Setting Working Directory-------------------------------------
+#setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-Milk/R") 
+#setwd("G:/Share Table QMRA/Share-Table-QMRA/R")
+#setwd(getSrcDirectory()[1])
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #Set working directory to the path of document
+```
+
+##Loading Libraries
+```{r ,echo=FALSE}
+#Opening Libary and Inputs-------------------------------------
+source("Util_Library.R")
+source("Functions_Full_Analysis.R")
+```
+
+
+##Loading Model Necessary Inputs. 
+```{r}
+library(tidyverse)
+#Inputs and Source Files-------------------------------------
+
+#Inputs
+source("Main_Loop.R")
+source("Input_Static.R")
+source("Input_Functions.R")
+source("Util_DFFunctions.R")
+source("Util_DFWeekCreation.R")
+source("Util_Counter&Lists.R")
+#Functions
+source("Util_Functions.R")
+source("Util_CCFunctions2.R")
+source("Util_VisualFunctions.R")
+source("Util_Output_Functions.R")
+
+```
+
+#Generating Change from T and Temp Data
+```{r}
+Df_RT_MT<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT.csv")
+```
+
+## Functions for growth and lag phases 
+```{r}
+#Function for growth and lag phase
+new_growth_rate<-function(newTemp, oldMu,oldTemp = 6, T0 = -4.15){
+  newMu<-((newTemp-T0)/(oldTemp-T0))* oldMu
+  return (newMu)
+}
+
+#Calculation of the new lag time.
+new_lag_time <- function (newTemp, oldLag, oldTemp = 6, T0 = -4.15) {
+  numerator <- oldTemp -T0
+  denom <- newTemp - T0
+  newLag <- ( (numerator / denom)^2) * oldLag
+  return(newLag)
+}
+```
+
+#functions to Create a random time temp df linear. 
+```{r}
+#Not in use, function to create a data frame based on interval and initial and final temperature
+Time_Temp_Creation<-function(Total_Time, Interval, Initial_Temperature, Final_Temperature){
+  Time_Temp_df<-data.frame("min"= seq(0,Total_Time,by = Interval),
+                         "tempM"  = seq(Initial_Temperature,Final_Temperature, by = ((Final_Temperature - Initial_Temperature)/(length(seq(0,Total_Time,by = Interval)) - 1) )))
+}
+
+Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temperature){
+  Time_Temp_df<-data.frame("min"= seq(0,Total_Time,by = Interval),
+                         "tempM"= rnorm(n =Total_Time+1, mean = Mean_Temperature, sd= SD_Temperature))
+  return (Time_Temp_df)
+}
+```
+
+```{r}
+#This function calculates thee growth based on a time and temperature profile for 1 specific milk with R100084 P Paoae
+Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,Interval, AF){
+  #In_Lag_Consumed= Total lag time consumed
+  #Time_Temp_df = dataframe with time and temperature conditions
+  #Interval = time interval in the time_temp_df in hrs. 
+  Total_Lag_Consumed = In_Lag_Consumed
+  Total_Growth = 0
+  old_lag = 0
+  NMax = 8.14
+  old_mumax = 0.083508
+  Growth_V = c()
+  for (i in 1:nrow(Time_Temp_df)){
+    if (Total_Lag_Consumed <1 && old_lag!=0){
+      Lag_t_interval<-new_lag_time(newTemp = Time_Temp_df$MilkTemp[i], oldLag = old_lag)
+      Lag_Consumed<-Interval/Lag_t_interval
+      Total_Lag_Consumed<-Total_Lag_Consumed+Lag_Consumed
+      Growth = 0
+    } else if (Total_Lag_Consumed>=1 | old_lag == 0){
+      Growth = ((new_growth_rate(newTemp = Time_Temp_df$MilkTemp[i], oldMu = old_mumax))/2.303)* AF#0.684 #Converted log10 from log ln
+      Total_Growth = Total_Growth + (Growth*Interval)
+    }
+    Growth_V = c(Growth_V,Total_Growth)
+    #print(length(Growth_V))
+  }
+  return(list(Total_Growth,Total_Lag_Consumed,Growth_V))
+}
+
+#Buchanan spoilage function
+Spoilage_Function_Single_Milk<-function(Cont, Pop_Max, Time_Temp_df, Interval =1/60, AF){
+  Lag_Consumed = 0
+  #this function provides two outputs, the total growth, and the new updated lag phase consumed. 
+  Output_Milk<-Func_Growth_LagCon(In_Lag_Consumed = Lag_Consumed ,Time_Temp_df = Time_Temp_df,Interval = Interval, AF=AF)
+  Lag_Consumed = Output_Milk[[2]]
+  Cont<-Output_Milk[[1]]+Cont
+  if( Cont>Pop_Max){
+     Cont = Pop_Max
+  }
+  return (list(Cont,Output_Milk[[3]]))
+}
+
+```
+
+##Running the  Model for Milk.
+```{r warning=TRUE}
+#Running Loop First:-------------------------------------
+start_time<-Sys.time()
+
+source("Main_Loops2.R")
+```
+
+
+```{r}
+#AnalysysDF_RON<-AnalysysDF
+
+  #SummaryLisr = List_Sens_Fr
+  #FoodType= = "Fruit"
+  #1. Start from here
+  Individual_Analysis_Fr<-rbind.fill(List_Sens_Pre)
+  
+  #2. find the duplicates
+  #this step filters replicated based on the ID
+  Individual_Analysis_Fr<-Individual_Analysis_Fr %>% 
+    group_by(ID) %>% 
+    filter(TotServices==max(TotServices))
+  #3
+  AnalysysDF<-Individual_Analysis_Fr
+  AnalysysDF_2<-Individual_Analysis_Fr
+  
+  #Adding the time of the services for those milks that were added to the service line during the lunch period. 
+  AnalysysDF[AnalysysDF$Initial.Service>1,]
+  AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*75
+
+  
+  AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
+```
+
+
+#Simulated Rooom Temp B
+```{r}
+Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT, Interval =1/60,AF = 1.32)
+Changes_Over_Time<-Output_Milk[[2]]
+
+NMax = 8.14
+for (i in 1:nrow(AnalysysDF)){
+  In_Cont<-AnalysysDF$InSpoilageCon[i]
+  Time<-AnalysysDF$TotTime[i]
+  if (Time == 0){
+    Total_Growth = 0
+  }else{
+    Total_Growth<-Changes_Over_Time[Time]
+  }
+  Final_Con<-In_Cont+Total_Growth
+  if(Final_Con>NMax){
+    Final_Con <- NMax
+  }
+  AnalysysDF$SpoilageCon[i]<-Final_Con
+}
+
+```
+
+##Start of the Milk Analysis based on outputs'
+
+###How many Items ended up in which locations
+```{r}
+library(scales)
+library(forcats)
+
+AnalysysDF %>% 
+  count(Location) %>% 
+  arrange(desc(n)) %>% 
+  mutate(Location = fct_reorder(Location, n)) %>%
+  ggplot(aes(x =Location, y = n/sum(n)*100))+
+  scale_y_continuous(labels = scales::percent_format(scale = 1) )+
+  geom_col()+
+  labs(x = "Final Food Location", y = "Percent of milk items by location", title= "Final Location for milk-Donation happens end of week")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  coord_flip()
+  
+```
+
+###What is the distribution of time for the milk items
+
+```{r}
+AnalysysDF %>%
+  ggplot(aes(x = TotTime))+
+  geom_histogram()+
+  scale_x_continuous(n.breaks= 10)+
+  labs(x = "Time in Hours", y = "Count ", title= "Time in system by Item week")+
+  theme(plot.title = element_text(hjust = 0.5))
+  
+
+```
+
+###APC Contamination by Items
+
+```{r}
+AnalysysDF %>%
+  ggplot()+
+  geom_histogram(aes(x = SpoilageCon),color="darkblue", fill="lightblue",alpha= 0.3)+
+  geom_histogram(aes(x = InSpoilageCon),color="darkblue", fill="lightgreen", alpha= 0.3)+
+  geom_vline(xintercept =6, color= "Red")+
+  scale_x_continuous(n.breaks= 10)+
+  labs(x = "Phsychotroph Population Log CFU/ml", y = "Count", title= "Levels per milk carton")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+```{r}
+AnalysysDF %>% 
+  group_by(ConsumedAt) %>% 
+  summarise(ChangeCon = SpoilageCon-InSpoilageCon) %>% 
+  filter(ConsumedAt!="") %>% 
+  ggplot(aes(x = ChangeCon, fill = ConsumedAt))+
+  geom_histogram(bins=50)+
+  labs(x = "Change in population log CFU/ml")
+
+```
+
+
+#Relationship between Time and APC Levels
+```{r}
+p_1_log<-AnalysysDF%>% 
+  ggplot(aes(y = SpoilageCon, x= TotTime, fill= Shared, shape = Shared))+
+  geom_point( size =2, alpha = 0.7, color = "black")+
+  geom_hline(yintercept =6)+
+geom_text(aes(100,6.5,label = "Quality Threshold = 6.0"), color = "black", size  = 3,check_overlap = TRUE)+
+  facet_wrap(.~Location)+
+  labs(x = "Residence Time in Cafeteria System (min)", y = expression("Pseudomonas poae population (log"[10]~"CFU/ml)"))+
+  scale_y_continuous()+
+  scale_shape_manual(values = c(21,23))+
+  scale_fill_manual(values = c("coral1", "seagreen3"))+
+  scale_x_log10(n.breaks= 10)+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(axis.text.x = element_text(angle = -45, vjust = -0.3))+
+  theme(legend.position="bottom")+
+  geom_segment(aes(x = 1440 , y = -Inf, xend = 1440, yend = 6,linetype = "Start of Day"))+
+  geom_segment(aes(x = 2880 , y = -Inf, xend = 2880, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 4320 , y = -Inf, xend = 4320, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 0 , y = -Inf, xend = 0, yend = 6), linetype = "dotted")  +
+  geom_segment(aes(x = 5760 , y = -Inf, xend = 5760, yend = 6), linetype = "dotted") +
+  scale_linetype_manual(name = "",values = c("dotted"))
+
+p_1_log
+
+#ggsave("Share Table Spoilage-log.jpg", width =8, height = 5, units = "in", dpi = 300)
+
+
+p_1<-AnalysysDF%>%
+  ggplot(aes(y = SpoilageCon, x= TotTime, fill= Shared, shape = Shared))+
+  geom_point( size =2, alpha = 0.7, color = "black")+
+  geom_hline(yintercept =6)+
+geom_text(aes(2000,6.5,label = "Quality Threshold = 6.0"), color = "black", size  = 3,check_overlap = TRUE)+
+  facet_wrap(.~Location)+
+  labs(x = "Residence Time in Cafeteria System (min)", y = expression("Pseudomonas poae population (log"[10]~"CFU/ml)"))+
+  scale_y_continuous()+
+  scale_shape_manual(values = c(21,23))+
+  scale_fill_manual(values = c("coral1", "seagreen3"))+
+  #scale_x_log10(n.breaks= 12)+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(axis.text.x = element_text(angle = -45, vjust = -0.3))+
+  theme(legend.position="bottom")+
+  geom_segment(aes(x = 1440 , y = -Inf, xend = 1440, yend = 6,linetype = "Start of Day") )+
+  geom_segment(aes(x = 2880 , y = -Inf, xend = 2880, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 4320 , y = -Inf, xend = 4320, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 0 , y = -Inf, xend = 0, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 5760 , y = -Inf, xend = 5760, yend = 6), linetype = "dotted") +
+  scale_linetype_manual(name = "",values = c("dotted"))
+
+p_1
+
+#ggsave("Share Table Spoilage-NonLog.jpg", width =8, height = 5, units = "in", dpi = 300)
+
+
+```
+
+#Change in Contamination Levels due to Time
+  ##Need to figure out a way to track contamination change. 
+```{r}
+AnalysysDF %>% 
+  mutate(Change_Cont = SpoilageCon-InSpoilageCon) %>% 
+  ggplot(aes(y = Change_Cont, x= TotTime, fill = Shared))+
+  geom_point( size =2, shape = 21, alpha = 0.7)+
+  facet_wrap(.~Location)+
+  labs(x = "Residence Time in Cafeteria System (min)", y = expression("Pseudomonas poae population Change (log"[10]~"CFU/ml"))+
+  scale_y_continuous()+
+  scale_x_log10(n.breaks= 10)+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()+
+  theme(legend.position="bottom")+
+  theme(axis.text.x = element_text(angle = -45, vjust = -0.3))
+
+#ggsave("growth over time 2.0.jpg", width =8, height = 5, units = "in", dpi = 300)
+
+
+```
+
+```{r}
+
+Normal<-AnalysysDF %>% 
+  mutate(Change_Cont = SpoilageCon-InSpoilageCon)
+
+mean(Normal$Change_Cont)
+quantile(Normal$Change_Cont)
+
+MostExtreme<-AnalysysDF %>% 
+  mutate(Change_Cont = SpoilageCon-InSpoilageCon)
+
+mean(MostExtreme$Change_Cont)
+quantile(MostExtreme$Change_Cont)
+
+mean((AnalysysDF$TotTime))
+quantile(AnalysysDF$TotTime, 0.975)
+
+sum(AnalysysDF$Shared == "Yes")/ length(AnalysysDF$Shared)
+
+
+#Total Time
+AnalysysDF %>% 
+  filter(Shared == "No") %>% 
+  summarize(median(TotTime), q25 = quantile(TotTime, 0.025), q975 = quantile(TotTime, 0.975))
+
+#Population Change
+AnalysysDF %>% 
+  filter(Shared == "Yes") %>% 
+  summarize(median(SpoilageCon - InSpoilageCon), q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), q975 = quantile(SpoilageCon - InSpoilageCon, 0.975))
+
+#Spoiled Milks
+AnalysysDF %>% 
+  filter(Shared == "Yes") %>% 
+  summarize(sum(SpoilageCon>6))
+
+(4/450806) *100
+(4/103309) *100
+
+#Percent of consumed milk
+
+AnalysysDF %>% 
+  filter(Location == "Consumed") %>% 
+  filter(TotTime<7200)
+
+(((871105))/969021) *100
+((964226-(871105))/969021) *100
+((968993-968611)/969021)*100
+((969021-968993)/969021)*100
+
+
+#Summaries
+AnalysysDF %>% 
+  #filter(Location == "Consumed") %>% 
+  nrow()
+385701/450806
+
+AnalysysDF %>% 
+  filter(Location == "Discarded") %>% 
+  nrow()
+52856/450806
+
+AnalysysDF %>% 
+  filter(Location == "Donated") %>% 
+  nrow()
+12249/450806
+
+#Summaries
+AnalysysDF %>% 
+  filter(Location == "Consumed") %>%
+  #filter(TotTime<1440) %>% 
+  #filter(TotTime>1440 && TotTime<2280) %>% 
+  #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
+  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*4 && TotTime<1440*5) %>%
+  nrow()
+(13/385701)*100
+
+AnalysysDF %>% 
+  filter(Location == "Discarded") %>%
+  #filter(TotTime<1440) %>% 
+  #filter(TotTime>1440 && TotTime<2280) %>% 
+  #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
+  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*4 && TotTime<1440*5) %>%
+  nrow()
+(2/52856)*100
+
+AnalysysDF %>% 
+  filter(Location == "Donated") %>% 
+  #filter(TotTime<1440) %>% 
+  #filter(TotTime>1440 && TotTime<2280) %>% 
+  #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
+  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*4 && TotTime<1440*5) %>%
+  nrow()
+(5/12249)*100
+
+```
+
+
+
+#
+```{r}
+Pre_Data_Full %>% 
+  filter(Location=="Shared")
+```
+
+
+
