@@ -28,7 +28,13 @@
   #Weeks
   
   Sens_Iterations<-10
- 
+  
+  
+#Lengths for milk model #need to make sense with no services all have to add up to 1440
+  Time_Service_Length = 50
+  Time_Turnaround_Length = 25 
+  Time_Overnight_Length = 1315
+
 # Sevice Line Information -------------------------------------------------
   
   #Initial Number of fruit

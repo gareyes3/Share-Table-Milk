@@ -81,45 +81,40 @@ if(salmonella ==1){
 
   #Storage Information for growth
   
-  #TEMP---------------------------------------
+  #TEMP--------------------------------------- Not used in Model
   
   #Temperature at Share Table
-  Temp_RT<-26 # worse case scenario
+  #Temp_RT<-26 # worse case scenario
   
-  Temp_ST<-26 #runif(1,20.5,26)
+  #Temp_ST<-26 #runif(1,20.5,26)
   
   #Temperature at refrigeration #Overnight
-  Temp_Ref<-runif(1,5,6) #runif(1,1,3)#
+  #Temp_Ref<-runif(1,5,6) #runif(1,1,3)#
   
   #Temperature Selection Line
-  Temp_SL<- 26 #runif(1,20.5,26)
+  #Temp_SL<- 26 #runif(1,20.5,26)
   
   #Temperature Sit Down
-  Temp_SD<-26 # runif (1,20.5,26)#
+  #Temp_SD<-26 # runif (1,20.5,26)#
   
   #Temperature Temp Storage
-  Temp_TS<-runif(1,5,6) #runif(1,1,3)#
+  #Temp_TS<-runif(1,5,6) #runif(1,1,3)#
   
-  #TIME--------------------------------------
+  #TIME-------------------------------------- No Used in Model
   
   #Time Selection Table
-  Time_SL<-runif(1,6,7)/60 #min
-  
+  #Time_SL<-runif(1,6,7)/60 #min
   #Time Sit Down
-  Time_SD<- runif(1,11,13)/60 
-  
+  #Time_SD<- runif(1,11,13)/60 
   #Time Share Table
-  Time_ST<-runif(1,8,10) /60 #min
-  
+  #Time_ST<-runif(1,8,10) /60 #min
   #Time over night storage
-  Time_ON<-22
-  
+  #Time_ON<-22
   #Time of each service all in hours. 
-  Time_Service<-30/60
-  
+  #Time_Service<-30/60
   #Time between Services
-  Time_Turnaround<- runif(1,10,15) /60
-  
+  #Time_Turnaround<- runif(1,10,15)/60
+
   
   #Initial Levels
   

@@ -1,40 +1,22 @@
+---
+title: "Time and Temperature Profiles Milk"
+output: html_document
+date: "2023-04-24"
+---
 
-#This document creates the simulate time and temperature profiles for the Milk Study. 
+#This document is used to create the milk time and temperature profiles.
 
-library(tidyverse)
-library(reshape2)
-library(cowplot)
+##Functions to get temperature profiles
 
-#Negative Slopes
-Neg_Slope_RTB<-(-0.0124) #Room Temperature
-Neg_Slope_Ref<-(-0.0141) #Refrigeration
-Neg_Slope_RT<-(-0.0088) #Refrigerated Tray
-Neg_Slope_TIC<-(-0.0057) #Tray with Ice 
-Neg_Slope_TIP<-(-0.0072) #Tray with Ice Packs
-Neg_Slope_CI<-(-0.0019) #Cooler with Ice
-
-
-#Determining room temperature vs refrigeration
-#ST_Condition_DF$Condition<-ifelse(ST_Condition_DF$Rtemp>10, "Room Temp", "Refrigeration")
-
-##Functions
-
+```{r}
 #Function to get the h (heat transfer coefficient)
 get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
+  #Neg slope for each condition
   neg_h =  ((Neg_slope*rho*C*V)/A)
   return(- neg_h)
 } 
 
-
-#Getting the Heat Transfer Coefficients for each Temp
-h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
-h_ref = get_h(Neg_slope = Neg_Slope_Ref)
-h_RT = get_h(Neg_slope = Neg_Slope_RT)
-h_TIC = get_h(Neg_slope = Neg_Slope_TIC)
-h_TIP = get_h(Neg_slope = Neg_Slope_TIP)
-h_CI = get_h(Neg_slope = Neg_Slope_CI)
-
-
+#This function gets temperature after some time. Based on Tinf and To
 get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236 ){
   #Time in minutes
   #Tinf = External Temp
@@ -43,8 +25,8 @@ get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236
   return (exp(-(h*A/rho*C*V)*(time))*(To-Tinf)+Tinf)
 }
 
-#Function to get the temperature profile from an external temperature vector
-predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
+#Function to get the temperature profile from an external temperature vector (Time and Temperature Profile)
+predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp, h_condition){
   Time_Temp_Profile<-Time_Temp_Prof
   Temp_Initial = Initial_Temp
   Temp_V<-c()
@@ -63,18 +45,33 @@ predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
 }
 
 
-#Generate Temperature Conditions
+#Generate Temperature Conditions (Simulated Condition)
 #Temperatures are a normal distribution
+#tot time =minutes
+#Iterval = minutes
 Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temperature){
   Time_Temp_df<-rnorm(n =Total_Time+1, mean = Mean_Temperature, sd= SD_Temperature)
   return (Time_Temp_df)
 }
 
-Create_Temperature_Profile_days<-function(First_Cond, Second_Cond, 
-                                          First_Cond_Total_Time,Second_Cond_Total_Time,
-                                          First_Cond_Mean_Temperature, First_Cond_SD_Temperature,
-                                          Second_Cond_Mean_Temperature, Second_Cond_SD_Temperature,
-                                          Interval, Cycles){
+
+#First cpnd = "Room Temp" , "Refrigeration", ....
+#Second Cond= Same
+#Total Time minutes - 1
+#Interval = 1 minute
+#Cycles = number of days
+
+#Main function to create the time and temp profiles
+Create_Temperature_Profile_days<-function(First_Cond, 
+                                          Second_Cond, 
+                                          First_Cond_Total_Time,
+                                          Second_Cond_Total_Time,
+                                          First_Cond_Mean_Temperature, 
+                                          First_Cond_SD_Temperature,
+                                          Second_Cond_Mean_Temperature, 
+                                          Second_Cond_SD_Temperature,
+                                          Interval, 
+                                          Cycles){
   
     First_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = First_Cond_Total_Time, Interval = Interval , 
                            Mean_Temperature = First_Cond_Mean_Temperature, 
@@ -101,6 +98,61 @@ Create_Temperature_Profile_days<-function(First_Cond, Second_Cond,
 }
 
 
+Create_Temperature_Profile_days_3cond<-function(First_Cond, 
+                                          Second_Cond,
+                                          Third_Cond,
+                                          Fourth_Cont,
+                                          First_Cond_Total_Time,
+                                          Second_Cond_Total_Time,
+                                          Third_Cond_Total_Time,
+                                          Fourth_Cond_Total_Time,
+                                          First_Cond_Mean_Temperature, 
+                                          First_Cond_SD_Temperature,
+                                          Second_Cond_Mean_Temperature, 
+                                          Second_Cond_SD_Temperature,
+                                          Third_Cond_Mean_Temperature, 
+                                          Third_Cond_SD_Temperature,
+                                          Fourth_Cond_Mean_Temperature, 
+                                          Fourth_Cond_SD_Temperature,
+                                          Interval, 
+                                          Cycles){
+  
+    First_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = First_Cond_Total_Time, Interval = Interval , 
+                           Mean_Temperature = First_Cond_Mean_Temperature, 
+                           SD_Temperature = First_Cond_SD_Temperature)
+    Second_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = Second_Cond_Total_Time, Interval = Interval , 
+                                        Mean_Temperature = Second_Cond_Mean_Temperature, 
+                                        SD_Temperature = Second_Cond_SD_Temperature)
+   Third_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = Third_Cond_Total_Time, Interval = Interval , 
+                                    Mean_Temperature = Third_Cond_Mean_Temperature, 
+                                    SD_Temperature = Third_Cond_SD_Temperature)
+   
+   Fouth_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = Third_Cond_Total_Time, Interval = Interval , 
+                                Mean_Temperature = Third_Cond_Mean_Temperature, 
+                                SD_Temperature = Third_Cond_SD_Temperature)
+    
+    
+    First_Cond_Temps_Desc<-rep(First_Cond,length(First_Cond_Temps))
+    Second_Cond_Temps_Desc<-rep(Second_Cond,length(Second_Cond_Temps))
+    Third_Cond_Temps_Desc<-rep(Third_Cond,length(Third_Cond_Temps))
+    
+    Temp_Vector<-c()
+    Cond_Vec<-c()
+    for (i in 1:Cycles){
+      Temp_Vector<-c(Temp_Vector,First_Cond_Temps,Second_Cond_Temps, Third_Cond_Temps)
+      Cond_Vec<-c(Cond_Vec,First_Cond_Temps_Desc,Second_Cond_Temps_Desc, Third_Cond_Temps_Desc)
+    }
+    
+    
+    Simulated_Conditions<-data.frame("Rtemp" = Temp_Vector,
+                                      "Condition" = Cond_Vec)
+    return(Simulated_Conditions)
+}
+
+
+#Function to predict all milk based on the conditions...
+#df = Milk df
+#Temp_Initial = Milk's initial temperature. (Refrigeration)
 predict_full_milk_temp<-function(df, Temp_Initial){
   Temp_Milk_Vectors<-c()
   Temp_Milk_Vectors<-c(Temp_Initial)
@@ -136,38 +188,75 @@ predict_full_milk_temp<-function(df, Temp_Initial){
   return(Temp_Milk_Vectors)
 }
 
+```
 
 
+## Generating H, temperature transfer coefficients
+```{r}
+#Negative Slopes
+Neg_Slope_RTB<-(-0.0124) #Room Temperature
+Neg_Slope_Ref<-(-0.0141) #Refrigeration
+Neg_Slope_RT<-(-0.0088) #Refrigerated Tray
+Neg_Slope_TIC<-(-0.0057) #Tray with Ice 
+Neg_Slope_TIP<-(-0.0072) #Tray with Ice Packs
+Neg_Slope_CI<-(-0.0019) #Cooler with Ice
+
+#Getting the Heat Transfer Coefficients for each Temp
+h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
+h_ref = get_h(Neg_slope = Neg_Slope_Ref)
+h_RT = get_h(Neg_slope = Neg_Slope_RT)
+h_TIC = get_h(Neg_slope = Neg_Slope_TIC)
+h_TIP = get_h(Neg_slope = Neg_Slope_TIP)
+h_CI = get_h(Neg_slope = Neg_Slope_CI)
+
+```
+
+## Generating Specific Time and Temperature profiles for study
+
+### Room Temp B 
+```{r}
 #Worst case scenario 124, 1314.125 min Room Temp - 21 hr 55 min Refrigerated Overnight"
-Time_Temp_Df<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
-                                Second_Cond = "Refrigeration", 
-                                First_Cond_Total_Time = 124,
-                                Second_Cond_Total_Time = 1314,
-                                First_Cond_Mean_Temperature = 22.1, 
-                                First_Cond_SD_Temperature = 0,#0.77,
-                                Second_Cond_Mean_Temperature= 3.71, 
-                                Second_Cond_SD_Temperature = 0,#1.04,
-                                Interval  =1, 
-                                Cycles = 5)
+Time_Temp_Df_RTB<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
+                                                  Second_Cond = "Refrigeration", 
+                                                  First_Cond_Total_Time = 124,
+                                                  Second_Cond_Total_Time = 1314,
+                                                  First_Cond_Mean_Temperature = 22.1, 
+                                                  First_Cond_SD_Temperature = 0,#0.77,
+                                                  Second_Cond_Mean_Temperature= 3.71, 
+                                                  Second_Cond_SD_Temperature = 0,#1.04,
+                                                  Interval  =1, 
+                                                  Cycles = 5)
 
 
-Temp_Milk_Vectors<-predict_full_milk_temp(df = Time_Temp_Df, Temp_Initial = 4.2)
+Temp_Milk_Vectors_RTB<-predict_full_milk_temp(df = Time_Temp_Df_RTB, Temp_Initial = 4.2)
 
-Df_RT_MT<-data.frame("RoomTemp" = Time_Temp_Df$Rtemp,
-                     "MilkTemp" = Temp_Milk_Vectors,
-                     "Time" = 1:length(Temp_Milk_Vectors))
-Df_RT_MT_melted<-melt(Df_RT_MT, id.vars = "Time")
+Df_RT_MT_RTB<-data.frame("RoomTemp" = Time_Temp_Df_RTB$Rtemp,
+                     "MilkTemp" = Temp_Milk_Vectors_RTB,
+                     "Time" = 1:length(Temp_Milk_Vectors_RTB))
+Df_RT_MT_RTB_melted<-melt(Df_RT_MT_RTB, id.vars = "Time")
+Df_RT_MT_RTB_melted$Condition = "Room Temp B"
 
+#Saving as CSV
+write.csv(Df_RT_MT_RTB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv")
+```
 
-ggplot(data = Df_RT_MT_melted, aes(x = Time, y = value, color = variable))+
+Plotting it 
+
+```{r}
+ggplot(data = Df_RT_MT_RTB_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
   theme_bw()+
-  labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Room Temp - 21 hr 55 min Refrigerated Overnight")+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Refrigerated Tray - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Temperature Profile")
-ggsave("Pedicted Time and Temp Profiles/PredictedRT.png", height = 3, width = 8, dpi = 300)
 
+#Unhash to save. 
+#ggsave("Pedicted Time and Temp Profiles/PredictedRefTray.png", height = 3, width = 8, dpi = 300)
 
-#Worst case scenario 124, 1314.125 min Ref Tray - 21 hr 55 min Refrigerated Overnight"
+```
+
+### Refrigerated Tray
+
+```{r}
 Time_Temp_Df_RT<-Create_Temperature_Profile_days(First_Cond = "Refrigerated Tray", 
                                               Second_Cond = "Refrigeration", 
                                               First_Cond_Total_Time = 124,
@@ -184,22 +273,29 @@ Time_Temp_Df_RT<-Create_Temperature_Profile_days(First_Cond = "Refrigerated Tray
 
 Temp_Milk_RT<-predict_full_milk_temp(Time_Temp_Df_RT, Temp_Initial = 4)
 
-Df_RT_MT_RT<-data.frame("RoomTemp" = Time_Temp_Df$Rtemp,
+Df_RT_MT_RT<-data.frame("RoomTemp" = Time_Temp_Df_RT$Rtemp,
                      "MilkTemp" = Temp_Milk_RT,
-                     "Time" = 1:length(Temp_Milk_Vectors))
+                     "Time" = 1:length(Temp_Milk_RT))
 Df_RT_MT_RT_melted<-melt(Df_RT_MT_RT, id.vars = "Time")
+Df_RT_MT_RT_melted$Condition = "Refrigerated Tray"
 
+write.csv(Df_RT_MT_RT, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv")
+```
 
+Plotting it 
+```{r}
 ggplot(data = Df_RT_MT_RT_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
   theme_bw()+
   labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Refrigerated Tray - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Temperature Profile")
 
+#ggsave("Pedicted Time and Temp Profiles/PredictedRefTray.png", height = 3, width = 8, dpi = 300)
+```
 
-ggsave("Pedicted Time and Temp Profiles/PredictedRefTray.png", height = 3, width = 8, dpi = 300)
 
-
+### Tray with Ice Packs
+```{r}
 #Worst case scenario 124, 1314.125 min Tray with ice packs - 21 hr 55 min Refrigerated Overnight"
 Time_Temp_Df_TIP<-Create_Temperature_Profile_days(First_Cond = "Tray With Ice Packs", 
                                                  Second_Cond = "Refrigeration", 
@@ -217,55 +313,31 @@ Time_Temp_Df_TIP<-Create_Temperature_Profile_days(First_Cond = "Tray With Ice Pa
 
 Temp_Milk_TIP<-predict_full_milk_temp(Time_Temp_Df_TIP, Temp_Initial = 4.2)
 
-Df_RT_MT_TIP<-data.frame("RoomTemp" = Time_Temp_Df$Rtemp,
+Df_RT_MT_TIP<-data.frame("RoomTemp" = Time_Temp_Df_TIP$Rtemp,
                         "MilkTemp" = Temp_Milk_TIP,
-                        "Time" = 1:length(Temp_Milk_Vectors))
+                        "Time" = 1:length(Temp_Milk_TIP))
 Df_RT_MT_TIP_melted<-melt(Df_RT_MT_TIP, id.vars = "Time")
+Df_RT_MT_TIP_melted$Condition = "Tray with Ice Packs"
 
 
+write.csv(Df_RT_MT_TIP, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
+
+```
+
+Plotting it
+```{r}
 ggplot(data = Df_RT_MT_TIP_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
   theme_bw()+
   labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Tray with Ice Packs - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Temperature Profile")
 
+#ggsave("Pedicted Time and Temp Profiles/PredictedTIP.png", height = 3, width = 8, dpi = 300)
+```
 
-ggsave("Pedicted Time and Temp Profiles/PredictedTIP.png", height = 3, width = 8, dpi = 300)
+### Tray with Ice 
 
-
-#Worst case scenario 124, 1314.125 min Tray with ice packs - 21 hr 55 min Refrigerated Overnight"
-Time_Temp_Df_TIP<-Create_Temperature_Profile_days(First_Cond = "Tray With Ice Packs", 
-                                                  Second_Cond = "Refrigeration", 
-                                                  First_Cond_Total_Time = 124,
-                                                  Second_Cond_Total_Time = 1314,
-                                                  First_Cond_Mean_Temperature = 22.1, 
-                                                  First_Cond_SD_Temperature = 0,#0.77,
-                                                  Second_Cond_Mean_Temperature= 3.71, 
-                                                  Second_Cond_SD_Temperature = 0,#1.04,
-                                                  Interval  =1, 
-                                                  Cycles = 5)
-
-
-
-
-Temp_Milk_TIP<-predict_full_milk_temp(Time_Temp_Df_TIP, Temp_Initial = 4.2)
-
-Df_RT_MT_TIP<-data.frame("RoomTemp" = Time_Temp_Df$Rtemp,
-                         "MilkTemp" = Temp_Milk_TIP,
-                         "Time" = 1:length(Temp_Milk_Vectors))
-Df_RT_MT_TIP_melted<-melt(Df_RT_MT_TIP, id.vars = "Time")
-
-
-ggplot(data = Df_RT_MT_TIP_melted, aes(x = Time, y = value, color = variable))+
-  geom_line(size = 1)+
-  theme_bw()+
-  labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Tray with Ice Packs - 21 hr 55 min Refrigerated Overnight")+
-  scale_color_discrete(name = "Temperature Profile")
-
-ggsave("Pedicted Time and Temp Profiles/PredictedTIP.png", height = 3, width = 8, dpi = 300)
-
-
-#Worst case scenario 124, 1314.125 min Tray with ice - 21 hr 55 min Refrigerated Overnight"
+```{r}
 Time_Temp_Df_TIC<-Create_Temperature_Profile_days(First_Cond = "Tray With Ice", 
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 124,
@@ -278,26 +350,32 @@ Time_Temp_Df_TIC<-Create_Temperature_Profile_days(First_Cond = "Tray With Ice",
                                                   Cycles = 5)
 
 
-
-
 Temp_Milk_TIC<-predict_full_milk_temp(Time_Temp_Df_TIC, Temp_Initial = 4.2)
 
-Df_RT_MT_TIC<-data.frame("RoomTemp" = Time_Temp_Df$Rtemp,
+Df_RT_MT_TIC<-data.frame("RoomTemp" = Time_Temp_Df_TIC$Rtemp,
                          "MilkTemp" = Temp_Milk_TIC,
                          "Time" = 1:length(Temp_Milk_TIC))
+
 Df_RT_MT_TIC_melted<-melt(Df_RT_MT_TIC, id.vars = "Time")
+Df_RT_MT_TIC_melted$Condition = "Tray with Ice"
 
+write.csv(Df_RT_MT_TIC, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv")
+```
 
+Plotting it
+```{r}
 ggplot(data = Df_RT_MT_TIC_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
   theme_bw()+
   labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Tray with Ice - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Temperature Profile")
 
-ggsave("Pedicted Time and Temp Profiles/PredictedTIC.png", height = 3, width = 8, dpi = 300)
+#ggsave("Pedicted Time and Temp Profiles/PredictedTIC.png", height = 3, width = 8, dpi = 300)
+```
 
+### Cooler with Ice
 
-#Worst case scenario 124, 1314.125 min Cooler with Ice - 21 hr 55 min Refrigerated Overnight"
+```{r}
 Time_Temp_Df_CI<-Create_Temperature_Profile_days(First_Cond = "Cooler with Ice", 
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 124,
@@ -314,25 +392,63 @@ Time_Temp_Df_CI<-Create_Temperature_Profile_days(First_Cond = "Cooler with Ice",
 
 Temp_Milk_CI<-predict_full_milk_temp(Time_Temp_Df_CI, Temp_Initial = 4.2)
 
-Df_RT_MT_CI<-data.frame("RoomTemp" = Time_Temp_Df$Rtemp,
+Df_RT_MT_CI<-data.frame("RoomTemp" = Time_Temp_Df_CI$Rtemp,
                          "MilkTemp" = Temp_Milk_CI,
                          "Time" = 1:length(Temp_Milk_CI))
+
 Df_RT_MT_CI_melted<-melt(Df_RT_MT_CI, id.vars = "Time")
+Df_RT_MT_TIC_melted$Condition = "Cooler with Ice"
 
 
+write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
+```
+
+Plotting it
+
+```{r}
 ggplot(data = Df_RT_MT_CI_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
   theme_bw()+
   labs(x = "Time (min)", y = "Temperature (°C)", title= "125 min Cooler with Ice - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Temperature Profile")
 
-ggsave("Pedicted Time and Temp Profiles/PredictedCI.png", height = 3, width = 8, dpi = 300)
+#ggsave("Pedicted Time and Temp Profiles/PredictedCI.png", height = 3, width = 8, dpi = 300)
+```
+
+### Room Temp with Intermediate Ref
+```{r}
+Create_Temperature_Profile_days_3cond(First_Cond = "Room Temperature", 
+                                      Second_Cond,
+                                      Third_Cond,
+                                      First_Cond_Total_Time,
+                                      Second_Cond_Total_Time,
+                                      Third_Cond_Total_Time,
+                                      First_Cond_Mean_Temperature, 
+                                      First_Cond_SD_Temperature,
+                                      Second_Cond_Mean_Temperature, 
+                                      Second_Cond_SD_Temperature,
+                                      Third_Cond_Mean_Temperature, 
+                                      Third_Cond_SD_Temperature,
+                                      Interval, 
+                                      Cycles)
+
+```
 
 
 
-######### ----------------------------------------------------------------------
-#Spoilage Model.
+### Plotting all of them together
 
+```{r}
+
+```
+
+
+
+
+## Spilage Model, To create secondary plots - Not needed to Manuscript
+
+### Spoilage Model Functions
+```{r}
 #Function for growth and lag phase
 new_growth_rate<-function(newTemp, oldMu,oldTemp = 6, T0 = -4.15){
   newMu<-((newTemp-T0)/(oldTemp-T0))* oldMu
@@ -387,31 +503,24 @@ Spoilage_Function_Single_Milk<-function(Cont, Pop_Max, Time_Temp_df, Interval =1
   return (list(Cont,Output_Milk[[3]]))
 }
 
+```
 
-#Export all Time and Temp Profiles.
 
-Df_RT_MT
-write.csv(Df_RT_MT, file = "Pedicted Time and Temp Profiles/Df_RT_MT.csv")
-
-Df_RT_MT_RT
-Df_RT_MT_TIC
-Df_RT_MT_TIP
-Df_RT_MT_CI
-
-##Spoilage Prediction
-
+### Spoilage prediction for Room Temp B
+```{r}
 #Room Temp 2 hr -----
-Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT, Interval =1/60,AF = 1.32)
+Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+
 Changes_Over_Time<-2.44+Output_Milk[[2]]
 
-Df_RT_MT_melted$Type<-"Temperature Profiles"
+Df_RT_MT_RTB_melted$Type<-"Temperature Profiles"
 
 data_Milk_G_RTB<-data.frame("Time" = 1:length(Changes_Over_Time),
                             "variable" = "Population Change",
                             "value" = Changes_Over_Time,
                             "Type" = "Population Changes")
 
-new_dat = rbind(Df_RT_MT_melted,data_Milk_G_RTB)
+new_dat = rbind(Df_RT_MT_RTB_melted,data_Milk_G_RTB)
 
 ggplot(data = new_dat, aes(x = Time))+
   geom_line(aes(y = value, color = variable),size = 1)+
@@ -419,9 +528,13 @@ ggplot(data = new_dat, aes(x = Time))+
   labs(x = "Time (min)", y = "", title= "125 min Room Temp - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Line Description")+
   facet_wrap(~Type, scales = "free_y", ncol= 1,labeller = as_labeller(c(`Population Changes` = "Population (log CFU/g)", `Temperature Profiles` = "Temperature (°C)") ),strip.position = "left", )
-ggsave("Pedicted Time and Temp Profiles/TempandChange_RTB.png", height = 4, width = 8, dpi = 300)
 
-#Refrigerated Tray 2 hr -----
+#ggsave("Pedicted Time and Temp Profiles/TempandChange_RTB.png", height = 4, width = 8, dpi = 300)
+```
+
+
+### Spoilage prediction for 2 hr -----
+```{r}
 Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RT, Interval =1/60,AF = 1.32)
 Changes_Over_Time_RT<-2.44+Output_Milk[[2]]
 
@@ -437,10 +550,10 @@ new_dat_RT = rbind(Df_RT_MT_RT_melted,data_Milk_G_RT)
 ggplot(data = new_dat_RT, aes(x = Time))+
   geom_line(aes(y = value, color = variable),size = 1)+
   theme_bw()+
-  labs(x = "Time (min)", y = "", title= "125 min Room Temp - 21 hr 55 min Refrigerated Overnight")+
+  labs(x = "Time (min)", y = "", title= "125 min Refrigerated Tray - 21 hr 55 min Refrigerated Overnight")+
   scale_color_discrete(name = "Line Description")+
   facet_wrap(~Type, scales = "free_y", ncol= 1,labeller = as_labeller(c(`Population Changes` = "Population (log CFU/g)", `Temperature Profiles` = "Temperature (°C)") ),strip.position = "left", )
-ggsave("Pedicted Time and Temp Profiles/TempandChange_RTB.png", height = 4, width = 8, dpi = 300)
 
-
+#ggsave("Pedicted Time and Temp Profiles/TempandChange_RTB.png", height = 4, width = 8, dpi = 300)
+```
 

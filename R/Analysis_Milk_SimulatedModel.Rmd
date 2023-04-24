@@ -8,22 +8,18 @@ output: html_document
 
 ```{r}
 #Setting Working Directory-------------------------------------
-#setwd("C:/Users/gareyes3/Documents/GitHub/Share-Table-Milk/R") 
-#setwd("G:/Share Table QMRA/Share-Table-QMRA/R")
-#setwd(getSrcDirectory()[1])
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #Set working directory to the path of document
 ```
 
-##Loading Libraries
+## Loading Libraries
 ```{r ,echo=FALSE}
 #Opening Libary and Inputs-------------------------------------
 source("Util_Library.R")
 source("Functions_Full_Analysis.R")
 ```
 
-
-##Loading Model Necessary Inputs. 
-```{r}
+## Loading Model Necessary Inputs. 
+```{r, include=FALSE}
 library(tidyverse)
 #Inputs and Source Files-------------------------------------
 
@@ -40,11 +36,6 @@ source("Util_CCFunctions2.R")
 source("Util_VisualFunctions.R")
 source("Util_Output_Functions.R")
 
-```
-
-#Generating Change from T and Temp Data
-```{r}
-Df_RT_MT<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT.csv")
 ```
 
 ## Functions for growth and lag phases 
@@ -79,6 +70,7 @@ Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temp
 }
 ```
 
+#Function for lag models and buchanan
 ```{r}
 #This function calculates thee growth based on a time and temperature profile for 1 specific milk with R100084 P Paoae
 Func_Growth_LagCon<-function(In_Lag_Consumed, Time_Temp_df,Interval, AF){
@@ -119,66 +111,223 @@ Spoilage_Function_Single_Milk<-function(Cont, Pop_Max, Time_Temp_df, Interval =1
   }
   return (list(Cont,Output_Milk[[3]]))
 }
-
 ```
 
 ##Running the  Model for Milk.
-```{r warning=TRUE}
-#Running Loop First:-------------------------------------
-start_time<-Sys.time()
 
+If conditions are changed, need to change in the input_static, Service Outputs, Days Outputs files.
+
+- To change the number of weeks: Input_Static : Sens_Iterations
+- To change the number of Days, Services: Input_Static : Days_No, Service_No
+- To Change the Service Time: XXXX
+- To change the In between Service Time: XXXX
+- To Change the Overnight Storage time: XXX
+
+The simulation  below will generate all the milks throughout the 1,000 weeks. Then we will apply the different conditions to  the milks to compare. 
+
+```{r warning=TRUE}
+#This chunk Runs the ST Model 
+
+start_time<-Sys.time()
 source("Main_Loops2.R")
 ```
 
-
 ```{r}
-#AnalysysDF_RON<-AnalysysDF
+#Define the length of periods to match your model to properly adjust time. 
+Service_Length = 50
+TurningT_Length = 25
 
-  #SummaryLisr = List_Sens_Fr
-  #FoodType= = "Fruit"
-  #1. Start from here
-  Individual_Analysis_Fr<-rbind.fill(List_Sens_Pre)
-  
-  #2. find the duplicates
-  #this step filters replicated based on the ID
-  Individual_Analysis_Fr<-Individual_Analysis_Fr %>% 
-    group_by(ID) %>% 
-    filter(TotServices==max(TotServices))
-  #3
-  AnalysysDF<-Individual_Analysis_Fr
-  AnalysysDF_2<-Individual_Analysis_Fr
-  
-  #Adding the time of the services for those milks that were added to the service line during the lunch period. 
-  AnalysysDF[AnalysysDF$Initial.Service>1,]
-  AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*75
+#1. Start from here
+Individual_Analysis_Milk<-rbind.fill(List_Sens_Pre)
 
-  
-  AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
+#2. find the duplicates
+
+#this step filters replicated based on the ID
+Individual_Analysis_Milk<-Individual_Analysis_Milk %>% 
+  group_by(ID) %>% 
+  filter(TotServices==max(TotServices))
+#3
+AnalysysDF<-Individual_Analysis_Milk
+
+#Adding the time of the services for those milks that were added to the service line during the lunch period.
+AnalysysDF[AnalysysDF$Initial.Service>1,]
+AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*(Service_Length+TurningT_Length)
+
+AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
 ```
 
+## Importing generated Time and Temp Data
 
-#Simulated Rooom Temp B
+#Function to apply growth 
 ```{r}
-Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT, Interval =1/60,AF = 1.32)
-Changes_Over_Time<-Output_Milk[[2]]
-
-NMax = 8.14
-for (i in 1:nrow(AnalysysDF)){
-  In_Cont<-AnalysysDF$InSpoilageCon[i]
-  Time<-AnalysysDF$TotTime[i]
-  if (Time == 0){
-    Total_Growth = 0
-  }else{
-    Total_Growth<-Changes_Over_Time[Time]
+#Applying Changes over time with N max limit
+Appling_Changes<-function(df,Changes_Over_Time){
+  NMax = 8.14
+  for (i in 1:nrow(df)){
+    In_Cont<-df$InSpoilageCon[i]
+    Time<-df$TotTime[i]
+    if (Time == 0){
+      Total_Growth = 0
+    }else{
+      Total_Growth<-Changes_Over_Time[Time]
+    }
+    Final_Con<-In_Cont+Total_Growth
+    if(Final_Con>NMax){
+      Final_Con <- NMax
+    }
+    df$SpoilageCon[i]<-Final_Con
   }
-  Final_Con<-In_Cont+Total_Growth
-  if(Final_Con>NMax){
-    Final_Con <- NMax
-  }
-  AnalysysDF$SpoilageCon[i]<-Final_Con
+  return(df)
 }
+```
+
+```{r}
+#Before Running this make sure that the files from "Time and Temperature Profiles.rmd" have been generated accordingly
+
+#Room Temp B
+Df_RT_MT_RTB<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv") 
+#Refrigerated Tray
+Df_RT_MT_RT<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv") 
+#Tray With Ice Packs
+Df_RT_MT_TIP<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv") 
+#Tray with Ice 
+Df_RT_MT_TIC<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv") 
+#Cooler with Ice
+Df_RT_MT_CI<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
 
 ```
+
+## Generating an Initial DF for each of the conditions
+```{r}
+AnalysysDF_RTB<- AnalysysDF
+AnalysysDF_RT<- AnalysysDF
+AnalysysDF_TIP<- AnalysysDF
+AnalysysDF_TIC<- AnalysysDF
+AnalysysDF_CI<- AnalysysDF
+```
+
+## Simulated Rooom Temp B
+```{r}
+Output_Milk_RTB<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB<-Output_Milk_RTB[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_RTB<- Appling_Changes(df = AnalysysDF_RTB,
+                                 Changes_Over_Time = Changes_Over_Time_RTB)
+
+```
+
+## Simulated Refrigerated Tray
+```{r}
+Output_Milk_RT<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RT, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RT<-Output_Milk_RT[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_RT<- Appling_Changes(df = AnalysysDF_RT,
+                                 Changes_Over_Time = Changes_Over_Time_RT)
+
+```
+
+## Simulated Tray with Ice Packs
+```{r}
+Output_Milk_TIP<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_TIP, Interval =1/60,AF = 1.32)
+Changes_Over_Time_TIP<-Output_Milk_TIP[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_TIP<- Appling_Changes(df = AnalysysDF_TIP,
+                                 Changes_Over_Time = Changes_Over_Time_TIP)
+
+```
+
+## Simulated Tray with Ice 
+```{r}
+Output_Milk_TIC<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_TIC, Interval =1/60,AF = 1.32)
+Changes_Over_Time_TIC<-Output_Milk_TIC[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_TIC<- Appling_Changes(df = AnalysysDF_TIC,
+                                 Changes_Over_Time = Changes_Over_Time_TIC)
+
+```
+
+## Simulated Cooler with Ice
+```{r}
+Output_Milk_CI<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_CI, Interval =1/60,AF = 1.32)
+Changes_Over_Time_CI<-Output_Milk_CI[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_CI<- Appling_Changes(df = AnalysysDF_CI,
+                                 Changes_Over_Time = Changes_Over_Time_CI)
+
+```
+
+## Summary Statistics
+```{r}
+#Total Time
+
+AnalysysDF_RTB %>% 
+  #filter(Shared == "No") %>% 
+  group_by(Shared) %>% 
+  dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975))
+
+AnalysysDF_RTB %>% 
+  group_by(Location) %>% 
+  dplyr::summarize(count = n(),
+                   Day_1 = sum(TotTime<1440)/count,
+                   Day_2 = sum(TotTime>1440 & TotTime<1440*2)/count,
+                   Day_3 = sum(TotTime>1440*2 & TotTime<1440*3)/count,
+                   Day_4 = sum(TotTime>1440*3 & TotTime<1440*4)/count,
+                   Day_5 = sum(TotTime>1440*4 & TotTime<1440*5)/count
+                   )
+
+
+
+
+#Population Change
+AnalysysDF_RTB %>% 
+  #filter(Shared == "Yes") %>% 
+  group_by(Shared) %>%
+  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975))
+
+#Spoiled Milks
+AnalysysDF_RTB %>% 
+  #filter(Shared == "Yes") %>%
+  group_by(Shared) %>%
+  dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n()))
+
+
+```
+
+
+
+
+```{r}
+AnalysysDF_RTB%>%
+  ggplot(aes(y = SpoilageCon, x= TotTime, fill= Shared, shape = Shared))+
+  geom_point( size =2, alpha = 0.7, color = "black")+
+  geom_hline(yintercept =6)+
+geom_text(aes(2000,6.5,label = "Quality Threshold = 6.0"), color = "black", size  = 3,check_overlap = TRUE)+
+  facet_wrap(.~Location)+
+  labs(x = "Residence Time in Cafeteria System (min)", y = expression("Pseudomonas poae population (log"[10]~"CFU/ml)"))+
+  scale_y_continuous()+
+  scale_shape_manual(values = c(21,23))+
+  scale_fill_manual(values = c("coral1", "seagreen3"))+
+  #scale_x_log10(n.breaks= 12)+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(axis.text.x = element_text(angle = -45, vjust = -0.3))+
+  theme(legend.position="bottom")+
+  geom_segment(aes(x = 1440 , y = -Inf, xend = 1440, yend = 6,linetype = "Start of Day") )+
+  geom_segment(aes(x = 2880 , y = -Inf, xend = 2880, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 4320 , y = -Inf, xend = 4320, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 0 , y = -Inf, xend = 0, yend = 6), linetype = "dotted") +
+  geom_segment(aes(x = 5760 , y = -Inf, xend = 5760, yend = 6), linetype = "dotted") +
+  scale_linetype_manual(name = "",values = c("dotted"))
+
+```
+
+
+
 
 ##Start of the Milk Analysis based on outputs'
 
