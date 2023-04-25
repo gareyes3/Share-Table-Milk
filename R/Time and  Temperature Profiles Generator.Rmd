@@ -98,6 +98,29 @@ Create_Temperature_Profile_days<-function(First_Cond,
 }
 
 
+Create_Temperature_Profile_var
+
+
+Service_Condition<-Time_Temp_Creation_Var(Total_Time = Service_Time, Interval = Interval , 
+                       Mean_Temperature = Service_Cond_Mean_Temperature, 
+                       SD_Temperature = Service_Cond_SD_Temperature)
+
+Break_Condition<-Time_Temp_Creation_Var(Total_Time = Break_Time, Interval = Interval , 
+                       Mean_Temperature = Break_Cond_Mean_Temperature, 
+                       SD_Temperature = Break_Cond_SD_Temperature)
+
+Overnight_Condition<-Time_Temp_Creation_Var(Overnight_Time = Break_Time, Interval = Interval , 
+                       Mean_Temperature = Overnight_Cond_Mean_Temperature, 
+                       SD_Temperature = Overnight_Cond_SD_Temperature)
+
+Service_Cond_Temps_Desc<-rep(First_Cond,length(Service_Cond_Temps))
+Break_Cond_Temps_Desc<-rep(Second_Cond,length(Break_Cond_Temps))
+Overnight_Cond_Temps_Desc<-rep(Third_Cond,length(Overnight_Cond_Temps))
+
+
+
+
+
 Create_Temperature_Profile_days_3cond<-function(First_Cond, 
                                           Second_Cond,
                                           Third_Cond,
