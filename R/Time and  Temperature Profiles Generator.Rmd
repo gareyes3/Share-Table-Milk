@@ -6,6 +6,12 @@ date: "2023-04-24"
 
 #This document is used to create the milk time and temperature profiles.
 
+```{r}
+library(tidyverse)
+library(reshape2)
+```
+
+
 ##Functions to get temperature profiles
 
 ```{r}
@@ -98,79 +104,61 @@ Create_Temperature_Profile_days<-function(First_Cond,
 }
 
 
-Create_Temperature_Profile_var
-
-
-Service_Condition<-Time_Temp_Creation_Var(Total_Time = Service_Time, Interval = Interval , 
+Create_Temperature_Profile_var<-function(Service_Cond,
+                                         Break_Cond,
+                                         Overnight_Cond,
+                                         Service_Time,
+                                         Break_Time,
+                                         Overnight_Time,
+                                         Service_Cond_Mean_Temperature,
+                                         Service_Cond_SD_Temperature,
+                                         Break_Cond_Mean_Temperature,
+                                         Break_Cond_SD_Temperature,
+                                         Overnight_Cond_Mean_Temperature,
+                                         Overnight_Cond_SD_Temperature,
+                                         services,
+                                         Cycles,
+                                         Interval) {
+  Service_Condition<-Time_Temp_Creation_Var(Total_Time = Service_Time, Interval = Interval , 
                        Mean_Temperature = Service_Cond_Mean_Temperature, 
                        SD_Temperature = Service_Cond_SD_Temperature)
 
-Break_Condition<-Time_Temp_Creation_Var(Total_Time = Break_Time, Interval = Interval , 
-                       Mean_Temperature = Break_Cond_Mean_Temperature, 
-                       SD_Temperature = Break_Cond_SD_Temperature)
-
-Overnight_Condition<-Time_Temp_Creation_Var(Overnight_Time = Break_Time, Interval = Interval , 
-                       Mean_Temperature = Overnight_Cond_Mean_Temperature, 
-                       SD_Temperature = Overnight_Cond_SD_Temperature)
-
-Service_Cond_Temps_Desc<-rep(First_Cond,length(Service_Cond_Temps))
-Break_Cond_Temps_Desc<-rep(Second_Cond,length(Break_Cond_Temps))
-Overnight_Cond_Temps_Desc<-rep(Third_Cond,length(Overnight_Cond_Temps))
-
-
-
-
-
-Create_Temperature_Profile_days_3cond<-function(First_Cond, 
-                                          Second_Cond,
-                                          Third_Cond,
-                                          Fourth_Cont,
-                                          First_Cond_Total_Time,
-                                          Second_Cond_Total_Time,
-                                          Third_Cond_Total_Time,
-                                          Fourth_Cond_Total_Time,
-                                          First_Cond_Mean_Temperature, 
-                                          First_Cond_SD_Temperature,
-                                          Second_Cond_Mean_Temperature, 
-                                          Second_Cond_SD_Temperature,
-                                          Third_Cond_Mean_Temperature, 
-                                          Third_Cond_SD_Temperature,
-                                          Fourth_Cond_Mean_Temperature, 
-                                          Fourth_Cond_SD_Temperature,
-                                          Interval, 
-                                          Cycles){
+  Break_Condition<-Time_Temp_Creation_Var(Total_Time = Break_Time, Interval = Interval , 
+                         Mean_Temperature = Break_Cond_Mean_Temperature, 
+                         SD_Temperature = Break_Cond_SD_Temperature)
   
-    First_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = First_Cond_Total_Time, Interval = Interval , 
-                           Mean_Temperature = First_Cond_Mean_Temperature, 
-                           SD_Temperature = First_Cond_SD_Temperature)
-    Second_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = Second_Cond_Total_Time, Interval = Interval , 
-                                        Mean_Temperature = Second_Cond_Mean_Temperature, 
-                                        SD_Temperature = Second_Cond_SD_Temperature)
-   Third_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = Third_Cond_Total_Time, Interval = Interval , 
-                                    Mean_Temperature = Third_Cond_Mean_Temperature, 
-                                    SD_Temperature = Third_Cond_SD_Temperature)
-   
-   Fouth_Cond_Temps<-Time_Temp_Creation_Var(Total_Time = Third_Cond_Total_Time, Interval = Interval , 
-                                Mean_Temperature = Third_Cond_Mean_Temperature, 
-                                SD_Temperature = Third_Cond_SD_Temperature)
-    
-    
-    First_Cond_Temps_Desc<-rep(First_Cond,length(First_Cond_Temps))
-    Second_Cond_Temps_Desc<-rep(Second_Cond,length(Second_Cond_Temps))
-    Third_Cond_Temps_Desc<-rep(Third_Cond,length(Third_Cond_Temps))
-    
-    Temp_Vector<-c()
-    Cond_Vec<-c()
-    for (i in 1:Cycles){
-      Temp_Vector<-c(Temp_Vector,First_Cond_Temps,Second_Cond_Temps, Third_Cond_Temps)
-      Cond_Vec<-c(Cond_Vec,First_Cond_Temps_Desc,Second_Cond_Temps_Desc, Third_Cond_Temps_Desc)
+  Overnight_Condition<-Time_Temp_Creation_Var(Total_Time = Overnight_Time, Interval = Interval , 
+                         Mean_Temperature = Overnight_Cond_Mean_Temperature, 
+                         SD_Temperature = Overnight_Cond_SD_Temperature)
+  
+  Service_Cond_Temps_Desc<-rep(Service_Cond,length(Service_Condition))
+  Break_Cond_Temps_Desc<-rep(Break_Cond,length(Break_Condition))
+  Overnight_Cond_Temps_Desc<-rep(Overnight_Cond,length(Overnight_Condition))
+  
+  Vector_services<-c()
+  condition_vector_services<-c()
+  for (i in 1:services){
+    if (i<services){
+      Vector_services<-c(Vector_services,Service_Condition,Break_Condition)
+      condition_vector_services<-c(condition_vector_services,Service_Cond_Temps_Desc,Break_Cond_Temps_Desc)
+    } else if (i == services){
+      Vector_services<-c(Vector_services,Service_Condition)
+      condition_vector_services<-c(condition_vector_services,Service_Cond_Temps_Desc)
     }
-    
-    
-    Simulated_Conditions<-data.frame("Rtemp" = Temp_Vector,
-                                      "Condition" = Cond_Vec)
-    return(Simulated_Conditions)
+  }
+  
+  Temp_Vector<-c()
+  Cond_Vec<-c()
+  for (i in 1:Cycles){
+    Temp_Vector<-c(Temp_Vector,Vector_services,Overnight_Condition)
+    Cond_Vec<-c(Cond_Vec,condition_vector_services,Overnight_Cond_Temps_Desc)
+  }
+  
+  Simulated_Conditions<-data.frame("Rtemp" = Temp_Vector,
+                                    "Condition" = Cond_Vec)
+  return(Simulated_Conditions)
 }
+
 
 
 #Function to predict all milk based on the conditions...
@@ -420,7 +408,7 @@ Df_RT_MT_CI<-data.frame("RoomTemp" = Time_Temp_Df_CI$Rtemp,
                          "Time" = 1:length(Temp_Milk_CI))
 
 Df_RT_MT_CI_melted<-melt(Df_RT_MT_CI, id.vars = "Time")
-Df_RT_MT_TIC_melted$Condition = "Cooler with Ice"
+Df_RT_MT_CI_melted$Condition = "Cooler with Ice"
 
 
 write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
@@ -440,28 +428,76 @@ ggplot(data = Df_RT_MT_CI_melted, aes(x = Time, y = value, color = variable))+
 
 ### Room Temp with Intermediate Ref
 ```{r}
-Create_Temperature_Profile_days_3cond(First_Cond = "Room Temperature", 
-                                      Second_Cond,
-                                      Third_Cond,
-                                      First_Cond_Total_Time,
-                                      Second_Cond_Total_Time,
-                                      Third_Cond_Total_Time,
-                                      First_Cond_Mean_Temperature, 
-                                      First_Cond_SD_Temperature,
-                                      Second_Cond_Mean_Temperature, 
-                                      Second_Cond_SD_Temperature,
-                                      Third_Cond_Mean_Temperature, 
-                                      Third_Cond_SD_Temperature,
-                                      Interval, 
-                                      Cycles)
+
+Time_Temp_Df_RTB_refB<-Create_Temperature_Profile_var(Service_Cond = "Room Temp",
+                                         Break_Cond ="Refrigeration",
+                                         Overnight_Cond = "Refrigeration",
+                                         Service_Time = 49,
+                                         Break_Time = 24,
+                                         Overnight_Time = 1314,
+                                         Service_Cond_Mean_Temperature = 22.1,
+                                         Service_Cond_SD_Temperature = 0,
+                                         Break_Cond_Mean_Temperature = 3.71,
+                                         Break_Cond_SD_Temperature = 0,
+                                         Overnight_Cond_Mean_Temperature = 3.71,
+                                         Overnight_Cond_SD_Temperature = 0,
+                                         services = 2,
+                                         Cycles = 5,
+                                         Interval = 1)
+
+Temp_Milk_RTB_refB<-predict_full_milk_temp(Time_Temp_Df_RTB_refB, Temp_Initial = 4.2)
+
+Df_RT_MT_RTB_refB<-data.frame("RoomTemp" = Time_Temp_Df_RTB_refB$Rtemp,
+                         "MilkTemp" = Temp_Milk_RTB_refB,
+                         "Time" = 1:length(Temp_Milk_RTB_refB))
+
+Df_RT_MT_RTB_refB_melted<-melt(Df_RT_MT_RTB_refB, id.vars = "Time")
+Df_RT_MT_RTB_refB_melted$Condition = "Room Temp B Ref Break"
+
+
+write.csv(Df_RT_MT_RTB_refB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
+
 
 ```
+
+
+Plotting it
+
+```{r}
+ggplot(data = Df_RT_MT_RTB_refB_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "RTB with ref breaks - 21 hr 55 min Refrigerated Overnight")+
+  scale_color_discrete(name = "Temperature Profile")
+
+ggsave("Pedicted Time and Temp Profiles/PredictedRTB_refB.png", height = 3, width = 8, dpi = 300)
+```
+
+
 
 
 
 ### Plotting all of them together
 
 ```{r}
+
+All_6_melted<-rbind(Df_RT_MT_RTB_melted,
+                    Df_RT_MT_RT_melted,
+                    Df_RT_MT_TIC_melted,
+                    Df_RT_MT_TIP_melted,
+                    Df_RT_MT_CI_melted,
+                    Df_RT_MT_RTB_refB_melted)
+
+ggplot(data = All_6_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "Milk Temperature for different Temperature profiles")+
+  scale_color_discrete(name = "Temperature Profile")+
+  facet_wrap(~Condition, ncol= 1)+
+  theme(legend.position = "bottom")
+
+ggsave("Pedicted Time and Temp Profiles/All Temp Combined.png", height = 6, width = 8, dpi = 300)
+
 
 ```
 

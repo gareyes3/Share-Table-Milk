@@ -312,7 +312,7 @@ if(Sim_PRE==1){
   # Adding time between services Pre ----------------------------------------
   if(j>0 && j<=(Service_No-1)){
     #selection
-    Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_Service)
+    #Left_Selection_Pre$TotTime<-Func_Adding_Time(Left_Selection_Pre$TotTime, Time_Service)
     #Share Table
     #Left_ST_Pre$TotTime<-Func_Adding_Time(Left_ST_Pre$TotTime, Time_Service)
   }

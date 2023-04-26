@@ -119,9 +119,9 @@ If conditions are changed, need to change in the input_static, Service Outputs, 
 
 - To change the number of weeks: Input_Static : Sens_Iterations
 - To change the number of Days, Services: Input_Static : Days_No, Service_No
-- To Change the Service Time: XXXX
-- To change the In between Service Time: XXXX
-- To Change the Overnight Storage time: XXX
+- To Change the Service Time: Input Static: Time_Service_Length
+- To change the In between Input Static: Time_Turnaround_Length
+- To Change the Overnight Storage time: Input Static: Time_Overnight_Length
 
 The simulation  below will generate all the milks throughout the 1,000 weeks. Then we will apply the different conditions to  the milks to compare. 
 
@@ -194,6 +194,8 @@ Df_RT_MT_TIP<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
 Df_RT_MT_TIC<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv") 
 #Cooler with Ice
 Df_RT_MT_CI<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
+#room temp b with ref break
+Df_RT_MT_RTB_refB<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
 
 ```
 
@@ -204,6 +206,8 @@ AnalysysDF_RT<- AnalysysDF
 AnalysysDF_TIP<- AnalysysDF
 AnalysysDF_TIC<- AnalysysDF
 AnalysysDF_CI<- AnalysysDF
+AnalysysDF_RTB_refB<- AnalysysDF
+
 ```
 
 ## Simulated Rooom Temp B
@@ -261,16 +265,44 @@ AnalysysDF_CI<- Appling_Changes(df = AnalysysDF_CI,
 
 ```
 
-## Summary Statistics
+
+## Simulated room temp b ref break
+```{r}
+Output_Milk_RTB_refB<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_refB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_refB<-Output_Milk_RTB_refB[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_RTB_refB<- Appling_Changes(df = AnalysysDF_RTB_refB,
+                                 Changes_Over_Time = Changes_Over_Time_RTB_refB)
+
+```
+
+
+
+## Summary Statistics creating three summary functions. 
 ```{r}
 #Total Time
 
-AnalysysDF_RTB %>% 
-  #filter(Shared == "No") %>% 
-  group_by(Shared) %>% 
-  dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975))
+summary_Times<-function(df){
+  a<-df %>% 
+    #filter(Shared == "No") %>% 
+    group_by(Shared) %>% 
+    dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975))
 
-AnalysysDF_RTB %>% 
+  b<-df %>% 
+    #filter(Shared == "No") %>% 
+    group_by(NULL) %>% 
+    dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975)) %>% 
+  mutate(Shared = "All") %>% 
+    select(Shared,All_time,Alltime_q25,Alltime_q975)
+  
+  return(rbind(a,b))
+}
+
+
+
+summary_location_per<-function(df){
+  a<-df %>% 
   group_by(Location) %>% 
   dplyr::summarize(count = n(),
                    Day_1 = sum(TotTime<1440)/count,
@@ -279,24 +311,126 @@ AnalysysDF_RTB %>%
                    Day_4 = sum(TotTime>1440*3 & TotTime<1440*4)/count,
                    Day_5 = sum(TotTime>1440*4 & TotTime<1440*5)/count
                    )
+  return (a)
+}
+
+
+summary_per_spoiled<-function(df){
+  #Spoiled Milks
+  a<-df %>% 
+    #filter(Shared == "Yes") %>%
+    group_by(Shared) %>%
+    dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n())) 
+  
+  b<-df %>% 
+    #filter(Shared == "Yes") %>%
+    group_by(NULL) %>%
+    dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n())) %>% 
+    mutate(Shared = "All") %>% 
+    select(Shared,All_Total_Spoiled,percentage)
+  return(rbind(a,b))
+}
 
 
 
-
+summary_pop_change<-function(df){
+  #Population Change
 #Population Change
-AnalysysDF_RTB %>% 
+a<-df %>% 
   #filter(Shared == "Yes") %>% 
   group_by(Shared) %>%
-  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975))
+  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975)) 
 
-#Spoiled Milks
-AnalysysDF_RTB %>% 
-  #filter(Shared == "Yes") %>%
-  group_by(Shared) %>%
-  dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n()))
 
+b<-df %>% 
+  #filter(Shared == "Yes") %>% 
+  group_by(NULL) %>%
+  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975)) %>% 
+  mutate(Shared = "All") %>% 
+  select(Shared,PopC_All_Med,PopC_All_q25,PopC_All_q975)
+  return(rbind(a,b))
+}
+
+
+summary_Times(AnalysysDF_RTB)
+summary_location_per(AnalysysDF_RTB)
+summary_per_spoiled(AnalysysDF_RTB)
+summary_pop_change(AnalysysDF_RTB)
+```
+
+
+
+## Summary Statistics Room Temp B
+```{r}
+summary_Times(AnalysysDF_RTB)
+summary_location_per(AnalysysDF_RTB)
+summary_per_spoiled(AnalysysDF_RTB)
+summary_pop_change(AnalysysDF_RTB)
 
 ```
+
+## Summary Statistics Ref Tray
+```{r}
+summary_Times(AnalysysDF_RT)
+summary_location_per(AnalysysDF_RT)
+summary_per_spoiled(AnalysysDF_RT)
+summary_pop_change(AnalysysDF_RT)
+```
+
+## Summary Statistics Tray with Ice
+```{r}
+summary_Times(AnalysysDF_TIC)
+summary_location_per(AnalysysDF_TIC)
+summary_per_spoiled(AnalysysDF_TIC)
+summary_pop_change(AnalysysDF_TIC)
+```
+
+
+
+## Summary Statistics Tray with Ice Packs
+```{r}
+summary_Times(AnalysysDF_TIP)
+summary_location_per(AnalysysDF_TIP)
+summary_per_spoiled(AnalysysDF_TIP)
+summary_pop_change(AnalysysDF_TIP)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

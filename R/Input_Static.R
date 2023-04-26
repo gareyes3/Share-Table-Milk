@@ -206,9 +206,9 @@
   
 #Growth, do we want to simulate growth of pathogens? 
   
-  Growth<-1
-  Growth_Pss<-1
-  Growth_Pre<-1
+  Growth<-0
+  Growth_Pss<-0
+  Growth_Pre<-0
   
 # Washing Items Effect of washing items
   

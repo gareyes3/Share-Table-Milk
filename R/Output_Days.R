@@ -212,8 +212,7 @@ if (Sim_PRE==1){
     if(No_Left_Selection_Pre>0){
       #Left_Selection_Pre<-Func_Growth_Milk_Spoilage(Temp_SL, Left_Selection_Pre, Time_Service,Growth_variability)
       #Left_Selection_Pre<-Func_Spoilage_YN(Left_Selection_Pre)
-      Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, 
-                                                 Time = Time_Service_Length)
+      Left_Selection_Pre= Func_Adding_Time_alldf(DF = Left_Selection_Pre, Time = Time_Service_Length)
     }
     
     #Here commented out the Share table items because it is added through the process. 
