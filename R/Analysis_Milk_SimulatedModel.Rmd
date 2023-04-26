@@ -163,9 +163,12 @@ AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
 #Applying Changes over time with N max limit
 Appling_Changes<-function(df,Changes_Over_Time){
   NMax = 8.14
+  Contamination_v<-df$InSpoilageCon
+  Time_V<-df$TotTime
+  Final_contamination_v<-c()
   for (i in 1:nrow(df)){
-    In_Cont<-df$InSpoilageCon[i]
-    Time<-df$TotTime[i]
+    In_Cont<-Contamination_v[i]
+    Time<-Time_V[i]
     if (Time == 0){
       Total_Growth = 0
     }else{
@@ -175,14 +178,17 @@ Appling_Changes<-function(df,Changes_Over_Time){
     if(Final_Con>NMax){
       Final_Con <- NMax
     }
-    df$SpoilageCon[i]<-Final_Con
+    Final_contamination_v<-c(Final_contamination_v,Final_Con)
   }
+  df$SpoilageCon<-Final_contamination_v
   return(df)
 }
 ```
 
 ```{r}
 #Before Running this make sure that the files from "Time and Temperature Profiles.rmd" have been generated accordingly
+
+## Primary Scenarios
 
 #Room Temp B
 Df_RT_MT_RTB<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv") 
@@ -197,10 +203,19 @@ Df_RT_MT_CI<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
 #room temp b with ref break
 Df_RT_MT_RTB_refB<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
 
+## Temperature Scenarios
+#Room Temp B
+Df_RT_MT_RTB_18C<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB_18C.csv") 
+#Refrigerated Tray
+Df_RT_MT_RTB_21C<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB_21C.csv") 
+#Tray With Ice Packs
+Df_RT_MT_RTB_23C<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv") 
+
 ```
 
 ## Generating an Initial DF for each of the conditions
 ```{r}
+### Fist Scenarios
 AnalysysDF_RTB<- AnalysysDF
 AnalysysDF_RT<- AnalysysDF
 AnalysysDF_TIP<- AnalysysDF
@@ -208,6 +223,10 @@ AnalysysDF_TIC<- AnalysysDF
 AnalysysDF_CI<- AnalysysDF
 AnalysysDF_RTB_refB<- AnalysysDF
 
+#Temperature Scenarios
+AnalysysDF_RTB_18C<- AnalysysDF
+AnalysysDF_RTB_21C<- AnalysysDF
+AnalysysDF_RTB_23C<- AnalysysDF
 ```
 
 ## Simulated Rooom Temp B
@@ -274,6 +293,41 @@ Changes_Over_Time_RTB_refB<-Output_Milk_RTB_refB[[2]]
 #If data frame is large this make time ~20 mins
 AnalysysDF_RTB_refB<- Appling_Changes(df = AnalysysDF_RTB_refB,
                                  Changes_Over_Time = Changes_Over_Time_RTB_refB)
+
+```
+
+
+## Temperature 18C
+
+```{r}
+Output_Milk_RTB_18C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_18C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_18C<-Output_Milk_RTB_18C[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_RTB_18C<- Appling_Changes(df = AnalysysDF_RTB_18C,
+                                 Changes_Over_Time = Changes_Over_Time_RTB_18C)
+
+```
+
+## Temperature 21C
+```{r}
+Output_Milk_RTB_21C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_21C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_21C<-Output_Milk_RTB_21C[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_RTB_21C<- Appling_Changes(df = AnalysysDF_RTB_21C,
+                                 Changes_Over_Time = Changes_Over_Time_RTB_21C)
+
+```
+
+## Temperature 23C
+```{r}
+Output_Milk_RTB_23C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_23C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_23C<-Output_Milk_RTB_23C[[2]]
+
+#If data frame is large this make time ~20 mins
+AnalysysDF_RTB_23C<- Appling_Changes(df = AnalysysDF_RTB_23C,
+                                 Changes_Over_Time = Changes_Over_Time_RTB_23C)
 
 ```
 
@@ -351,17 +405,13 @@ b<-df %>%
   return(rbind(a,b))
 }
 
-
-summary_Times(AnalysysDF_RTB)
-summary_location_per(AnalysysDF_RTB)
-summary_per_spoiled(AnalysysDF_RTB)
-summary_pop_change(AnalysysDF_RTB)
 ```
 
 
 
 ## Summary Statistics Room Temp B
 ```{r}
+nrow(AnalysysDF_RTB)
 summary_Times(AnalysysDF_RTB)
 summary_location_per(AnalysysDF_RTB)
 summary_per_spoiled(AnalysysDF_RTB)
@@ -394,19 +444,45 @@ summary_location_per(AnalysysDF_TIP)
 summary_per_spoiled(AnalysysDF_TIP)
 summary_pop_change(AnalysysDF_TIP)
 ```
+## Summary Statistics Cooler with Ice
+```{r}
+summary_Times(AnalysysDF_CI)
+summary_location_per(AnalysysDF_CI)
+summary_per_spoiled(AnalysysDF_CI)
+summary_pop_change(AnalysysDF_CI)
+```
 
+## Summary Statistics RTB with ref in between 
+```{r}
+summary_Times(AnalysysDF_RTB_refB)
+summary_location_per(AnalysysDF_RTB_refB)
+summary_per_spoiled(AnalysysDF_RTB_refB)
+summary_pop_change(AnalysysDF_RTB_refB)
+```
 
+## Summary Statistics RTB 18C
+```{r}
+summary_Times(AnalysysDF_RTB_18C)
+summary_location_per(AnalysysDF_RTB_18C)
+summary_per_spoiled(AnalysysDF_RTB_18C)
+summary_pop_change(AnalysysDF_RTB_18C)
+```
 
+## Summary Statistics RTB 21C
+```{r}
+summary_Times(AnalysysDF_RTB_21C)
+summary_location_per(AnalysysDF_RTB_21C)
+summary_per_spoiled(AnalysysDF_RTB_21C)
+summary_pop_change(AnalysysDF_RTB_21C)
+```
 
-
-
-
-
-
-
-
-
-
+## Summary Statistics RTB 23C
+```{r}
+summary_Times(AnalysysDF_RTB_23C)
+summary_location_per(AnalysysDF_RTB_23C)
+summary_per_spoiled(AnalysysDF_RTB_23C)
+summary_pop_change(AnalysysDF_RTB_23C)
+```
 
 
 
