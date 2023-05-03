@@ -624,6 +624,28 @@ ggsave("Pedicted Time and Temp Profiles/All Temp Combined.png", height = 5, widt
 
 ```
 
+```{r}
+All_Temp_melted<-rbind(Df_RT_MT_RTB_melted,
+                       Df_RT_MT_RTB_18C_melted,
+                       Df_RT_MT_RTB_21C_melted,
+                       Df_RT_MT_RTB_23C_melted)
+
+All_Temp_melted$Condition<-str_replace(All_Temp_melted$Condition, pattern = "Room Temp B", replacement = "Baseline")
+
+All_Temp_melted$Condition<-factor(All_Temp_melted$Condition, levels = c("Baseline", "Baseline 18.3°C","Baseline 21.1°C","Baseline 23.8°C"))
+
+ggplot(data = All_Temp_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)")+
+  scale_color_discrete(name = "Temperature Profile")+
+  facet_wrap(~Condition, ncol= 1)+
+  theme(legend.position = "right")
+
+ggsave("Pedicted Time and Temp Profiles/All Temp Combined Temperature.png", height = 5, width = 9, dpi = 300)
+```
+
+
 
 
 
