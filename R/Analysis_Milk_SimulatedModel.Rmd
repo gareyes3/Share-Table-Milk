@@ -113,51 +113,6 @@ Spoilage_Function_Single_Milk<-function(Cont, Pop_Max, Time_Temp_df, Interval =1
 }
 ```
 
-##Running the  Model for Milk.
-
-If conditions are changed, need to change in the input_static, Service Outputs, Days Outputs files.
-
-- To change the number of weeks: Input_Static : Sens_Iterations
-- To change the number of Days, Services: Input_Static : Days_No, Service_No
-- To Change the Service Time: Input Static: Time_Service_Length
-- To change the In between Input Static: Time_Turnaround_Length
-- To Change the Overnight Storage time: Input Static: Time_Overnight_Length
-
-The simulation  below will generate all the milks throughout the 1,000 weeks. Then we will apply the different conditions to  the milks to compare. 
-
-```{r warning=TRUE}
-#This chunk Runs the ST Model 
-
-start_time<-Sys.time()
-source("Main_Loops2.R")
-```
-
-```{r}
-#Define the length of periods to match your model to properly adjust time. 
-Service_Length = 50
-TurningT_Length = 25
-
-#1. Start from here
-Individual_Analysis_Milk<-rbind.fill(List_Sens_Pre)
-
-#2. find the duplicates
-
-#this step filters replicated based on the ID
-Individual_Analysis_Milk<-Individual_Analysis_Milk %>% 
-  group_by(ID) %>% 
-  filter(TotServices==max(TotServices))
-#3
-AnalysysDF<-Individual_Analysis_Milk
-
-#Adding the time of the services for those milks that were added to the service line during the lunch period.
-AnalysysDF[AnalysysDF$Initial.Service>1,]
-AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*(Service_Length+TurningT_Length)
-
-AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
-```
-
-## Importing generated Time and Temp Data
-
 #Function to apply growth 
 ```{r}
 #Applying Changes over time with N max limit
@@ -185,6 +140,8 @@ Appling_Changes<-function(df,Changes_Over_Time){
 }
 ```
 
+
+#Importing time and Temp Profiles. 
 ```{r}
 #Before Running this make sure that the files from "Time and Temperature Profiles.rmd" have been generated accordingly
 
@@ -213,21 +170,228 @@ Df_RT_MT_RTB_23C<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv
 
 ```
 
-## Generating an Initial DF for each of the conditions
-```{r}
-### Fist Scenarios
-AnalysysDF_RTB<- AnalysysDF
-AnalysysDF_RT<- AnalysysDF
-AnalysysDF_TIP<- AnalysysDF
-AnalysysDF_TIC<- AnalysysDF
-AnalysysDF_CI<- AnalysysDF
-AnalysysDF_RTB_refB<- AnalysysDF
 
-#Temperature Scenarios
-AnalysysDF_RTB_18C<- AnalysysDF
-AnalysysDF_RTB_21C<- AnalysysDF
-AnalysysDF_RTB_23C<- AnalysysDF
+## Summary Statistics creating three summary functions. 
+```{r}
+#Total Time
+
+summary_Times<-function(df){
+  a<-df %>% 
+    #filter(Shared == "No") %>% 
+    group_by(Shared) %>% 
+    dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975))
+
+  b<-df %>% 
+    #filter(Shared == "No") %>% 
+    group_by(NULL) %>% 
+    dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975)) %>% 
+  mutate(Shared = "All") %>% 
+    select(Shared,All_time,Alltime_q25,Alltime_q975)
+  
+  return(rbind(a,b))
+}
+
+
+
+summary_location_per<-function(df){
+  a<-df %>% 
+  group_by(Location) %>% 
+  dplyr::summarize(count = n(),
+                   Day_1 = sum(TotTime<1440)/count,
+                   Day_2 = sum(TotTime>1440 & TotTime<1440*2)/count,
+                   Day_3 = sum(TotTime>1440*2 & TotTime<1440*3)/count,
+                   Day_4 = sum(TotTime>1440*3 & TotTime<1440*4)/count,
+                   Day_5 = sum(TotTime>1440*4 & TotTime<1440*5)/count
+                   )
+  return (a)
+}
+
+
+summary_per_spoiled<-function(df){
+  #Spoiled Milks
+  a<-df %>% 
+    #filter(Shared == "Yes") %>%
+    group_by(Shared) %>%
+    dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n())) 
+  
+  b<-df %>% 
+    #filter(Shared == "Yes") %>%
+    group_by(NULL) %>%
+    dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n())) %>% 
+    mutate(Shared = "All") %>% 
+    select(Shared,All_Total_Spoiled,percentage)
+  return(rbind(a,b))
+}
+
+
+
+summary_pop_change<-function(df){
+  #Population Change
+#Population Change
+a<-df %>% 
+  #filter(Shared == "Yes") %>% 
+  group_by(Shared) %>%
+  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975)) 
+
+
+b<-df %>% 
+  #filter(Shared == "Yes") %>% 
+  group_by(NULL) %>%
+  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975)) %>% 
+  mutate(Shared = "All") %>% 
+  select(Shared,PopC_All_Med,PopC_All_q25,PopC_All_q975)
+  return(rbind(a,b))
+}
+
 ```
+
+
+##Running the  Model for Milk.
+
+If conditions are changed, need to change in the input_static, Service Outputs, Days Outputs files.
+
+- To change the number of weeks: Input_Static : Sens_Iterations
+- To change the number of Days, Services: Input_Static : Days_No, Service_No
+- To Change the Service Time: Input Static: Time_Service_Length
+- To change the In between Input Static: Time_Turnaround_Length
+- To Change the Overnight Storage time: Input Static: Time_Overnight_Length
+
+The simulation  below will generate all the milks throughout the 1,000 weeks. Then we will apply the different conditions to  the milks to compare. 
+
+```{r warning=TRUE}
+#This chunk Runs the ST Model 
+
+#Temp_Profile<-Df_RT_MT_RTB
+
+Obtaining_Spoiled_Milks<-function(Temp_Profile, N_Years, Service_Length,TurningT_Length){
+  final_list <- list()
+  Outputs_List_TotalMilks<-list()
+  #Outputs_List_location_per<-list()
+  Outputs_List_per_spoiled<-list()
+  Outputs_List_pop_change<-list()
+  
+  #Define the length of periods to match your model to properly adjust time. 
+  Service_Length = Service_Length#50
+  TurningT_Length = TurningT_Length#25
+  
+  for (i in 1:N_Years){
+    start_time<-Sys.time()
+    source("Main_Loops2.R")
+    
+    #1. Start from here
+    Individual_Analysis_Milk<-rbind.fill(List_Sens_Pre)
+    
+    #2. find the duplicates
+    
+    #this step filters replicated based on the ID
+    Individual_Analysis_Milk<-Individual_Analysis_Milk %>% 
+      group_by(ID) %>% 
+      filter(TotServices==max(TotServices))
+    #3
+    AnalysysDF<-Individual_Analysis_Milk
+    
+    #Adding the time of the services for those milks that were added to the service line during the lunch period.
+    AnalysysDF[AnalysysDF$Initial.Service>1,]
+    AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*(Service_Length+TurningT_Length)
+    
+    AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
+    
+    
+    Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Temp_Profile, Interval =1/60,AF = 1.32)
+    Changes_Over_Time<-Output_Milk[[2]]
+    
+    #If data frame is large this make time ~20 mins
+    AnalysysDF<- Appling_Changes(df = AnalysysDF,
+                                     Changes_Over_Time = Changes_Over_Time)
+    
+    Outputs_List_TotalMilks<-append(Outputs_List_TotalMilks,nrow(AnalysysDF))
+    #Outputs_List_location_per<-append(Outputs_List_location_per,list(summary_location_per(AnalysysDF)))
+    Outputs_List_per_spoiled<-append(Outputs_List_per_spoiled,list(summary_per_spoiled(AnalysysDF)))
+    Outputs_List_pop_change<-append(Outputs_List_pop_change,list(summary_pop_change(AnalysysDF)))
+    
+    end_time<-Sys.time()
+  
+    Total_time<-end_time-start_time
+    print(Total_time)
+  }
+  return(list( Outputs_List_TotalMilks,Outputs_List_per_spoiled,Outputs_List_pop_change))
+}
+
+
+Outputs_RTB<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RT<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RT, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_TIP<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_TIP, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_TIC<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_TIC, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_CI<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_CI, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RTB_refB<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_refB, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+
+Outputs_RTB_18C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_18C, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RTB_21C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_21C, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RTB_23C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_23C, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+
+
+
+Extracting_Total_Milks<-function(Output_Name, N_Years){
+  Total_Milks<-c()
+  for( i in 1:N_Years){
+    Total_Milks[i]<-Output_Name[[1]][[i]]
+  }
+  return(Total_Milks)
+}
+
+
+Extracting_Total_SpoiledMilks<-function(Output_Name, N_Years){
+  Total_Milks<-c()
+  for( i in 1:N_Years){
+    Total_Milks[i]<-Outputs_RTB[[2]][[i]][[3,2]]
+  }
+  return(Total_Milks)
+}
+
+##Baseline RTB
+Extracting_Total_Milks(Output_Name = Outputs_RTB, N_Years = 20)
+Extracting_Total_SpoiledMilks(Output_Name = Outputs_RTB, N_Years = 20)
+
+##Baseline RTB
+Extracting_Total_Milks(Output_Name = Outputs_RTB_refB, N_Years = 20)
+Extracting_Total_SpoiledMilks(Output_Name = Outputs_RT_refB, N_Years = 20)
+
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Simulated Rooom Temp B
 ```{r}
@@ -333,78 +497,14 @@ AnalysysDF_RTB_23C<- Appling_Changes(df = AnalysysDF_RTB_23C,
 
 
 
-## Summary Statistics creating three summary functions. 
+
+
 ```{r}
-#Total Time
-
-summary_Times<-function(df){
-  a<-df %>% 
-    #filter(Shared == "No") %>% 
-    group_by(Shared) %>% 
-    dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975))
-
-  b<-df %>% 
-    #filter(Shared == "No") %>% 
-    group_by(NULL) %>% 
-    dplyr::summarize(All_time=median(TotTime), Alltime_q25 = quantile(TotTime, 0.025), Alltime_q975 = quantile(TotTime, 0.975)) %>% 
-  mutate(Shared = "All") %>% 
-    select(Shared,All_time,Alltime_q25,Alltime_q975)
-  
-  return(rbind(a,b))
-}
-
-
-
-summary_location_per<-function(df){
-  a<-df %>% 
-  group_by(Location) %>% 
-  dplyr::summarize(count = n(),
-                   Day_1 = sum(TotTime<1440)/count,
-                   Day_2 = sum(TotTime>1440 & TotTime<1440*2)/count,
-                   Day_3 = sum(TotTime>1440*2 & TotTime<1440*3)/count,
-                   Day_4 = sum(TotTime>1440*3 & TotTime<1440*4)/count,
-                   Day_5 = sum(TotTime>1440*4 & TotTime<1440*5)/count
-                   )
-  return (a)
-}
-
-
-summary_per_spoiled<-function(df){
-  #Spoiled Milks
-  a<-df %>% 
-    #filter(Shared == "Yes") %>%
-    group_by(Shared) %>%
-    dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n())) 
-  
-  b<-df %>% 
-    #filter(Shared == "Yes") %>%
-    group_by(NULL) %>%
-    dplyr::summarize(All_Total_Spoiled = sum(SpoilageCon>6), percentage = (sum(SpoilageCon>6)/n())) %>% 
-    mutate(Shared = "All") %>% 
-    select(Shared,All_Total_Spoiled,percentage)
-  return(rbind(a,b))
-}
-
-
-
-summary_pop_change<-function(df){
-  #Population Change
-#Population Change
-a<-df %>% 
-  #filter(Shared == "Yes") %>% 
-  group_by(Shared) %>%
-  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975)) 
-
-
-b<-df %>% 
-  #filter(Shared == "Yes") %>% 
-  group_by(NULL) %>%
-  dplyr::summarize(PopC_All_Med = median(SpoilageCon - InSpoilageCon), PopC_All_q25 = quantile(SpoilageCon - InSpoilageCon, 0.025), PopC_All_q975 = quantile(SpoilageCon - InSpoilageCon, 0.975)) %>% 
-  mutate(Shared = "All") %>% 
-  select(Shared,PopC_All_Med,PopC_All_q25,PopC_All_q975)
-  return(rbind(a,b))
-}
-
+nrow(AnalysysDF)
+summary_Times(AnalysysDF)
+summary_location_per(AnalysysDF)
+summary_per_spoiled(AnalysysDF)
+summary_pop_change(AnalysysDF)
 ```
 
 

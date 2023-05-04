@@ -595,6 +595,87 @@ ggsave("Pedicted Time and Temp Profiles/PredictedRTB_23C.png", height = 3, width
 ```
 
 
+## Refrigeration Temp 2 C
+
+```{r}
+Time_Temp_Df_Ref_2C<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
+                                                  Second_Cond = "Refrigeration", 
+                                                  First_Cond_Total_Time = 124,
+                                                  Second_Cond_Total_Time = 1314,
+                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_SD_Temperature = 0,#0.77,
+                                                  Second_Cond_Mean_Temperature= 2, 
+                                                  Second_Cond_SD_Temperature = 0,#1.04,
+                                                  Interval  =1, 
+                                                  Cycles = 5)
+
+
+Temp_Milk_Vectors_Ref_2C<-predict_full_milk_temp(df = Time_Temp_Df_Ref_2C, Temp_Initial = 4.2)
+
+Df_RT_MT_Ref_2C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_2C$Rtemp,
+                     "MilkTemp" = Temp_Milk_Vectors_Ref_2C,
+                     "Time" = 1:length(Temp_Milk_Vectors_Ref_2C))
+Df_RT_MT_Ref_2C_melted<-melt(Df_RT_MT_Ref_2C, id.vars = "Time")
+Df_RT_MT_Ref_2C_melted$Condition = "Refrigeration Temp 2C"
+
+#Saving as CSV
+write.csv(Df_RT_MT_Ref_2C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_2C.csv")
+```
+
+Plotting it
+
+```{r}
+ggplot(data = Df_RT_MT_Ref_2C_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "Overnight Refrigeration at 2°C ")+
+  scale_color_discrete(name = "Temperature Profile")
+
+ggsave("Pedicted Time and Temp Profiles/PredictedRef_2C.png", height = 3, width = 8, dpi = 300)
+```
+
+
+## Refrigeration Temp 7 C
+
+```{r}
+Time_Temp_Df_Ref_7C<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
+                                                  Second_Cond = "Refrigeration", 
+                                                  First_Cond_Total_Time = 124,
+                                                  Second_Cond_Total_Time = 1314,
+                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_SD_Temperature = 0,#0.77,
+                                                  Second_Cond_Mean_Temperature= 7, 
+                                                  Second_Cond_SD_Temperature = 0,#1.04,
+                                                  Interval  =1, 
+                                                  Cycles = 5)
+
+
+Temp_Milk_Vectors_Ref_7C<-predict_full_milk_temp(df = Time_Temp_Df_Ref_7C, Temp_Initial = 7)
+
+Df_RT_MT_Ref_7C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_7C$Rtemp,
+                     "MilkTemp" = Temp_Milk_Vectors_Ref_7C,
+                     "Time" = 1:length(Temp_Milk_Vectors_Ref_7C))
+Df_RT_MT_Ref_7C_melted<-melt(Df_RT_MT_Ref_7C, id.vars = "Time")
+Df_RT_MT_Ref_7C_melted$Condition = "Refrigeration Temp 7C"
+
+#Saving as CSV
+write.csv(Df_RT_MT_Ref_7C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
+```
+
+Plotting it
+
+```{r}
+ggplot(data = Df_RT_MT_Ref_7C_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "Overnight Refrigeration at 7°C ")+
+  scale_color_discrete(name = "Temperature Profile")
+
+ggsave("Pedicted Time and Temp Profiles/PredictedRef_7C.png", height = 3, width = 8, dpi = 300)
+```
+
+
+
 
 ### Plotting all of them together
 
