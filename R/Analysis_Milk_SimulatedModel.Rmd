@@ -359,6 +359,7 @@ Extracting_Total_SpoiledMilks(Output_Name = Outputs_RT_refB, N_Years = 20)
 ```
 
 ```{r}
+sample(1:45, 4)
 
 ```
 
