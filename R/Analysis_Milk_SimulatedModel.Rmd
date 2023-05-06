@@ -301,6 +301,7 @@ Obtaining_Spoiled_Milks<-function(Temp_Profile, N_Years, Service_Length,TurningT
     AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
     
     
+    
     Output_Milk<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Temp_Profile, Interval =1/60,AF = 1.32)
     Changes_Over_Time<-Output_Milk[[2]]
     
@@ -352,18 +353,57 @@ Extracting_Total_Milks<-function(Output_Name, N_Years){
 Extracting_Total_SpoiledMilks<-function(Output_Name, N_Years){
   Total_Milks<-c()
   for( i in 1:N_Years){
-    Total_Milks[i]<-Outputs_RTB[[2]][[i]][[3,2]]
+    Total_Milks[i]<-Output_Name[[2]][[i]][[3,2]]
   }
   return(Total_Milks)
 }
 
 ##Baseline RTB
-Extracting_Total_Milks(Output_Name = Outputs_RTB, N_Years = 20)
-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RTB, N_Years = 20)
+Total_Milks_RTB<-Extracting_Total_Milks(Output_Name = Outputs_RTB, N_Years = 50)
+Total_Milks_Spoiled_RTB<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RTB, N_Years = 50)
 
-##Baseline RTB
-Extracting_Total_Milks(Output_Name = Outputs_RTB_refB, N_Years = 20)
-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RT_refB, N_Years = 20)
+mean(Total_Milks_RTB)
+range(Total_Milks_RTB)
+mean(Total_Milks_Spoiled_RTB)
+range(Total_Milks_Spoiled_RTB)
+
+#RT
+Total_Milks_RT<-Extracting_Total_Milks(Output_Name = Outputs_RT, N_Years = 50)
+Total_Milks_Spoiled_RT<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RT, N_Years = 50)
+
+mean(Total_Milks_RT)
+range(Total_Milks_RT)
+mean(Total_Milks_Spoiled_RT)
+range(Total_Milks_Spoiled_RT)
+
+#TIP
+Total_Milks_TIP<-Extracting_Total_Milks(Output_Name = Outputs_TIP, N_Years = 50)
+Total_Milks_Spoiled_TIP<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_TIP, N_Years = 50)
+
+mean(Total_Milks_TIP)
+range(Total_Milks_TIP)
+mean(Total_Milks_Spoiled_TIP)
+range(Total_Milks_Spoiled_TIP)
+
+#TIC
+Total_Milks_TIC<-Extracting_Total_Milks(Output_Name = Outputs_TIC, N_Years = 50)
+Total_Milks_Spoiled_TIC<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_TIC, N_Years = 50)
+
+mean(Total_Milks_TIC)
+range(Total_Milks_TIC)
+mean(Total_Milks_Spoiled_TIC)
+range(Total_Milks_Spoiled_TIC)
+
+#CI
+Total_Milks_CI<-Extracting_Total_Milks(Output_Name = Outputs_CI, N_Years = 50)
+Total_Milks_Spoiled_CI<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_CI, N_Years = 50)
+
+mean(Total_Milks_CI)
+range(Total_Milks_CI)
+mean(Total_Milks_Spoiled_CI)
+range(Total_Milks_Spoiled_CI)
+
+
 
 ```
 
@@ -376,6 +416,52 @@ sample(1:45, 4)
 
 
 
+```{r warning=TRUE}
+#This chunk Runs the ST Model 
+
+#Temp_Profile<-Df_RT_MT_RTB
+
+Obtaining_Spoiled_Milks_DFs<-function(N_Years, Service_Length,TurningT_Length){
+  final_list <- list()
+  #Define the length of periods to match your model to properly adjust time. 
+  Service_Length = Service_Length#50
+  TurningT_Length = TurningT_Length#25
+  
+  for (i in 1:N_Years){
+    print(i)
+    start_time<-Sys.time()
+    source("Main_Loops2.R")
+    
+    #1. Start from here
+    Individual_Analysis_Milk<-rbind.fill(List_Sens_Pre)
+    
+    #2. find the duplicates
+    
+    #this step filters replicated based on the ID
+    Individual_Analysis_Milk<-Individual_Analysis_Milk %>% 
+      group_by(ID) %>% 
+      filter(TotServices==max(TotServices))
+    #3
+    AnalysysDF<-Individual_Analysis_Milk
+    
+    #Adding the time of the services for those milks that were added to the service line during the lunch period.
+    AnalysysDF[AnalysysDF$Initial.Service>1,]
+    AnalysysDF$TotTime<-AnalysysDF$TotTime+(as.integer(AnalysysDF$Initial.Service)-1)*(Service_Length+TurningT_Length)
+    
+    AnalysysDF$Shared<-ifelse(AnalysysDF$STtimes>0, "Yes", "No")
+    
+    final_list<-append(final_list,list(AnalysysDF))
+    end_time<-Sys.time()
+  
+    Total_time<-end_time-start_time
+    print(Total_time)
+  }
+  return(final_list)
+}
+
+Outs_DFs<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
+
+```
 
 
 
