@@ -245,10 +245,10 @@ Df_RT_MT_RTB<-data.frame("RoomTemp" = Time_Temp_Df_RTB$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_RTB,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB))
 Df_RT_MT_RTB_melted<-melt(Df_RT_MT_RTB, id.vars = "Time")
-Df_RT_MT_RTB_melted$Condition = "Room Temp B"
+Df_RT_MT_RTB_melted$Condition = "Ambient Temperature 72°F (22.1°C)"
 
 #Saving as CSV
-write.csv(Df_RT_MT_RTB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv")
+#write.csv(Df_RT_MT_RTB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv")
 ```
 
 Plotting it 
@@ -290,7 +290,7 @@ Df_RT_MT_RT<-data.frame("RoomTemp" = Time_Temp_Df_RT$Rtemp,
 Df_RT_MT_RT_melted<-melt(Df_RT_MT_RT, id.vars = "Time")
 Df_RT_MT_RT_melted$Condition = "Refrigerated Tray"
 
-write.csv(Df_RT_MT_RT, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv")
+#write.csv(Df_RT_MT_RT, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv")
 ```
 
 Plotting it 
@@ -331,7 +331,7 @@ Df_RT_MT_TIP_melted<-melt(Df_RT_MT_TIP, id.vars = "Time")
 Df_RT_MT_TIP_melted$Condition = "Tray with Ice Packs"
 
 
-write.csv(Df_RT_MT_TIP, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
+#write.csv(Df_RT_MT_TIP, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
 
 ```
 
@@ -370,7 +370,7 @@ Df_RT_MT_TIC<-data.frame("RoomTemp" = Time_Temp_Df_TIC$Rtemp,
 Df_RT_MT_TIC_melted<-melt(Df_RT_MT_TIC, id.vars = "Time")
 Df_RT_MT_TIC_melted$Condition = "Tray with Ice"
 
-write.csv(Df_RT_MT_TIC, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv")
+#write.csv(Df_RT_MT_TIC, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv")
 ```
 
 Plotting it
@@ -411,7 +411,7 @@ Df_RT_MT_CI_melted<-melt(Df_RT_MT_CI, id.vars = "Time")
 Df_RT_MT_CI_melted$Condition = "Cooler with Ice"
 
 
-write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
+#write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
 ```
 
 Plotting it
@@ -452,10 +452,10 @@ Df_RT_MT_RTB_refB<-data.frame("RoomTemp" = Time_Temp_Df_RTB_refB$Rtemp,
                          "Time" = 1:length(Temp_Milk_RTB_refB))
 
 Df_RT_MT_RTB_refB_melted<-melt(Df_RT_MT_RTB_refB, id.vars = "Time")
-Df_RT_MT_RTB_refB_melted$Condition = "Room Temp B Ref Break"
+Df_RT_MT_RTB_refB_melted$Condition = "Ambient with Intermediate Refrigeration"
 
 
-write.csv(Df_RT_MT_RTB_refB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
+#write.csv(Df_RT_MT_RTB_refB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
 
 
 ```
@@ -498,10 +498,10 @@ Df_RT_MT_RTB_18C<-data.frame("RoomTemp" = Time_Temp_Df_RTB_18C$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_RTB_18C,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB_18C))
 Df_RT_MT_RTB_18C_melted<-melt(Df_RT_MT_RTB_18C, id.vars = "Time")
-Df_RT_MT_RTB_18C_melted$Condition = "Room Temp B 18.3°C"
+Df_RT_MT_RTB_18C_melted$Condition = "Ambient Temperature 65°F (18.3° C)"
 
 #Saving as CSV
-write.csv(Df_RT_MT_RTB_18C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_18C.csv")
+#write.csv(Df_RT_MT_RTB_18C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_18C.csv")
 ```
 
 Plotting it
@@ -537,10 +537,10 @@ Df_RT_MT_RTB_21C<-data.frame("RoomTemp" = Time_Temp_Df_RTB_21C$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_RTB_21C,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB_21C))
 Df_RT_MT_RTB_21C_melted<-melt(Df_RT_MT_RTB_21C, id.vars = "Time")
-Df_RT_MT_RTB_21C_melted$Condition = "Room Temp B 21.1°C"
+Df_RT_MT_RTB_21C_melted$Condition = "Ambient Temperature 70°F (21.1° C)"
 
 #Saving as CSV
-write.csv(Df_RT_MT_RTB_21C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_21C.csv")
+#write.csv(Df_RT_MT_RTB_21C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_21C.csv")
 ```
 
 Plotting it
@@ -576,10 +576,10 @@ Df_RT_MT_RTB_23C<-data.frame("RoomTemp" = Time_Temp_Df_RTB_23C$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_RTB_23C,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB_23C))
 Df_RT_MT_RTB_23C_melted<-melt(Df_RT_MT_RTB_23C, id.vars = "Time")
-Df_RT_MT_RTB_23C_melted$Condition = "Room Temp B 23.8°C"
+Df_RT_MT_RTB_23C_melted$Condition = "Ambient Temperature 75°F (23.8° C)"
 
 #Saving as CSV
-write.csv(Df_RT_MT_RTB_23C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv")
+#write.csv(Df_RT_MT_RTB_23C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv")
 ```
 
 Plotting it
@@ -616,10 +616,10 @@ Df_RT_MT_Ref_2C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_2C$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_Ref_2C,
                      "Time" = 1:length(Temp_Milk_Vectors_Ref_2C))
 Df_RT_MT_Ref_2C_melted<-melt(Df_RT_MT_Ref_2C, id.vars = "Time")
-Df_RT_MT_Ref_2C_melted$Condition = "Refrigeration Temp 2C"
+Df_RT_MT_Ref_2C_melted$Condition = "Overnight Refrigeration 36°F (2°C)"
 
 #Saving as CSV
-write.csv(Df_RT_MT_Ref_2C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_2C.csv")
+#write.csv(Df_RT_MT_Ref_2C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_2C.csv")
 ```
 
 Plotting it
@@ -656,10 +656,10 @@ Df_RT_MT_Ref_7C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_7C$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_Ref_7C,
                      "Time" = 1:length(Temp_Milk_Vectors_Ref_7C))
 Df_RT_MT_Ref_7C_melted<-melt(Df_RT_MT_Ref_7C, id.vars = "Time")
-Df_RT_MT_Ref_7C_melted$Condition = "Refrigeration Temp 7C"
+Df_RT_MT_Ref_7C_melted$Condition = "Overnight Refrigeration 45°F (7°C)"
 
 #Saving as CSV
-write.csv(Df_RT_MT_Ref_7C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
+#write.csv(Df_RT_MT_Ref_7C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
 ```
 
 Plotting it
@@ -688,9 +688,9 @@ All_6_melted<-rbind(Df_RT_MT_RTB_melted,
                     Df_RT_MT_CI_melted,
                     Df_RT_MT_RTB_refB_melted)
 
-All_6_melted$Condition<-str_replace(All_6_melted$Condition, pattern = "Room Temp B", replacement = "Baseline")
+#All_6_melted$Condition<-str_replace(All_6_melted$Condition, pattern = "Room Temp B", replacement = "Baseline")
 
-All_6_melted$Condition<-factor(All_6_melted$Condition, levels = c("Baseline", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Baseline Ref Break"))
+All_6_melted$Condition<-factor(All_6_melted$Condition, levels = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration"))
 
 ggplot(data = All_6_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
@@ -706,14 +706,12 @@ ggsave("Pedicted Time and Temp Profiles/All Temp Combined.png", height = 5, widt
 ```
 
 ```{r}
-All_Temp_melted<-rbind(Df_RT_MT_RTB_melted,
-                       Df_RT_MT_RTB_18C_melted,
+All_Temp_melted<-rbind(Df_RT_MT_RTB_18C_melted,
                        Df_RT_MT_RTB_21C_melted,
                        Df_RT_MT_RTB_23C_melted)
 
-All_Temp_melted$Condition<-str_replace(All_Temp_melted$Condition, pattern = "Room Temp B", replacement = "Baseline")
 
-All_Temp_melted$Condition<-factor(All_Temp_melted$Condition, levels = c("Baseline", "Baseline 18.3°C","Baseline 21.1°C","Baseline 23.8°C"))
+All_Temp_melted$Condition<-factor(All_Temp_melted$Condition, levels = c("Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)"))
 
 ggplot(data = All_Temp_melted, aes(x = Time, y = value, color = variable))+
   geom_line(size = 1)+
