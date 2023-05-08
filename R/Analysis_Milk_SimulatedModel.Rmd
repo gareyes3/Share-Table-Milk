@@ -461,25 +461,322 @@ Obtaining_Spoiled_Milks_DFs<-function(N_Years, Service_Length,TurningT_Length){
 
 Outs_DFs<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
 
+Outs_DFs_RTB<-Outs_DFs
+Outs_DFs_RT<-Outs_DFs
+Outs_DFs_TIP<-Outs_DFs
+Outs_DFs_TIC<-Outs_DFs
+Outs_DFs_CI<-Outs_DFs
+Outs_DFs_RTB_refB<-Outs_DFs
+Outs_DFs_RTB_18C<-Outs_DFs
+Outs_DFs_RTB_21C<-Outs_DFs
+Outs_DFs_RTB_23C<-Outs_DFs
+
+Outs_DFs_Ref_7C<-Outs_DFs
+Outs_DFs_Ref_2C<-Outs_DFs
+```
+
+
+```{r}
+Extracting_Total_SpoiledMilks<-function(Output_Name, N_Years){
+  Total_Milks<-c()
+  for( i in 1:N_Years){
+    Total_Milks[i]<-Output_Name[[i]][[3,2]]
+  }
+  return(Total_Milks)
+}
+```
+
+
+#RTB
+```{r}
+RTB_List<-list()  
+Output_Milk_RTB<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB<-Output_Milk_RTB[[2]]
+for (i in 1:50){
+  AnalysysDF_RTB<- Appling_Changes(df = Outs_DFs_RTB[[i]], Changes_Over_Time = Changes_Over_Time_RTB)
+  RTB_List<-append(RTB_List,list(AnalysysDF_RTB))
+}
+
+RTB_List[[i]]
+
+RTB_List_per_spoiled<-list() 
+for (i in 1:50){
+  RTB_List_per_spoiled<-append(RTB_List_per_spoiled,list(summary_per_spoiled(RTB_List[[i]])))
+}
+
+Total_Milks_Spoiled_RTB<-Extracting_Total_SpoiledMilks(Output_Name = RTB_List_per_spoiled, N_Years = 50)
+
+rows_RTB = c()
+for (i in 1:50){
+  x_RTB = nrow(RTB_List[[i]])
+  rows_RTB = c(rows_RTB,x_RTB)
+}
+
+mean(rows_RTB)
+
+Total_Milks_Spoiled_RTB
+mean(Total_Milks_Spoiled_RTB)
+range (Total_Milks_Spoiled_RTB)
+```
+
+#RT
+```{r}
+RT_List<-list()  
+Output_Milk_RT<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RT, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RT<-Output_Milk_RT[[2]]
+for (i in 1:50){
+  AnalysysDF_RT<- Appling_Changes(df = Outs_DFs_RT[[i]], Changes_Over_Time = Changes_Over_Time_RT)
+  RT_List<-append(RT_List,list(AnalysysDF_RT))
+}
+
+RT_List[[i]]
+
+RT_List_per_spoiled<-list() 
+for (i in 1:50){
+  RT_List_per_spoiled<-append(RT_List_per_spoiled,list(summary_per_spoiled(RT_List[[i]])))
+}
+
+Total_Milks_Spoiled_RT<-Extracting_Total_SpoiledMilks(Output_Name = RT_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_RT
+mean(Total_Milks_Spoiled_RT)
+range (Total_Milks_Spoiled_RT)
+```
+
+
+#TIP
+```{r}
+TIP_List<-list()  
+Output_Milk_TIP<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_TIP, Interval =1/60,AF = 1.32)
+Changes_Over_Time_TIP<-Output_Milk_TIP[[2]]
+for (i in 1:50){
+  AnalysysDF_TIP<- Appling_Changes(df = Outs_DFs_TIP[[i]], Changes_Over_Time = Changes_Over_Time_TIP)
+  TIP_List<-append(TIP_List,list(AnalysysDF_TIP))
+}
+
+TIP_List[[i]]
+
+TIP_List_per_spoiled<-list() 
+for (i in 1:50){
+  TIP_List_per_spoiled<-append(TIP_List_per_spoiled,list(summary_per_spoiled(TIP_List[[i]])))
+}
+
+Total_Milks_Spoiled_TIP<-Extracting_Total_SpoiledMilks(Output_Name = TIP_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_TIP
+mean(Total_Milks_Spoiled_TIP)
+range (Total_Milks_Spoiled_TIP)
+```
+
+
+
+#TIC
+```{r}
+TIC_List<-list()  
+Output_Milk_TIC<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_TIC, Interval =1/60,AF = 1.32)
+Changes_Over_Time_TIC<-Output_Milk_TIC[[2]]
+for (i in 1:50){
+  AnalysysDF_TIC<- Appling_Changes(df = Outs_DFs_TIC[[i]], Changes_Over_Time = Changes_Over_Time_TIC)
+  TIC_List<-append(TIC_List,list(AnalysysDF_TIC))
+}
+
+TIC_List[[i]]
+
+TIC_List_per_spoiled<-list() 
+for (i in 1:50){
+  TIC_List_per_spoiled<-append(TIC_List_per_spoiled,list(summary_per_spoiled(TIC_List[[i]])))
+}
+
+Total_Milks_Spoiled_TIC<-Extracting_Total_SpoiledMilks(Output_Name = TIC_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_TIC
+mean(Total_Milks_Spoiled_TIC)
+range (Total_Milks_Spoiled_TIC)
+```
+
+
+#CI
+```{r}
+CI_List<-list()  
+Output_Milk_CI<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_CI, Interval =1/60,AF = 1.32)
+Changes_Over_Time_CI<-Output_Milk_CI[[2]]
+for (i in 1:50){
+  AnalysysDF_CI<- Appling_Changes(df = Outs_DFs_CI[[i]], Changes_Over_Time = Changes_Over_Time_CI)
+  CI_List<-append(CI_List,list(AnalysysDF_CI))
+}
+
+CI_List[[i]]
+
+CI_List_per_spoiled<-list() 
+for (i in 1:50){
+  CI_List_per_spoiled<-append(CI_List_per_spoiled,list(summary_per_spoiled(CI_List[[i]])))
+}
+
+Total_Milks_Spoiled_CI<-Extracting_Total_SpoiledMilks(Output_Name = CI_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_CI
+mean(Total_Milks_Spoiled_CI)
+range (Total_Milks_Spoiled_CI)
+```
+
+
+
+#RTB_refB
+```{r}
+RTB_refB_List<-list()  
+Output_Milk_RTB_refB<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_refB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_refB<-Output_Milk_RTB_refB[[2]]
+for (i in 1:50){
+  AnalysysDF_RTB_refB<- Appling_Changes(df = Outs_DFs_RTB_refB[[i]], Changes_Over_Time = Changes_Over_Time_RTB_refB)
+  RTB_refB_List<-append(RTB_refB_List,list(AnalysysDF_RTB_refB))
+}
+
+RTB_refB_List[[i]]
+
+RTB_refB_List_per_spoiled<-list() 
+for (i in 1:50){
+  RTB_refB_List_per_spoiled<-append(RTB_refB_List_per_spoiled,list(summary_per_spoiled(RTB_refB_List[[i]])))
+}
+
+Total_Milks_Spoiled_RTB_refB<-Extracting_Total_SpoiledMilks(Output_Name = RTB_refB_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_RTB_refB
+mean(Total_Milks_Spoiled_RTB_refB)
+range (Total_Milks_Spoiled_RTB_refB)
 ```
 
 
 
 
+#18C
+```{r}
+RTB_18C_List<-list()  
+Output_Milk_RTB_18C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_18C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_18C<-Output_Milk_RTB_18C[[2]]
+for (i in 1:50){
+  AnalysysDF_RTB_18C<- Appling_Changes(df = Outs_DFs_RTB_18C[[i]], Changes_Over_Time = Changes_Over_Time_RTB_18C)
+  RTB_18C_List<-append(RTB_18C_List,list(AnalysysDF_RTB_18C))
+}
+
+RTB_18C_List[[i]]
+
+RTB_18C_List_per_spoiled<-list() 
+for (i in 1:50){
+  RTB_18C_List_per_spoiled<-append(RTB_18C_List_per_spoiled,list(summary_per_spoiled(RTB_18C_List[[i]])))
+}
+
+Total_Milks_Spoiled_RTB_18C<-Extracting_Total_SpoiledMilks(Output_Name = RTB_18C_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_RTB_18C
+mean(Total_Milks_Spoiled_RTB_18C)
+range (Total_Milks_Spoiled_RTB_18C)
+```
 
 
 
 
+#21C
+```{r}
+RTB_21C_List<-list()  
+Output_Milk_RTB_21C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_21C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_21C<-Output_Milk_RTB_21C[[2]]
+for (i in 1:50){
+  AnalysysDF_RTB_21C<- Appling_Changes(df = Outs_DFs_RTB_21C[[i]], Changes_Over_Time = Changes_Over_Time_RTB_21C)
+  RTB_21C_List<-append(RTB_21C_List,list(AnalysysDF_RTB_21C))
+}
 
 
 
+RTB_21C_List[[i]]
+
+RTB_21C_List_per_spoiled<-list() 
+for (i in 1:50){
+  RTB_21C_List_per_spoiled<-append(RTB_21C_List_per_spoiled,list(summary_per_spoiled(RTB_21C_List[[i]])))
+}
+
+Total_Milks_Spoiled_RTB_21C<-Extracting_Total_SpoiledMilks(Output_Name = RTB_21C_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_RTB_21C
+mean(Total_Milks_Spoiled_RTB_21C)
+range (Total_Milks_Spoiled_RTB_21C)
+```
 
 
 
+#23C
+```{r}
+RTB_23C_List<-list()  
+Output_Milk_RTB_23C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB_23C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_RTB_23C<-Output_Milk_RTB_23C[[2]]
+for (i in 1:50){
+  AnalysysDF_RTB_23C<- Appling_Changes(df = Outs_DFs_RTB_23C[[i]], Changes_Over_Time = Changes_Over_Time_RTB_23C)
+  RTB_23C_List<-append(RTB_23C_List,list(AnalysysDF_RTB_23C))
+}
+
+RTB_23C_List[[i]]
+
+RTB_23C_List_per_spoiled<-list() 
+for (i in 1:50){
+  RTB_23C_List_per_spoiled<-append(RTB_23C_List_per_spoiled,list(summary_per_spoiled(RTB_23C_List[[i]])))
+}
+
+Total_Milks_Spoiled_RTB_23C<-Extracting_Total_SpoiledMilks(Output_Name = RTB_23C_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_RTB_23C
+mean(Total_Milks_Spoiled_RTB_23C)
+range (Total_Milks_Spoiled_RTB_23C)
+```
 
 
 
+#ref7C
+```{r}
+Ref_7C_List<-list()  
+Output_Milk_Ref_7C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_Ref_7C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_Ref_7C<-Output_Milk_Ref_7C[[2]]
+for (i in 1:50){
+  AnalysysDF_Ref_7C<- Appling_Changes(df = Outs_DFs_Ref_7C[[i]], Changes_Over_Time = Changes_Over_Time_Ref_7C)
+  Ref_7C_List<-append(Ref_7C_List,list(AnalysysDF_Ref_7C))
+}
 
+Ref_7C_List[[i]]
+
+Ref_7C_List_per_spoiled<-list() 
+for (i in 1:50){
+  Ref_7C_List_per_spoiled<-append(Ref_7C_List_per_spoiled,list(summary_per_spoiled(Ref_7C_List[[i]])))
+}
+
+Total_Milks_Spoiled_Ref_7C<-Extracting_Total_SpoiledMilks(Output_Name = Ref_7C_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_Ref_7C
+mean(Total_Milks_Spoiled_Ref_7C)
+range (Total_Milks_Spoiled_Ref_7C)
+```
+
+
+#ref2C
+```{r}
+Ref_2C_List<-list()  
+Output_Milk_Ref_2C<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_Ref_2C, Interval =1/60,AF = 1.32)
+Changes_Over_Time_Ref_2C<-Output_Milk_Ref_2C[[2]]
+for (i in 1:50){
+  AnalysysDF_Ref_2C<- Appling_Changes(df = Outs_DFs_Ref_2C[[i]], Changes_Over_Time = Changes_Over_Time_Ref_2C)
+  Ref_2C_List<-append(Ref_2C_List,list(AnalysysDF_Ref_2C))
+}
+
+Ref_2C_List[[i]]
+
+Ref_2C_List_per_spoiled<-list() 
+for (i in 1:50){
+  Ref_2C_List_per_spoiled<-append(Ref_2C_List_per_spoiled,list(summary_per_spoiled(Ref_2C_List[[i]])))
+}
+
+Total_Milks_Spoiled_Ref_2C<-Extracting_Total_SpoiledMilks(Output_Name = Ref_2C_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_Ref_2C
+mean(Total_Milks_Spoiled_Ref_2C)
+range (Total_Milks_Spoiled_Ref_2C)
+```
 
 
 
