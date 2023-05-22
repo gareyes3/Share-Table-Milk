@@ -99,10 +99,11 @@
 
   
   # Inputs for Milk Spoilage -------------------------------------------------
-  
-  Initial_Spoilage_Con<-1.0 # Initial Spoilage organism concentration Aerobic Plate Count in log CFU/mL
+  Milk_Con_Mean<- 0.38 #-1.77, q2.5 #2.52 q97.5, 0.38 q50 
+  Milk_Con_SD<- 1.1
   Spoilage_Treshold<-7 #Considered spoiled milk. APCs log CFU/g
   
+  quantile(rnorm(100000,0.38,1.1),.50)
   
   
   #Inputs for E.coli Growth

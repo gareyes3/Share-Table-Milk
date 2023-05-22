@@ -36,8 +36,8 @@ if(j==1 && k== 1){
   if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Initial(FoodType = "Pre")
     
-    #Adding initial spoilge contamination to the Datafra,e
-    Pre_Data.Frame<-Func_Adding_Initial_MilkCOnt(Pre_Data.Frame)
+    #Adding initial spoilge contamination to the Dataframe
+    Pre_Data.Frame<-Func_Adding_Initial_MilkCont(df = Pre_Data.Frame, mean = Milk_Con_Mean, sd = Milk_Con_SD)
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
     
@@ -109,7 +109,7 @@ if(j>1 && k ==1 ){
     Pre_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pre")
     
     #Adding initial spoilge contamination to the Datafra,e
-    Pre_Data.Frame<-Func_Adding_Initial_MilkCOnt(Pre_Data.Frame)
+    Pre_Data.Frame<-Func_Adding_Initial_MilkCont(df = Pre_Data.Frame, mean = Milk_Con_Mean, sd = Milk_Con_SD)
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
     
@@ -190,7 +190,7 @@ if(j>0 && k>1 ){
   if(Sim_PRE==1){
     Pre_Data.Frame<-Fuct_DF_Reservice(FoodType = "Pre")
     #Adding initial spoilge contamination to the Datafra,e
-    Pre_Data.Frame<-Func_Adding_Initial_MilkCOnt(Pre_Data.Frame)
+    Pre_Data.Frame<-Func_Adding_Initial_MilkCont(df = Pre_Data.Frame, mean = Milk_Con_Mean, sd = Milk_Con_SD)
     
     #Adding initial contamination based on prevalence and area of the item #CFU/Pss
     
