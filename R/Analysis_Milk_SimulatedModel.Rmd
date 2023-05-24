@@ -259,6 +259,7 @@ If conditions are changed, need to change in the input_static, Service Outputs, 
 - To Change the Service Time: Input Static: Time_Service_Length
 - To change the In between Input Static: Time_Turnaround_Length
 - To Change the Overnight Storage time: Input Static: Time_Overnight_Length
+- To Change the contamination levels: Input Static: Milk_Con_Mean, and Milk_Con_SD
 
 The simulation  below will generate all the milks throughout the 1,000 weeks. Then we will apply the different conditions to  the milks to compare. 
 
@@ -325,96 +326,6 @@ Obtaining_Spoiled_Milks<-function(Temp_Profile, N_Years, Service_Length,TurningT
 ```
 
 
-```{r warning=TRUE}
-Outputs_RTB<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_RT<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RT, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_TIP<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_TIP, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_TIC<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_TIC, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_CI<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_CI, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_RTB_refB<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_refB, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
-
-Outputs_RTB_18C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_18C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_RTB_21C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_21C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_RTB_23C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_23C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-
-Outputs_ref_2C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_Ref_2C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-Outputs_ref_7C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_Ref_7C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
-
-
-Extracting_Total_Milks<-function(Output_Name, N_Years){
-  Total_Milks<-c()
-  for( i in 1:N_Years){
-    Total_Milks[i]<-Output_Name[[1]][[i]]
-  }
-  return(Total_Milks)
-}
-
-
-Extracting_Total_SpoiledMilks<-function(Output_Name, N_Years){
-  Total_Milks<-c()
-  for( i in 1:N_Years){
-    Total_Milks[i]<-Output_Name[[2]][[i]][[3,2]]
-  }
-  return(Total_Milks)
-}
-
-##Baseline RTB
-Total_Milks_RTB<-Extracting_Total_Milks(Output_Name = Outputs_RTB, N_Years = 50)
-Total_Milks_Spoiled_RTB<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RTB, N_Years = 50)
-
-mean(Total_Milks_RTB)
-range(Total_Milks_RTB)
-mean(Total_Milks_Spoiled_RTB)
-range(Total_Milks_Spoiled_RTB)
-
-#RT
-Total_Milks_RT<-Extracting_Total_Milks(Output_Name = Outputs_RT, N_Years = 50)
-Total_Milks_Spoiled_RT<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RT, N_Years = 50)
-
-mean(Total_Milks_RT)
-range(Total_Milks_RT)
-mean(Total_Milks_Spoiled_RT)
-range(Total_Milks_Spoiled_RT)
-
-#TIP
-Total_Milks_TIP<-Extracting_Total_Milks(Output_Name = Outputs_TIP, N_Years = 50)
-Total_Milks_Spoiled_TIP<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_TIP, N_Years = 50)
-
-mean(Total_Milks_TIP)
-range(Total_Milks_TIP)
-mean(Total_Milks_Spoiled_TIP)
-range(Total_Milks_Spoiled_TIP)
-
-#TIC
-Total_Milks_TIC<-Extracting_Total_Milks(Output_Name = Outputs_TIC, N_Years = 50)
-Total_Milks_Spoiled_TIC<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_TIC, N_Years = 50)
-
-mean(Total_Milks_TIC)
-range(Total_Milks_TIC)
-mean(Total_Milks_Spoiled_TIC)
-range(Total_Milks_Spoiled_TIC)
-
-#CI
-Total_Milks_CI<-Extracting_Total_Milks(Output_Name = Outputs_CI, N_Years = 50)
-Total_Milks_Spoiled_CI<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_CI, N_Years = 50)
-
-mean(Total_Milks_CI)
-range(Total_Milks_CI)
-mean(Total_Milks_Spoiled_CI)
-range(Total_Milks_Spoiled_CI)
-
-
-
-```
-
-```{r}
-sample(1:45, 4)
-
-```
-
-
-
-
 
 ```{r warning=TRUE}
 #This chunk Runs the ST Model 
@@ -459,7 +370,8 @@ Obtaining_Spoiled_Milks_DFs<-function(N_Years, Service_Length,TurningT_Length){
   return(final_list)
 }
 
-Outs_DFs<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
+#normal service, changes in time and temp profile
+Outs_DFs<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25) 
 
 Outs_DFs_RTB<-Outs_DFs
 Outs_DFs_RT<-Outs_DFs
@@ -473,6 +385,15 @@ Outs_DFs_RTB_23C<-Outs_DFs
 
 Outs_DFs_Ref_7C<-Outs_DFs
 Outs_DFs_Ref_2C<-Outs_DFs
+
+#for this one you will have to change the Input_static file, reload it and then run each of the lines
+source("Input_Static.R")
+Outs_DFs_LowCont<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
+source("Input_Static.R")
+Outs_DFs_MedCont<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
+source("Input_Static.R")
+Outs_DFs_HighCont<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25) 
+
 ```
 
 
@@ -782,6 +703,115 @@ range (Total_Milks_Spoiled_Ref_2C)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+#####EXTRA######
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r warning=TRUE}
+Outputs_RTB<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RT<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RT, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_TIP<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_TIP, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_TIC<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_TIC, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_CI<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_CI, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RTB_refB<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_refB, N_Years = 20 ,Service_Length = 50 ,TurningT_Length = 25)
+
+Outputs_RTB_18C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_18C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RTB_21C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_21C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_RTB_23C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_RTB_23C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+
+Outputs_ref_2C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_Ref_2C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+Outputs_ref_7C<-Obtaining_Spoiled_Milks(Temp_Profile = Df_RT_MT_Ref_7C, N_Years = 50 ,Service_Length = 50 ,TurningT_Length = 25)
+
+
+Extracting_Total_Milks<-function(Output_Name, N_Years){
+  Total_Milks<-c()
+  for( i in 1:N_Years){
+    Total_Milks[i]<-Output_Name[[1]][[i]]
+  }
+  return(Total_Milks)
+}
+
+
+Extracting_Total_SpoiledMilks<-function(Output_Name, N_Years){
+  Total_Milks<-c()
+  for( i in 1:N_Years){
+    Total_Milks[i]<-Output_Name[[2]][[i]][[3,2]]
+  }
+  return(Total_Milks)
+}
+
+##Baseline RTB
+Total_Milks_RTB<-Extracting_Total_Milks(Output_Name = Outputs_RTB, N_Years = 50)
+Total_Milks_Spoiled_RTB<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RTB, N_Years = 50)
+
+mean(Total_Milks_RTB)
+range(Total_Milks_RTB)
+mean(Total_Milks_Spoiled_RTB)
+range(Total_Milks_Spoiled_RTB)
+
+#RT
+Total_Milks_RT<-Extracting_Total_Milks(Output_Name = Outputs_RT, N_Years = 50)
+Total_Milks_Spoiled_RT<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_RT, N_Years = 50)
+
+mean(Total_Milks_RT)
+range(Total_Milks_RT)
+mean(Total_Milks_Spoiled_RT)
+range(Total_Milks_Spoiled_RT)
+
+#TIP
+Total_Milks_TIP<-Extracting_Total_Milks(Output_Name = Outputs_TIP, N_Years = 50)
+Total_Milks_Spoiled_TIP<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_TIP, N_Years = 50)
+
+mean(Total_Milks_TIP)
+range(Total_Milks_TIP)
+mean(Total_Milks_Spoiled_TIP)
+range(Total_Milks_Spoiled_TIP)
+
+#TIC
+Total_Milks_TIC<-Extracting_Total_Milks(Output_Name = Outputs_TIC, N_Years = 50)
+Total_Milks_Spoiled_TIC<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_TIC, N_Years = 50)
+
+mean(Total_Milks_TIC)
+range(Total_Milks_TIC)
+mean(Total_Milks_Spoiled_TIC)
+range(Total_Milks_Spoiled_TIC)
+
+#CI
+Total_Milks_CI<-Extracting_Total_Milks(Output_Name = Outputs_CI, N_Years = 50)
+Total_Milks_Spoiled_CI<-Extracting_Total_SpoiledMilks(Output_Name = Outputs_CI, N_Years = 50)
+
+mean(Total_Milks_CI)
+range(Total_Milks_CI)
+mean(Total_Milks_Spoiled_CI)
+range(Total_Milks_Spoiled_CI)
+
+
+
+```
 
 
 

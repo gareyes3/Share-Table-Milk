@@ -11,5 +11,5 @@ Bevier_Trial_For_Model_Melted %>%
   geom_line()+
   facet_wrap(~variable ,nrow = 5)+
   theme_bw()+
-  labs(y = "Temperature (Â°C", x = "Time (min)")
+  labs(y = "Temperature (°C)", x = "Time (min)")
 

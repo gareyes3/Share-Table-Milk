@@ -14,20 +14,19 @@ C <- 4.2 #kj/KgC°
 V <- 0.236 #L
 A <- 0.004275 #m2
 
-#Negative Slopes
-Neg_Slope_RTB<-(-0.0124) #Room Temperature
-Neg_Slope_Ref<-(-0.0141) #Refrigeration
-Neg_Slope_RT<-(-0.0141) #Refrigerated Tray
-Neg_Slope_TIC<-(-0.0141) #Tray with Ice 
-Neg_Slope_TIP<-(-0.0141) #Tray with Ice Packs
-Neg_Slope_CI<-(-0.0141) #Cooler with Ice
-
-
 
 get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
   neg_h =  ((Neg_slope*rho*C*V)/A)
   return(- neg_h)
 } 
+
+#Negative Slopes
+Neg_Slope_RTB<-(-0.0124) #Room Temperature
+Neg_Slope_Ref<-(-0.0141) #Refrigeration
+Neg_Slope_RT<-(-0.0088) #Refrigerated Tray
+Neg_Slope_TIC<-(-0.0057) #Tray with Ice 
+Neg_Slope_TIP<-(-0.0072) #Tray with Ice Packs
+Neg_Slope_CI<-(-0.0019) #Cooler with Ice
 
 #Getting the Heat Transfer Coefficients for each Temp
 h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
@@ -46,11 +45,6 @@ get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236
   # h = convection trans coefficient for that condition
   return (exp(-(h*A/rho*C*V)*(time))*(To-Tinf)+Tinf)
 }
-
-get_temp(h = h_RTB, To = 1.55, Tinf =  20, time = 5)
-get_temp(h = h_ref, To = 17, Tinf =  4, time = 120)
-
-
 ```
 ##Function to create time and temp profiles vector
 ```{r}
@@ -98,12 +92,6 @@ predict_temp_fromProf<-function(Time_Temp_Prof, Initial_Temp,h_condition){
 }
 
 
-Time_Temp_Profile<-c(21.6, 20.8, 20.5,20.6,20.8,20.7,20.8,20.8,20.7,20.8,20.8,20.8, 20.9,20.6,20.7,21)
-
-#From Time and Temp Profile (Vector of temperatures)
-predict_temp_fromProf(Time_Temp_Prof = Time_Temp_Profile, Initial_Temp = 1.55, h_condition = h_RTB)
-
-
 Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temperature){
   Time_Temp_df<-data.frame("min"= seq(0,Total_Time,by = Interval),
                          "tempM"= rnorm(n =Total_Time+1, mean = Mean_Temperature, sd= SD_Temperature))
@@ -118,51 +106,9 @@ calc_rmse=function(actual, predicted) {
   sqrt(mean((actual - predicted) ^ 2))
 }
 
-Dec_Day1<-read.csv("Dec_Day1_Temps.csv")
+Condition_Data<-read.csv("Bevier_Trial_Temps_formodel.csv")
 
-RT_Temp_DecD1<-Dec_Day1$tempR
-MT_Temp_DecD1<-Dec_Day1$tempM
-
-PredictedMT_Temp_DecD1<-predict_temp_fromProf(Time_Temp_Prof = RT_Temp_DecD1, Initial_Temp = 7.8, h_condition = h_RTB)
-
-calc_rmse(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
-
-DF_val_rt<-data.frame("Observed" = MT_Temp_DecD1, 
-                      "Predicted" = PredictedMT_Temp_DecD1)
-
-ggplot(aes(x = Predicted, y = Observed),data = DF_val_rt)+
-  geom_point()+
-  geom_line()+
-  theme_bw()+
-  labs(x = "Predicted Milk Internal Temperature °C",y = "Observed Milk Internal Temperature °C", title = "Validation of RT heat trasnfer equation with December Trial Data: 2hr at RT")
-
-
-
-
-#Validation of Refrigeration.
-
-#Dec_Day1<-read.csv("March_6_Ref_Validation.csv")
-Dec_Day1<-read.csv("March_Day1_Temps.csv")
-
-
-RT_Temp_DecD1<-Dec_Day1$tempR
-MT_Temp_DecD1<-Dec_Day1$tempM
-
-PredictedMT_Temp_DecD1<-predict_temp_fromProf(Time_Temp_Prof = RT_Temp_DecD1, Initial_Temp = 18.1, h_condition = h_ref)
-
-calc_rmse(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
-
-plot(MT_Temp_DecD1,PredictedMT_Temp_DecD1)
-
-DF_val_rt<-data.frame("Observed" = MT_Temp_DecD1, 
-                      "Predicted" = PredictedMT_Temp_DecD1)
-
-ggplot(aes(x = Predicted, y = Observed),data = DF_val_rt)+
-  geom_point()+
-  geom_abline(slope=1, intercept=0)+
-  geom_line()+
-  theme_bw()+
-  labs(x = "Predicted Milk Internal Temperature °C",y = "Observed Milk Internal Temperature °C", title = "Validation of Refrigeration heat transfer equation with MarchData 2hr at RT")
+predict_temp_fromProf(Time_Temp_Prof =Condition_Data$Ambient.Temperature,Initial_Temp =  )
 
 
 ```
