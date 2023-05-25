@@ -32,8 +32,8 @@
   
 #Lengths for milk model #need to make sense with no services all have to add up to 1440
   Time_Service_Length = 50
-  Time_Turnaround_Length = 4 #25
-  Time_Overnight_Length = 1174#1315 #
+  Time_Turnaround_Length = 7 #25
+  Time_Overnight_Length = 1219#1315 #
 
 # Sevice Line Information -------------------------------------------------
   
