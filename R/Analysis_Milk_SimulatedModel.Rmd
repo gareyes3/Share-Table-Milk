@@ -394,6 +394,12 @@ Outs_DFs_MedCont<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,
 source("Input_Static.R")
 Outs_DFs_HighCont<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25) 
 
+#ST off
+source("Input_Static.R")
+Outs_DFs_SToff<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
+
+
+
 ```
 
 
