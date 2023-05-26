@@ -183,6 +183,61 @@ ggplot(Predicted_vs_Observed, aes(x = Time))+
 
 
 
+##For half time in condition
+
+```{r}
+Condition_Data<-read.csv("Bevier_Trial_Temps_External_30min.csv")
+Condition_Data_InternalMilk<-read.csv("Bevier_Trial_Temps_Internal_30min.csv")
+
+Predicted_RTB<-predict_temp_fromProf(Time_Temp_Prof =Condition_Data$Ambient.Temperature, Initial_Temp = Condition_Data_InternalMilk$Ambient.Temperature[1], h_condition = h_RTB)
+
+Predicted_RT<-predict_temp_fromProf(Time_Temp_Prof =Condition_Data$Refrigerated.Tray, Initial_Temp = Condition_Data_InternalMilk$Refrigerated.Tray[1], h_condition = h_RT)
+
+Predicted_TI<-predict_temp_fromProf(Time_Temp_Prof =Condition_Data$Tray.with.Ice, Initial_Temp = Condition_Data_InternalMilk$Tray.with.Ice[1], h_condition = h_TIC)
+
+Predicted_TIP<-predict_temp_fromProf(Time_Temp_Prof =Condition_Data$Tray.with.Ice.Packs, Initial_Temp = Condition_Data_InternalMilk$Tray.with.Ice.Packs[1], h_condition = h_TIP)
+
+Predicted_CI<-predict_temp_fromProf(Time_Temp_Prof =Condition_Data$Cooler.with.Ice, Initial_Temp = Condition_Data_InternalMilk$Cooler.with.Ice[1], h_condition = h_CI)
+
+
+calc_rmse(actual = Condition_Data_InternalMilk$Ambient.Temperature, predicted = Predicted_RTB)
+calc_rmse(actual = Condition_Data_InternalMilk$Refrigerated.Tray, predicted = Predicted_RT)
+calc_rmse(actual = Condition_Data_InternalMilk$Tray.with.Ice, predicted = Predicted_TI)
+calc_rmse(actual = Condition_Data_InternalMilk$Tray.with.Ice.Packs, predicted = Predicted_TIP)
+calc_rmse(actual = Condition_Data_InternalMilk$Cooler.with.Ice, predicted = Predicted_CI)
+
+
+PredictionDf<-data.frame("Time" = c(1:30),
+                         "Ambient.Temperature" = Predicted_RTB,
+                         "Cooler.with.Ice" = Predicted_CI,
+                         "Tray.with.Ice"= Predicted_TI,
+                         "Tray.with.Ice.Packs"= Predicted_TIP,
+                         "Refrigerated.Tray" = Predicted_RT)
+
+library(reshape2)
+library(ggplot2)
+Internal_DF<-reshape2::melt(Condition_Data_InternalMilk, id.vars = "Time")
+Internal_DF$type<-"Observed"
+
+Predicted_DF<-reshape2::melt(PredictionDf, id.vars = "Time")
+Predicted_DF$type<-"Predicted"
+
+Predicted_vs_Observed<-rbind(Internal_DF,Predicted_DF)
+
+Labels<-c("Ambient.Temperature"="Ambient Temperature", 
+          "Cooler.with.Ice"="Cooler with Ice", 
+          "Tray.with.Ice"="Tray with Ice", 
+          "Tray.with.Ice.Packs"="Tray with Ice Packs", 
+          "Refrigerated.Tray"="Refrigerated Tray")
+
+ggplot(Predicted_vs_Observed, aes(x = Time))+
+  #geom_point(aes(y = value, color = type))+
+  geom_line(aes(y = value, color = type), size=1)+
+  facet_wrap(~variable, scales = "free_y", labeller = labeller(variable= Labels))+
+  theme_bw()+
+  labs(y = "Temperature (°C)", x = "Time (min)", color = "Observer vs Predicted")
+
+```
 
 
 
