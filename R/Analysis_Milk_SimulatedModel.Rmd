@@ -719,6 +719,37 @@ range (Total_Milks_Spoiled_Ref_2C)
 
 
 
+#High Conts
+```{r}
+HighCont_List<-list()  
+Output_Milk_HighCont<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_HighCont<-Output_Milk_HighCont[[2]]
+for (i in 1:50){
+  AnalysysDF_HighCont<- Appling_Changes(df = Outs_DFs_HighCont[[i]], Changes_Over_Time = Changes_Over_Time_HighCont)
+  HighCont_List<-append(HighCont_List,list(AnalysysDF_HighCont))
+}
+
+aaaa<-HighCont_List[[1]]
+
+HighCont_List_per_spoiled<-list() 
+for (i in 1:50){
+  HighCont_List_per_spoiled<-append(HighCont_List_per_spoiled,list(summary_per_spoiled(HighCont_List[[i]])))
+}
+
+Total_Milks_Spoiled_HighCont<-Extracting_Total_SpoiledMilks(Output_Name = HighCont_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_HighCont
+mean(Total_Milks_Spoiled_HighCont)
+range (Total_Milks_Spoiled_HighCont)
+
+
+
+quantile(rnorm(100000,0.38,1.11),0.995)
+```
+
+
+
+
 
 
 
