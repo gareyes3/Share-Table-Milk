@@ -46,6 +46,7 @@ get_temp<-function(h, To, Tinf, time,  A =0.004275,rho =1.033, C= 4.2, V = 0.236
   return (exp(-(h*A/rho*C*V)*(time))*(To-Tinf)+Tinf)
 }
 ```
+
 ##Function to create time and temp profiles vector
 ```{r}
 #Constant outside temperature
