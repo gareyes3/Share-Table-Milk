@@ -205,12 +205,13 @@ predict_full_milk_temp<-function(df, Temp_Initial){
 ## Generating H, temperature transfer coefficients
 ```{r}
 #Negative Slopes
+#Negative Slopes
 Neg_Slope_RTB<-(-0.0124) #Room Temperature
-Neg_Slope_Ref<-(-0.0141) #Refrigeration
+Neg_Slope_Ref<-(-0.0088) #Refrigeration
 Neg_Slope_RT<-(-0.0088) #Refrigerated Tray
-Neg_Slope_TIC<-(-0.0057) #Tray with Ice 
+Neg_Slope_TIC<-(-0.0058) #Tray with Ice 
 Neg_Slope_TIP<-(-0.0072) #Tray with Ice Packs
-Neg_Slope_CI<-(-0.0019) #Cooler with Ice
+Neg_Slope_CI<-(-0.0008) #Cooler with Ice
 
 #Getting the Heat Transfer Coefficients for each Temp
 h_RTB = get_h(Neg_slope = Neg_Slope_RTB)
@@ -246,6 +247,8 @@ Df_RT_MT_RTB<-data.frame("RoomTemp" = Time_Temp_Df_RTB$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB))
 Df_RT_MT_RTB_melted<-melt(Df_RT_MT_RTB, id.vars = "Time")
 Df_RT_MT_RTB_melted$Condition = "Ambient Temperature 72°F (22.1°C)"
+Df_RT_MT_RTB_melted$Scenario = "Condition Scenario"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_RTB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv")
@@ -289,6 +292,8 @@ Df_RT_MT_RT<-data.frame("RoomTemp" = Time_Temp_Df_RT$Rtemp,
                      "Time" = 1:length(Temp_Milk_RT))
 Df_RT_MT_RT_melted<-melt(Df_RT_MT_RT, id.vars = "Time")
 Df_RT_MT_RT_melted$Condition = "Refrigerated Tray"
+Df_RT_MT_RT_melted$Scenario = "Condition Scenario"
+
 
 #write.csv(Df_RT_MT_RT, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv")
 ```
@@ -329,6 +334,8 @@ Df_RT_MT_TIP<-data.frame("RoomTemp" = Time_Temp_Df_TIP$Rtemp,
                         "Time" = 1:length(Temp_Milk_TIP))
 Df_RT_MT_TIP_melted<-melt(Df_RT_MT_TIP, id.vars = "Time")
 Df_RT_MT_TIP_melted$Condition = "Tray with Ice Packs"
+Df_RT_MT_TIP_melted$Scenario = "Condition Scenario"
+
 
 
 #write.csv(Df_RT_MT_TIP, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
@@ -369,6 +376,8 @@ Df_RT_MT_TIC<-data.frame("RoomTemp" = Time_Temp_Df_TIC$Rtemp,
 
 Df_RT_MT_TIC_melted<-melt(Df_RT_MT_TIC, id.vars = "Time")
 Df_RT_MT_TIC_melted$Condition = "Tray with Ice"
+Df_RT_MT_TIC_melted$Scenario = "Condition Scenario"
+
 
 #write.csv(Df_RT_MT_TIC, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv")
 ```
@@ -409,6 +418,8 @@ Df_RT_MT_CI<-data.frame("RoomTemp" = Time_Temp_Df_CI$Rtemp,
 
 Df_RT_MT_CI_melted<-melt(Df_RT_MT_CI, id.vars = "Time")
 Df_RT_MT_CI_melted$Condition = "Cooler with Ice"
+Df_RT_MT_CI_melted$Scenario = "Condition Scenario"
+
 
 
 #write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
@@ -453,6 +464,7 @@ Df_RT_MT_RTB_refB<-data.frame("RoomTemp" = Time_Temp_Df_RTB_refB$Rtemp,
 
 Df_RT_MT_RTB_refB_melted<-melt(Df_RT_MT_RTB_refB, id.vars = "Time")
 Df_RT_MT_RTB_refB_melted$Condition = "Ambient with Intermediate Refrigeration"
+Df_RT_MT_RTB_refB_melted$Scenario = "Condition Scenario"
 
 
 #write.csv(Df_RT_MT_RTB_refB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
@@ -499,6 +511,8 @@ Df_RT_MT_RTB_18C<-data.frame("RoomTemp" = Time_Temp_Df_RTB_18C$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB_18C))
 Df_RT_MT_RTB_18C_melted<-melt(Df_RT_MT_RTB_18C, id.vars = "Time")
 Df_RT_MT_RTB_18C_melted$Condition = "Ambient Temperature 65°F (18.3° C)"
+Df_RT_MT_RTB_18C_melted$Scenario = "Ambient Temperature Scenarios"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_RTB_18C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_18C.csv")
@@ -538,6 +552,8 @@ Df_RT_MT_RTB_21C<-data.frame("RoomTemp" = Time_Temp_Df_RTB_21C$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB_21C))
 Df_RT_MT_RTB_21C_melted<-melt(Df_RT_MT_RTB_21C, id.vars = "Time")
 Df_RT_MT_RTB_21C_melted$Condition = "Ambient Temperature 70°F (21.1° C)"
+Df_RT_MT_RTB_21C_melted$Scenario = "Ambient Temperature Scenarios"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_RTB_21C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_21C.csv")
@@ -577,6 +593,8 @@ Df_RT_MT_RTB_23C<-data.frame("RoomTemp" = Time_Temp_Df_RTB_23C$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_RTB_23C))
 Df_RT_MT_RTB_23C_melted<-melt(Df_RT_MT_RTB_23C, id.vars = "Time")
 Df_RT_MT_RTB_23C_melted$Condition = "Ambient Temperature 75°F (23.8° C)"
+Df_RT_MT_RTB_23C_melted$Scenario = "Ambient Temperature Scenarios"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_RTB_23C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv")
@@ -617,6 +635,8 @@ Df_RT_MT_Ref_2C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_2C$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_Ref_2C))
 Df_RT_MT_Ref_2C_melted<-melt(Df_RT_MT_Ref_2C, id.vars = "Time")
 Df_RT_MT_Ref_2C_melted$Condition = "Overnight Refrigeration 36°F (2°C)"
+Df_RT_MT_Ref_2C_melted$Scenario = "Overnight Refrigeration Scenarios"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_Ref_2C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_2C.csv")
@@ -657,6 +677,8 @@ Df_RT_MT_Ref_7C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_7C$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_Ref_7C))
 Df_RT_MT_Ref_7C_melted<-melt(Df_RT_MT_Ref_7C, id.vars = "Time")
 Df_RT_MT_Ref_7C_melted$Condition = "Overnight Refrigeration 45°F (7°C)"
+Df_RT_MT_Ref_7C_melted$Scenario = "Overnight Refrigeration Scenarios"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_Ref_7C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
@@ -696,6 +718,8 @@ Df_RT_MT_Ref_4C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_4C$Rtemp,
                      "Time" = 1:length(Temp_Milk_Vectors_Ref_4C))
 Df_RT_MT_Ref_4C_melted<-melt(Df_RT_MT_Ref_4C, id.vars = "Time")
 Df_RT_MT_Ref_4C_melted$Condition = "Overnight Refrigeration 39°F (4°C)"
+Df_RT_MT_Ref_4C_melted$Scenario = "Overnight Refrigeration Scenarios"
+
 
 #Saving as CSV
 #write.csv(Df_RT_MT_Ref_4C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
@@ -724,12 +748,19 @@ All_6_melted<-rbind(Df_RT_MT_RTB_melted,
                     Df_RT_MT_TIC_melted,
                     Df_RT_MT_TIP_melted,
                     Df_RT_MT_CI_melted,
-                    Df_RT_MT_RTB_refB_melted)
+                    Df_RT_MT_RTB_refB_melted,
+                    Df_RT_MT_RTB_18C_melted,
+                    Df_RT_MT_RTB_21C_melted,
+                    Df_RT_MT_RTB_23C_melted,
+                    Df_RT_MT_Ref_2C_melted,
+                    Df_RT_MT_Ref_4C_melted,
+                    Df_RT_MT_Ref_7C_melted
+                    
+                    )
 
 #All_6_melted$Condition<-str_replace(All_6_melted$Condition, pattern = "Room Temp B", replacement = "Baseline")
 
-All_6_melted$Condition<-factor(All_6_melted$Condition, levels = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration"))
-
+All_6_melted$Condition<-factor(All_6_melted$Condition, levels = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration","Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)", "Overnight Refrigeration 36°F (2°C)","Overnight Refrigeration 39°F (4°C)","Overnight Refrigeration 45°F (7°C)" ))
 
 Max_RTB<-round(max(Df_RT_MT_RTB$MilkTemp),1)
 Max_RT<-round(max(Df_RT_MT_RT$MilkTemp),1)
@@ -737,30 +768,54 @@ Max_TIC<-round(max(Df_RT_MT_TIC$MilkTemp),1)
 Max_TIP<-round(max(Df_RT_MT_TIP$MilkTemp),1)
 Max_CI<-round(max(Df_RT_MT_CI$MilkTemp),1)
 Max_RTB_refB<-round(max(Df_RT_MT_RTB_refB$MilkTemp),1)
+Max_RTB_18C<-round(max(Df_RT_MT_RTB_18C$MilkTemp),1)
+Max_RTB_21C<-round(max(Df_RT_MT_RTB_21C$MilkTemp),1)
+Max_RTB_23C<-round(max(Df_RT_MT_RTB_23C$MilkTemp),1)
+Max_Ref_2C<-round(max(Df_RT_MT_Ref_2C$MilkTemp),1)
+Max_Ref_4C<-round(max(Df_RT_MT_Ref_4C$MilkTemp),1)
+Max_Ref_7C<-round(max(Df_RT_MT_Ref_7C$MilkTemp),1)
+
+
+
+
 
 #RMSE and Text
 dat_text <- data.frame(
-label = c(paste("Peak Temp",Max_RTB,"°C"), 
-          paste("Peak Temp",Max_RT,"°C"), 
-          paste("Peak Temp",Max_TIC,"°C"), 
-          paste("Peak Temp",Max_TIP,"°C"), 
-          paste("Peak Temp",Max_CI,"°C"),
-          paste("Peak Temp",Max_RTB_refB,"°C")),
-Condition   = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration"),
-  x     = c(6700, 6700, 6700,6700,6700,6700),
-  y     = c(15, 15, 15,15,15,15)
+label = c(paste("Milk Peak Temp:",Max_RTB,"°C"), 
+          paste("Milk Peak Temp:",Max_RT,"°C"), 
+          paste("Milk Peak Temp:",Max_TIC,"°C"), 
+          paste("Milk Peak Temp:",Max_TIP,"°C"), 
+          paste("Milk Peak Temp:",Max_CI,"°C"),
+          paste("Milk Peak Temp:",Max_RTB_refB,"°C"),
+          paste("Milk Peak Temp:",Max_RTB_18C,"°C"),
+          paste("Milk Peak Temp:",Max_RTB_21C,"°C"),
+          paste("Milk Peak Temp:",Max_RTB_23C,"°C"),
+          paste("Milk Peak Temp:",Max_Ref_2C,"°C"),
+          paste("Milk Peak Temp:",Max_Ref_4C,"°C"),
+          paste("Milk Peak Temp:",Max_Ref_7C,"°C")),
+Condition   = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration","Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)", "Overnight Refrigeration 36°F (2°C)","Overnight Refrigeration 39°F (4°C)","Overnight Refrigeration 45°F (7°C)"),
+Scenario   = c("Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Ambient Temperature Scenarios","Ambient Temperature Scenarios","Ambient Temperature Scenarios","Overnight Refrigeration Scenarios","Overnight Refrigeration Scenarios","Overnight Refrigeration Scenarios"),
+  x     = c(5200, 5200, 5200,5200,5200, 5200, 5200,5200, 5200, 5200, 5200,5200),
+  y     = c(20, 20, 20,20,20,20,20, 20, 20,20,20,20)
 )
 
+
+All_6_melted$Scenario<-factor(All_6_melted$Scenario, levels = c("Condition Scenario","Ambient Temperature Scenarios","Overnight Refrigeration Scenarios"))
+
+dat_text$Scenario<-factor(dat_text$Scenario, levels = c("Condition Scenario","Ambient Temperature Scenarios","Overnight Refrigeration Scenarios"))
+
 ggplot(data = All_6_melted, aes(x = Time, y = value))+
-  geom_line(size = 1, aes(color = variable))+
+  geom_line(size = 0.6, aes(color = variable))+
   theme_bw()+
   labs(x = "Time (min)", y = "Temperature (°C)")+
-  scale_color_discrete(name = "Temperature Profile")+
-  facet_wrap(~Condition, ncol= 1)+
+  scale_color_manual(name = "Temperature Profile", values = c("#00AFBB", "#FC4E07"))+
+  #scale_linetype_discrete(name = "Temperature Profile")+
+  facet_wrap(Scenario~Condition, ncol=3)+
   theme(legend.position = "right")+
-  geom_text(data = dat_text, mapping = aes(x = x, y = y, label = label), size =3)
+  geom_text(data = dat_text, mapping = aes(x = x, y = y, label = label), size =3) +
+  theme(legend.position = "top",strip.text = element_text(face="bold"),strip.background = element_rect(fill="lightgrey"))
 
-ggsave("Pedicted Time and Temp Profiles/All Temp Combined.png", height = 5, width = 9, dpi = 300)
+ggsave("All Temp Combined.png", height = 6, width = 9, dpi = 300)
 
 
 ```
