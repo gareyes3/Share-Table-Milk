@@ -1082,12 +1082,6 @@ range (Ref_2C_List_population)
 ```
 
 
-
-```{r}
-quantile(rnorm(100000,0.38,1.11),0.995)
-```
-
-
 #High Conts
 ```{r}
 HighCont_List<-list()  
@@ -1097,8 +1091,6 @@ for (i in 1:50){
   AnalysysDF_HighCont<- Appling_Changes(df = Outs_DFs_HighCont[[i]], Changes_Over_Time = Changes_Over_Time_HighCont)
   HighCont_List<-append(HighCont_List,list(AnalysysDF_HighCont))
 }
-
-aaaa<-HighCont_List[[1]]
 
 HighCont_List_per_spoiled<-list() 
 for (i in 1:50){
@@ -1110,11 +1102,196 @@ Total_Milks_Spoiled_HighCont<-Extracting_Total_SpoiledMilks(Output_Name = HighCo
 Total_Milks_Spoiled_HighCont
 mean(Total_Milks_Spoiled_HighCont)
 range (Total_Milks_Spoiled_HighCont)
+
+
+
+#Range of milks per year
+HighCont_List_total_milks<-c()
+for (i in 1:50){
+  HighCont_List_total_milks<-c(HighCont_List_total_milks,length(HighCont_List[[i]]$ID))
+}
+mean(HighCont_List_total_milks)
+range(HighCont_List_total_milks)
+
+
+#Percentage of spoiled milks per year
+HighCont_List_pecentage_spoiled<-c()
+for (i in 1:50){
+  HighCont_List_pecentage_spoiled<-c(HighCont_List_pecentage_spoiled,(sum(HighCont_List[[i]]$SpoilageCon>6)/length(HighCont_List[[i]]$SpoilageCon)))
+}
+
+mean(HighCont_List_pecentage_spoiled)
+range (HighCont_List_pecentage_spoiled)
+
+#Population Summary
+HighCont_List_population<-c()
+for (i in 1:50){
+  HighCont_List_population<-c(HighCont_List_population,HighCont_List[[i]]$SpoilageCon)
+}
+
+mean(HighCont_List_population) #CFU/mL
+range (HighCont_List_population)
+
+```
+
+#Med Conts
+
+```{r}
+MedCont_List<-list()  
+Output_Milk_MedCont<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_MedCont<-Output_Milk_MedCont[[2]]
+for (i in 1:50){
+  AnalysysDF_MedCont<- Appling_Changes(df = Outs_DFs_MedCont[[i]], Changes_Over_Time = Changes_Over_Time_MedCont)
+  MedCont_List<-append(MedCont_List,list(AnalysysDF_MedCont))
+}
+
+MedCont_List_per_spoiled<-list() 
+for (i in 1:50){
+  MedCont_List_per_spoiled<-append(MedCont_List_per_spoiled,list(summary_per_spoiled(MedCont_List[[i]])))
+}
+
+Total_Milks_Spoiled_MedCont<-Extracting_Total_SpoiledMilks(Output_Name = MedCont_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_MedCont
+mean(Total_Milks_Spoiled_MedCont)
+range (Total_Milks_Spoiled_MedCont)
+
+
+
+#Range of milks per year
+MedCont_List_total_milks<-c()
+for (i in 1:50){
+  MedCont_List_total_milks<-c(MedCont_List_total_milks,length(MedCont_List[[i]]$ID))
+}
+mean(MedCont_List_total_milks)
+range(MedCont_List_total_milks)
+
+
+#Percentage of spoiled milks per year
+MedCont_List_pecentage_spoiled<-c()
+for (i in 1:50){
+  MedCont_List_pecentage_spoiled<-c(MedCont_List_pecentage_spoiled,(sum(MedCont_List[[i]]$SpoilageCon>6)/length(MedCont_List[[i]]$SpoilageCon)))
+}
+
+mean(MedCont_List_pecentage_spoiled)
+range (MedCont_List_pecentage_spoiled)
+
+#Population Summary
+MedCont_List_population<-c()
+for (i in 1:50){
+  MedCont_List_population<-c(MedCont_List_population,MedCont_List[[i]]$SpoilageCon)
+}
+
+mean(MedCont_List_population) #CFU/mL
+range (MedCont_List_population)
+
 ```
 
 
+#Low Cont
+```{r}
+LowCont_List<-list()  
+Output_Milk_LowCont<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_LowCont<-Output_Milk_LowCont[[2]]
+for (i in 1:50){
+  AnalysysDF_LowCont<- Appling_Changes(df = Outs_DFs_LowCont[[i]], Changes_Over_Time = Changes_Over_Time_LowCont)
+  LowCont_List<-append(LowCont_List,list(AnalysysDF_LowCont))
+}
+
+LowCont_List_per_spoiled<-list() 
+for (i in 1:50){
+  LowCont_List_per_spoiled<-append(LowCont_List_per_spoiled,list(summary_per_spoiled(LowCont_List[[i]])))
+}
+
+Total_Milks_Spoiled_LowCont<-Extracting_Total_SpoiledMilks(Output_Name = LowCont_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_LowCont
+mean(Total_Milks_Spoiled_LowCont)
+range (Total_Milks_Spoiled_LowCont)
 
 
+
+#Range of milks per year
+LowCont_List_total_milks<-c()
+for (i in 1:50){
+  LowCont_List_total_milks<-c(LowCont_List_total_milks,length(LowCont_List[[i]]$ID))
+}
+mean(LowCont_List_total_milks)
+range(LowCont_List_total_milks)
+
+
+#Percentage of spoiled milks per year
+LowCont_List_pecentage_spoiled<-c()
+for (i in 1:50){
+  LowCont_List_pecentage_spoiled<-c(LowCont_List_pecentage_spoiled,(sum(LowCont_List[[i]]$SpoilageCon>6)/length(LowCont_List[[i]]$SpoilageCon)))
+}
+
+mean(LowCont_List_pecentage_spoiled)
+range (LowCont_List_pecentage_spoiled)
+
+#Population Summary
+LowCont_List_population<-c()
+for (i in 1:50){
+  LowCont_List_population<-c(LowCont_List_population,LowCont_List[[i]]$SpoilageCon)
+}
+
+mean(LowCont_List_population) #CFU/mL
+range (LowCont_List_population)
+
+```
+
+#5b_4s
+
+```{r}
+s54b_List<-list()  
+Output_Milk_s54b<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_RTB, Interval =1/60,AF = 1.32)
+Changes_Over_Time_s54b<-Output_Milk_s54b[[2]]
+for (i in 1:50){
+  AnalysysDF_s54b<- Appling_Changes(df = Outs_DFs_5s4b[[i]], Changes_Over_Time = Changes_Over_Time_s54b)
+  s54b_List<-append(s54b_List,list(AnalysysDF_s54b))
+}
+
+s54b_List_per_spoiled<-list() 
+for (i in 1:50){
+  s54b_List_per_spoiled<-append(s54b_List_per_spoiled,list(summary_per_spoiled(s54b_List[[i]])))
+}
+
+Total_Milks_Spoiled_s54b<-Extracting_Total_SpoiledMilks(Output_Name = s54b_List_per_spoiled, N_Years = 50)
+
+Total_Milks_Spoiled_s54b
+mean(Total_Milks_Spoiled_s54b)
+range (Total_Milks_Spoiled_s54b)
+
+
+
+#Range of milks per year
+s54b_List_total_milks<-c()
+for (i in 1:50){
+  s54b_List_total_milks<-c(s54b_List_total_milks,length(s54b_List[[i]]$ID))
+}
+mean(s54b_List_total_milks)
+range(s54b_List_total_milks)
+
+
+#Percentage of spoiled milks per year
+s54b_List_pecentage_spoiled<-c()
+for (i in 1:50){
+  s54b_List_pecentage_spoiled<-c(s54b_List_pecentage_spoiled,(sum(s54b_List[[i]]$SpoilageCon>6)/length(s54b_List[[i]]$SpoilageCon)))
+}
+
+mean(s54b_List_pecentage_spoiled)
+range (s54b_List_pecentage_spoiled)
+
+#Population Summary
+s54b_List_population<-c()
+for (i in 1:50){
+  s54b_List_population<-c(s54b_List_population,s54b_List[[i]]$SpoilageCon)
+}
+
+mean(s54b_List_population) #CFU/mL
+range (s54b_List_population)
+
+```
 
 
 
