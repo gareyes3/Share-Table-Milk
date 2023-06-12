@@ -24,7 +24,7 @@ get_h<-function(Neg_slope, rho = 1.033, C = 4.2 , V = 0.236, A = 0.004275){
 Neg_Slope_RTB<-(-0.0124) #Room Temperature
 Neg_Slope_Ref<-(-0.0088) #Refrigeration
 Neg_Slope_RT<-(-0.0088) #Refrigerated Tray
-Neg_Slope_TIC<-(-0.0058) #Tray with Ice 
+Neg_Slope_TIC<-(-0.0057) #Tray with Ice 
 Neg_Slope_TIP<-(-0.0072) #Tray with Ice Packs
 Neg_Slope_CI<-(-0.0008) #Cooler with Ice
 
@@ -161,14 +161,14 @@ Predicted_vs_Observed$variable[Predicted_vs_Observed$variable == "Refrigerated.T
 
 #RMSE and Text
 dat_text <- data.frame(
-label = c("RMSE: 0.72", "RMSE: 0.07", "RMSE:0.47", "RMSE: 0.31", "RMSE: 0.12", "RMSE: 0.19"),
+label = c("RMSE: 0.72", "RMSE: 0.06", "RMSE:0.50", "RMSE: 0.31", "RMSE: 0.12", "RMSE: 0.19"),
  variable   = c("Ambient Temperature","Cooler with Ice","Tray with Ice","Tray with Ice Packs","Refrigerated Tray","Refrigeration"),
   x     = c(30, 30, 30,30,30,20),
   y     = c(4, 2.15, 3,3,4,14)
 )
 
 dat_text_h <- data.frame(
-label = c("h: 2.97", "h: 0.19", "h: 1.39", "h: 1.72", "h: 2.11", "h = 2.11"  ),
+label = c("h: 2.97", "h: 0.19", "h: 1.37", "h: 1.72", "h: 2.11", "h = 2.11"  ),
  variable   = c("Ambient Temperature","Cooler with Ice","Tray with Ice","Tray with Ice Packs","Refrigerated Tray","Refrigeration"),
   x     = c(30, 30, 30,30,30, 20),
   y     = c(3, 2.08, 2.5,2.4,3.4, 13.5)
@@ -262,7 +262,7 @@ Predicted_vs_Observed$variable[Predicted_vs_Observed$variable == "Refrigerated.T
 
 #RMSE and Text
 dat_text <- data.frame(
-label = c("RMSE: 0.43", "RMSE: 0.06", "RMSE:1.12", "RMSE: 0.64", "RMSE: 0.41", "RMSE: 1.25"),
+label = c("RMSE: 0.43", "RMSE: 0.06", "RMSE:1.15", "RMSE: 0.64", "RMSE: 0.41", "RMSE: 1.25"),
  variable   = c("Ambient Temperature","Cooler with Ice","Tray with Ice","Tray with Ice Packs","Refrigerated Tray","Refrigeration"),
   x     = c(20,20,20,20,20,10),
   y     = c(3, 2.55, 3,2.5,2.5,18)
@@ -283,7 +283,6 @@ ggplot(Predicted_vs_Observed, aes(x = Time))+
   scale_color_manual(values = c("#00AFBB", "#FC4E07"))
 
 ggsave("Testing Set.jpg", width =8, height = 5, units = "in", dpi = 300)
-
 
 ```
 

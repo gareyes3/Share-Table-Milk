@@ -209,7 +209,7 @@ predict_full_milk_temp<-function(df, Temp_Initial){
 Neg_Slope_RTB<-(-0.0124) #Room Temperature
 Neg_Slope_Ref<-(-0.0088) #Refrigeration
 Neg_Slope_RT<-(-0.0088) #Refrigerated Tray
-Neg_Slope_TIC<-(-0.0058) #Tray with Ice 
+Neg_Slope_TIC<-(-0.0057) #Tray with Ice 
 Neg_Slope_TIP<-(-0.0072) #Tray with Ice Packs
 Neg_Slope_CI<-(-0.0008) #Cooler with Ice
 
@@ -251,7 +251,7 @@ Df_RT_MT_RTB_melted$Scenario = "Condition Scenario"
 
 
 #Saving as CSV
-#write.csv(Df_RT_MT_RTB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv")
+write.csv(Df_RT_MT_RTB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB.csv")
 ```
 
 Plotting it 
@@ -295,7 +295,7 @@ Df_RT_MT_RT_melted$Condition = "Refrigerated Tray"
 Df_RT_MT_RT_melted$Scenario = "Condition Scenario"
 
 
-#write.csv(Df_RT_MT_RT, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv")
+write.csv(Df_RT_MT_RT, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RT.csv")
 ```
 
 Plotting it 
@@ -337,8 +337,7 @@ Df_RT_MT_TIP_melted$Condition = "Tray with Ice Packs"
 Df_RT_MT_TIP_melted$Scenario = "Condition Scenario"
 
 
-
-#write.csv(Df_RT_MT_TIP, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
+write.csv(Df_RT_MT_TIP, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIP.csv")
 
 ```
 
@@ -379,7 +378,7 @@ Df_RT_MT_TIC_melted$Condition = "Tray with Ice"
 Df_RT_MT_TIC_melted$Scenario = "Condition Scenario"
 
 
-#write.csv(Df_RT_MT_TIC, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv")
+write.csv(Df_RT_MT_TIC, file = "Pedicted Time and Temp Profiles/Df_RT_MT_TIC.csv")
 ```
 
 Plotting it
@@ -422,7 +421,7 @@ Df_RT_MT_CI_melted$Scenario = "Condition Scenario"
 
 
 
-#write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
+write.csv(Df_RT_MT_CI, file = "Pedicted Time and Temp Profiles/Df_RT_MT_CI.csv")
 ```
 
 Plotting it
@@ -467,7 +466,7 @@ Df_RT_MT_RTB_refB_melted$Condition = "Ambient with Intermediate Refrigeration"
 Df_RT_MT_RTB_refB_melted$Scenario = "Condition Scenario"
 
 
-#write.csv(Df_RT_MT_RTB_refB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
+write.csv(Df_RT_MT_RTB_refB, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_refB.csv")
 
 
 ```
@@ -515,7 +514,7 @@ Df_RT_MT_RTB_18C_melted$Scenario = "Ambient Temperature Scenarios"
 
 
 #Saving as CSV
-#write.csv(Df_RT_MT_RTB_18C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_18C.csv")
+write.csv(Df_RT_MT_RTB_18C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_18C.csv")
 ```
 
 Plotting it
@@ -556,7 +555,7 @@ Df_RT_MT_RTB_21C_melted$Scenario = "Ambient Temperature Scenarios"
 
 
 #Saving as CSV
-#write.csv(Df_RT_MT_RTB_21C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_21C.csv")
+write.csv(Df_RT_MT_RTB_21C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_21C.csv")
 ```
 
 Plotting it
@@ -597,7 +596,7 @@ Df_RT_MT_RTB_23C_melted$Scenario = "Ambient Temperature Scenarios"
 
 
 #Saving as CSV
-#write.csv(Df_RT_MT_RTB_23C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv")
+write.csv(Df_RT_MT_RTB_23C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_RTB_23C.csv")
 ```
 
 Plotting it
@@ -639,7 +638,7 @@ Df_RT_MT_Ref_2C_melted$Scenario = "Overnight Refrigeration Scenarios"
 
 
 #Saving as CSV
-#write.csv(Df_RT_MT_Ref_2C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_2C.csv")
+write.csv(Df_RT_MT_Ref_2C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_2C.csv")
 ```
 
 Plotting it
@@ -681,7 +680,7 @@ Df_RT_MT_Ref_7C_melted$Scenario = "Overnight Refrigeration Scenarios"
 
 
 #Saving as CSV
-#write.csv(Df_RT_MT_Ref_7C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
+write.csv(Df_RT_MT_Ref_7C, file = "Pedicted Time and Temp Profiles/Df_RT_MT_Ref_7C.csv")
 ```
 
 Plotting it
