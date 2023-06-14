@@ -177,6 +177,8 @@ Df_RT_MT_Ref_4C<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_Ref_4C.csv")
 #Bell Schedule Scenarios
 Df_RT_MT_s5b4<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_s5b4.csv")
 Df_RT_MT_s4b3<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_s4b3.csv")
+Df_RT_MT_s1b0<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_s1b0.csv")
+Df_RT_MT_s2b1<-read.csv("Pedicted Time and Temp Profiles/Df_RT_MT_s2b1.csv")
 
 ```
 
@@ -416,6 +418,8 @@ source("Input_Static.R")
 Outs_DFs_4s3b<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
 
 
+source("Input_Static.R")
+Outs_DFs_1sb0<-Obtaining_Spoiled_Milks_DFs(N_Years = 50, Service_Length = 50,TurningT_Length = 25)
 
 ```
 
