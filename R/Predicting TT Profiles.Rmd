@@ -103,8 +103,13 @@ Time_Temp_Creation_Var<-function(Total_Time, Interval, Mean_Temperature, SD_Temp
 
 
 ```{r}
+
 calc_rmse=function(actual, predicted) {
   sqrt(mean((actual - predicted) ^ 2))
+}
+
+calc_bias = function(actual,predicted){
+  mean(predicted - actual)
 }
 
 Condition_Data<-read.csv("Bevier_Trial_Temps_External_50min.csv")
@@ -130,6 +135,12 @@ calc_rmse(actual = Condition_Data_InternalMilk$Tray.with.Ice.Packs, predicted = 
 calc_rmse(actual = Condition_Data_InternalMilk$Cooler.with.Ice, predicted = Predicted_CI[1:50])
 calc_rmse(actual = Condition_Data_InternalMilk$Refrigeration, predicted = Predicted_ref[1:50])
 
+calc_bias(actual = Condition_Data_InternalMilk$Ambient.Temperature, predicted = Predicted_RTB[1:50])
+calc_bias(actual = Condition_Data_InternalMilk$Refrigerated.Tray, predicted = Predicted_RT[1:50])
+calc_bias(actual = Condition_Data_InternalMilk$Tray.with.Ice, predicted = Predicted_TI[1:50])
+calc_bias(actual = Condition_Data_InternalMilk$Tray.with.Ice.Packs, predicted = Predicted_TIP[1:50])
+calc_bias(actual = Condition_Data_InternalMilk$Cooler.with.Ice, predicted = Predicted_CI[1:50])
+calc_bias(actual = Condition_Data_InternalMilk$Refrigeration, predicted = Predicted_ref[1:50])
 
 
 PredictionDf<-data.frame("Time" = c(1:50),
@@ -142,6 +153,8 @@ PredictionDf<-data.frame("Time" = c(1:50),
 
 library(reshape2)
 library(ggplot2)
+
+
 Internal_DF<-reshape2::melt(Condition_Data_InternalMilk, id.vars = "Time")
 Internal_DF$type<-"Observed"
 
@@ -184,7 +197,7 @@ Predicted_vs_Observed$variable<-factor(Predicted_vs_Observed$variable, levels= c
 ggplot(Predicted_vs_Observed, aes(x = Time))+
   #geom_point(aes(y = value, color = type))+
   geom_line(aes(y = value, color = type, linetype = type), size=1)+
-  facet_wrap(~variable, scales = "free_y")+
+  facet_wrap(~variable)+
   theme_bw()+
   labs(y = "Temperature (°C)", x = "Time (min)", color = "Observed vs Predicted",linetype = "Observed vs Predicted", title = "Fitted Data, 50 minutes")+
   geom_text(data    = dat_text,
@@ -229,6 +242,12 @@ calc_rmse(actual = Condition_Data_InternalMilk$Tray.with.Ice.Packs, predicted = 
 calc_rmse(actual = Condition_Data_InternalMilk$Cooler.with.Ice, predicted = Predicted_CI)
 calc_rmse(actual = Condition_Data_InternalMilk$Refrigeration, predicted = Predicted_ref)
 
+calc_bias(actual = Condition_Data_InternalMilk$Ambient.Temperature, predicted = Predicted_RTB)
+calc_bias(actual = Condition_Data_InternalMilk$Refrigerated.Tray, predicted = Predicted_RT)
+calc_bias(actual = Condition_Data_InternalMilk$Tray.with.Ice, predicted = Predicted_TI)
+calc_bias(actual = Condition_Data_InternalMilk$Tray.with.Ice.Packs, predicted = Predicted_TIP)
+calc_bias(actual = Condition_Data_InternalMilk$Cooler.with.Ice, predicted = Predicted_CI)
+calc_bias(actual = Condition_Data_InternalMilk$Refrigeration, predicted = Predicted_ref)
 
 
 PredictionDf<-data.frame("Time" = c(1:30),
@@ -275,7 +294,7 @@ Predicted_vs_Observed$variable<-factor(Predicted_vs_Observed$variable, levels= c
 
 ggplot(Predicted_vs_Observed, aes(x = Time))+
   geom_line(aes(y = value, color = type, linetype = type), size=1)+
-  facet_wrap(~variable, scales = "free_y")+
+  facet_wrap(~variable)+
   theme_bw()+
   labs(y = "Temperature (°C)", x = "Time (min)", color = "Observed vs Predicted",linetype = "Observed vs Predicted", title = "Testing Data, 30 minutes")+
   geom_text(data    = dat_text,

@@ -619,7 +619,7 @@ Time_Temp_Df_Ref_2C<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 124,
                                                   Second_Cond_Total_Time = 1314,
-                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_Mean_Temperature = 22.1, 
                                                   First_Cond_SD_Temperature = 0,#0.77,
                                                   Second_Cond_Mean_Temperature= 2, 
                                                   Second_Cond_SD_Temperature = 0,#1.04,
@@ -627,7 +627,7 @@ Time_Temp_Df_Ref_2C<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                                   Cycles = 5)
 
 
-Temp_Milk_Vectors_Ref_2C<-predict_full_milk_temp(df = Time_Temp_Df_Ref_2C, Temp_Initial = 4.2)
+Temp_Milk_Vectors_Ref_2C<-predict_full_milk_temp(df = Time_Temp_Df_Ref_2C, Temp_Initial = 2)
 
 Df_RT_MT_Ref_2C<-data.frame("RoomTemp" = Time_Temp_Df_Ref_2C$Rtemp,
                      "MilkTemp" = Temp_Milk_Vectors_Ref_2C,
@@ -661,7 +661,7 @@ Time_Temp_Df_Ref_7C<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 124,
                                                   Second_Cond_Total_Time = 1314,
-                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_Mean_Temperature = 22.1, 
                                                   First_Cond_SD_Temperature = 0,#0.77,
                                                   Second_Cond_Mean_Temperature= 7, 
                                                   Second_Cond_SD_Temperature = 0,#1.04,
@@ -702,7 +702,7 @@ Time_Temp_Df_Ref_4C<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 124,
                                                   Second_Cond_Total_Time = 1314,
-                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_Mean_Temperature = 22.1, 
                                                   First_Cond_SD_Temperature = 0,#0.77,
                                                   Second_Cond_Mean_Temperature= 4, 
                                                   Second_Cond_SD_Temperature = 0,#1.04,
@@ -745,7 +745,7 @@ Time_Temp_Df_s5b4<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 266,
                                                   Second_Cond_Total_Time = 1174,
-                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_Mean_Temperature = 22.1, 
                                                   First_Cond_SD_Temperature = 0,#0.77,
                                                   Second_Cond_Mean_Temperature= 3.71, 
                                                   Second_Cond_SD_Temperature = 0,#1.04,
@@ -786,7 +786,7 @@ Time_Temp_Df_s4b3<-Create_Temperature_Profile_days(First_Cond = "Room Temp",
                                                   Second_Cond = "Refrigeration", 
                                                   First_Cond_Total_Time = 221,
                                                   Second_Cond_Total_Time = 1219,
-                                                  First_Cond_Mean_Temperature = 23.8, 
+                                                  First_Cond_Mean_Temperature = 22.1, 
                                                   First_Cond_SD_Temperature = 0,#0.77,
                                                   Second_Cond_Mean_Temperature= 3.71, 
                                                   Second_Cond_SD_Temperature = 0,#1.04,
@@ -820,6 +820,89 @@ ggsave("Pedicted Time and Temp Profiles/PredictedRef_4C.png", height = 3, width 
 ```
 
 
+## 1b
+
+```{r}
+Time_Temp_Df_s1b0<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
+                                                  Second_Cond = "Refrigeration", 
+                                                  First_Cond_Total_Time = 40,
+                                                  Second_Cond_Total_Time = 1400,
+                                                  First_Cond_Mean_Temperature = 22.1, 
+                                                  First_Cond_SD_Temperature = 0,#0.77,
+                                                  Second_Cond_Mean_Temperature= 3.71, 
+                                                  Second_Cond_SD_Temperature = 0,#1.04,
+                                                  Interval  =1, 
+                                                  Cycles = 5)
+
+
+Temp_Milk_Vectors_s1b0<-predict_full_milk_temp(df = Time_Temp_Df_s1b0, Temp_Initial = 4)
+
+Df_RT_MT_s1b0<-data.frame("RoomTemp" = Time_Temp_Df_s1b0$Rtemp,
+                     "MilkTemp" = Temp_Milk_Vectors_s1b0,
+                     "Time" = 1:length(Temp_Milk_Vectors_s1b0))
+Df_RT_MT_s1b0_melted<-melt(Df_RT_MT_s1b0, id.vars = "Time")
+Df_RT_MT_s1b0_melted$Condition = "1 Lunch (40 min) with 0 breaks"
+Df_RT_MT_s1b0_melted$Scenario = "Bell Schedule Scenarios"
+
+
+#Saving as CSV
+write.csv(Df_RT_MT_s1b0, file = "Pedicted Time and Temp Profiles/Df_RT_MT_s1b0.csv")
+```
+
+Plotting it
+```{r}
+ggplot(data = Df_RT_MT_s1b0_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "Overnight Refrigeration at 4°C ")+
+  scale_color_discrete(name = "Temperature Profile")
+
+#ggsave("Pedicted Time and Temp Profiles/PredictedRef_4C.png", height = 3, width = 8, dpi = 300)
+```
+
+## 2s1b-short
+
+```{r}
+Time_Temp_Df_s2b1<-Create_Temperature_Profile_days(First_Cond = "Room Temp", 
+                                                  Second_Cond = "Refrigeration", 
+                                                  First_Cond_Total_Time = 74,
+                                                  Second_Cond_Total_Time = 1366,
+                                                  First_Cond_Mean_Temperature = 22.1, 
+                                                  First_Cond_SD_Temperature = 0,#0.77,
+                                                  Second_Cond_Mean_Temperature= 3.71, 
+                                                  Second_Cond_SD_Temperature = 0,#1.04,
+                                                  Interval  =1, 
+                                                  Cycles = 5)
+
+
+Temp_Milk_Vectors_s2b1<-predict_full_milk_temp(df = Time_Temp_Df_s2b1, Temp_Initial = 4)
+
+Df_RT_MT_s2b1<-data.frame("RoomTemp" = Time_Temp_Df_s2b1$Rtemp,
+                     "MilkTemp" = Temp_Milk_Vectors_s2b1,
+                     "Time" = 1:length(Temp_Milk_Vectors_s2b1))
+Df_RT_MT_s2b1_melted<-melt(Df_RT_MT_s2b1, id.vars = "Time")
+Df_RT_MT_s2b1_melted$Condition = "2 Lunches (30 min) with 1 break (14 min)"
+Df_RT_MT_s2b1_melted$Scenario = "Bell Schedule Scenarios"
+
+
+#Saving as CSV
+write.csv(Df_RT_MT_s2b1, file = "Pedicted Time and Temp Profiles/Df_RT_MT_s2b1.csv")
+```
+
+Plotting it
+```{r}
+ggplot(data = Df_RT_MT_s2b1_melted, aes(x = Time, y = value, color = variable))+
+  geom_line(size = 1)+
+  theme_bw()+
+  labs(x = "Time (min)", y = "Temperature (°C)", title= "Overnight Refrigeration at 4°C ")+
+  scale_color_discrete(name = "Temperature Profile")
+
+#ggsave("Pedicted Time and Temp Profiles/PredictedRef_4C.png", height = 3, width = 8, dpi = 300)
+```
+
+
+
+
 
 
 ### Plotting all of them together
@@ -839,12 +922,14 @@ All_6_melted<-rbind(Df_RT_MT_RTB_melted,
                     Df_RT_MT_Ref_4C_melted,
                     Df_RT_MT_Ref_7C_melted,
                     Df_RT_MT_s5b4_melted,
-                    Df_RT_MT_s4b3_melted
+                    Df_RT_MT_s4b3_melted,
+                    Df_RT_MT_s2b1_melted,
+                    Df_RT_MT_s1b0_melted
                     )
 
 #All_6_melted$Condition<-str_replace(All_6_melted$Condition, pattern = "Room Temp B", replacement = "Baseline")
 
-All_6_melted$Condition<-factor(All_6_melted$Condition, levels = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration","Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)", "Overnight Refrigeration 36°F (2°C)","Overnight Refrigeration 39°F (4°C)","Overnight Refrigeration 45°F (7°C)","5 Lunch (50 min) with 4 breaks (4 min)","4 Lunch (50 min) with 3 breaks (7 min)"))
+All_6_melted$Condition<-factor(All_6_melted$Condition, levels = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration","Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)", "Overnight Refrigeration 36°F (2°C)","Overnight Refrigeration 39°F (4°C)","Overnight Refrigeration 45°F (7°C)","5 Lunch (50 min) with 4 breaks (4 min)","4 Lunch (50 min) with 3 breaks (7 min)","2 Lunches (30 min) with 1 break (14 min)","1 Lunch (40 min) with 0 breaks" ))
 
 Max_RTB<-round(max(Df_RT_MT_RTB$MilkTemp),1)
 Max_RT<-round(max(Df_RT_MT_RT$MilkTemp),1)
@@ -860,7 +945,8 @@ Max_Ref_4C<-round(max(Df_RT_MT_Ref_4C$MilkTemp),1)
 Max_Ref_7C<-round(max(Df_RT_MT_Ref_7C$MilkTemp),1)
 Max_s5b4<-round(max(Df_RT_MT_s5b4$MilkTemp),1)
 Max_s4b3<-round(max(Df_RT_MT_s4b3$MilkTemp),1)
-
+Max_s2b1<-round(max(Df_RT_MT_s2b1$MilkTemp),1)
+Max_s1b0<-round(max(Df_RT_MT_s1b0$MilkTemp),1)
 
 
 
@@ -879,12 +965,14 @@ label = c(paste("Milk Peak Temp:",Max_RTB,"°C"),
           paste("Milk Peak Temp:",Max_Ref_4C,"°C"),
           paste("Milk Peak Temp:",Max_Ref_7C,"°C"),
           paste("Milk Peak Temp:",Max_s5b4,"°C"),
-          paste("Milk Peak Temp:",Max_s4b3,"°C")
+          paste("Milk Peak Temp:",Max_s4b3,"°C"),
+          paste("Milk Peak Temp:",Max_s2b1,"°C"),
+          paste("Milk Peak Temp:",Max_s1b0,"°C")
           ),
-Condition   = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration","Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)", "Overnight Refrigeration 36°F (2°C)","Overnight Refrigeration 39°F (4°C)","Overnight Refrigeration 45°F (7°C)","5 Lunch (50 min) with 4 breaks (4 min)","4 Lunch (50 min) with 3 breaks (7 min)"),
-Scenario   = c("Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Ambient Temperature Scenarios","Ambient Temperature Scenarios","Ambient Temperature Scenarios","Overnight Refrigeration Scenarios","Overnight Refrigeration Scenarios","Overnight Refrigeration Scenarios","Bell Schedule Scenarios","Bell Schedule Scenarios"),
-  x     = c(5200, 5200, 5200,5200,5200, 5200, 5200,5200, 5200, 5200, 5200,5200, 5200,5200),
-  y     = c(20, 20, 20,20,20,20,20, 20, 20,20,20,20,20,20)
+Condition   = c("Ambient Temperature 72°F (22.1°C)", "Refrigerated Tray", "Tray with Ice Packs", "Tray with Ice", "Cooler with Ice", "Ambient with Intermediate Refrigeration","Ambient Temperature 65°F (18.3° C)","Ambient Temperature 70°F (21.1° C)","Ambient Temperature 75°F (23.8° C)", "Overnight Refrigeration 36°F (2°C)","Overnight Refrigeration 39°F (4°C)","Overnight Refrigeration 45°F (7°C)","5 Lunch (50 min) with 4 breaks (4 min)","4 Lunch (50 min) with 3 breaks (7 min)","2 Lunches (30 min) with 1 break (14 min)","1 Lunch (40 min) with 0 breaks"),
+Scenario   = c("Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Condition Scenario", "Ambient Temperature Scenarios","Ambient Temperature Scenarios","Ambient Temperature Scenarios","Overnight Refrigeration Scenarios","Overnight Refrigeration Scenarios","Overnight Refrigeration Scenarios","Bell Schedule Scenarios","Bell Schedule Scenarios","Bell Schedule Scenarios","Bell Schedule Scenarios"),
+  x     = c(5200, 5200, 5200,5200,5200, 5200, 5200,5200, 5200, 5200, 5200,5200, 5200,5200, 5200,5200),
+  y     = c(20, 20, 20,20,20,20,20, 20, 20,20,20,20,20,20,20,20)
 )
 
 
