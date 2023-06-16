@@ -370,7 +370,7 @@ geom_text(aes(2000,6.5,label = "Quality Threshold = 6.0"), color = "black", size
 
 
 
-ggsave("Share Table Spoilage-NonLog.jpg", width =8, height = 5, units = "in", dpi = 300)
+#ggsave("Share Table Spoilage-NonLog.jpg", width =8, height = 5, units = "in", dpi = 300)
 
 
 ```
@@ -391,7 +391,7 @@ AnalysysDF %>%
   theme(legend.position="bottom")+
   theme(axis.text.x = element_text(angle = -45, vjust = -0.3))
 
-ggsave("growth over time 2.0.jpg", width =8, height = 5, units = "in", dpi = 300)
+#ggsave("growth over time 2.0.jpg", width =8, height = 5, units = "in", dpi = 300)
 
 
 ```
@@ -468,7 +468,7 @@ AnalysysDF %>%
   #filter(TotTime<1440) %>% 
   #filter(TotTime>1440 && TotTime<2280) %>% 
   #filter(TotTime>1440*2 && TotTime<1440*3) %>% 
-  filter(TotTime>1440*3 && TotTime<1440*4) %>%
+  #filter(TotTime>1440*3 && TotTime<1440*4) %>%
   #filter(TotTime>1440*4 && TotTime<1440*5) %>%
   nrow()
 (13/385701)*100

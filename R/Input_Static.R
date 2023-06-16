@@ -20,7 +20,7 @@
   N_Iterations<-round((Students_p_grade*NSLP_rate),0) #65
   
   #Serivices, number of days we are trying to iterate. Lunch periods per day
-  Service_No<-2 #2 is baseline
+  Service_No<-1 #2 is baseline
   
   #Days we are trying to Iterate. Days
   Food_Days<-5
@@ -31,9 +31,9 @@
   
   
 #Lengths for milk model #need to make sense with no services all have to add up to 1440
-  Time_Service_Length = 30
-  Time_Turnaround_Length = 14 #25
-  Time_Overnight_Length = 1364#1315 #
+  Time_Service_Length = 40
+  Time_Turnaround_Length = 0 #25
+  Time_Overnight_Length = 1400#1315 #
 
 # Sevice Line Information -------------------------------------------------
   
@@ -99,11 +99,11 @@
 
   
   # Inputs for Milk Spoilage -------------------------------------------------
-  Milk_Con_Mean<- 3.22 # 0.38 #-1.77, q2.5 #2.52 q97.5, 0.38 q50 
-  Milk_Con_SD<-0 #1.1
+  Milk_Con_Mean<- 0.38 # 0.38 #-1.77, q2.5 #2.52 q97.5, 0.38 q50 
+  Milk_Con_SD<-1.1 #1.1
   Spoilage_Treshold<-7 #Considered spoiled milk. APCs log CFU/g
   
-  quantile(rnorm(100000,0.38,1.1),.50)
+  #quantile(rnorm(100000,0.38,1.1),.50)
   
   
   #Inputs for E.coli Growth
