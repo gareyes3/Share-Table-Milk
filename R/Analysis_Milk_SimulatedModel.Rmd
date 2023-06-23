@@ -1493,7 +1493,7 @@ range (s43b_List_Time)
 ## S10B
 ```{r}
 s1b0_List<-list()  
-Output_Milk_s1b0<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_s4b3, Interval =1/60,AF = 1.32)
+Output_Milk_s1b0<-Spoilage_Function_Single_Milk(Cont = 2.44, Pop_Max =8.14, Time_Temp_df = Df_RT_MT_s1b0, Interval =1/60,AF = 1.32)
 Changes_Over_Time_s1b0<-Output_Milk_s1b0[[2]]
 for (i in 1:50){
   AnalysysDF_s1b0<- Appling_Changes(df = Outs_DFs_1sb0[[i]], Changes_Over_Time = Changes_Over_Time_s1b0)
